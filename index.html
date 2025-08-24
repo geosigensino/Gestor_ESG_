@@ -41,13 +41,24 @@
     .btn.primary:hover{filter:saturate(1.1);box-shadow:0 10px 22px rgba(24,91,36,.35)}
     .btn.small{padding:6px 9px}
 
-    /* Layout: tarefas mais largas que notas */
-    .grid{display:grid;grid-template-columns:3fr 2fr;gap:28px;margin-top:26px}
-    .panel{background:var(--panel);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow)}
+    /* Layout: tarefas | notas (evita overflow e mantém alinhado) */
+    .grid{
+      display:grid;
+      grid-template-columns: minmax(0,1.8fr) minmax(320px,1fr);
+      gap:28px;
+      margin-top:26px;
+      align-items:start;
+    }
+    .panel{background:var(--panel);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
     .panel h3{margin:18px;font-size:16px}
 
-    /* Kanban — mais “respiro” nas colunas */
-    .kanban{display:grid;grid-template-columns:repeat(4,minmax(300px,1fr));gap:24px;padding:24px}
+    /* Kanban — responsiva (não “empurra” o painel de notas) */
+    .kanban{
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px,1fr));
+      gap:24px;
+      padding:24px;
+    }
     .col{background:var(--card);border:1px solid var(--border);border-radius:12px;min-height:260px;display:flex;flex-direction:column}
     .col header{display:flex;align-items:center;justify-content:space-between;padding:14px;border-bottom:1px solid var(--border)}
     .dropzone{flex:1;padding:14px;min-height:160px}

@@ -34,10 +34,7 @@
       --shadow: 0 10px 24px rgba(16,19,23,.08);
     }
     html, body { height: 100%; }
-    body {
-      margin: 0; font: 14px/1.35 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-      background: var(--bg); color: var(--txt);
-    }
+    body { margin: 0; font: 14px/1.35 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, "Apple Color Emoji", "Segoe UI Emoji"; background: var(--bg); color: var(--txt); }
     .wrap { max-width: 1200px; margin: 0 auto; padding: 28px 20px 40px; }
     header { display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
     .logo { display:flex; align-items:center; gap:10px; }
@@ -225,13 +222,19 @@
   </dialog>
 
   <script>
+  // ======= SUPABASE PADRÃO (fixo no código) =======
+  // Estes valores permitem que qualquer pessoa abra o link e já conecte em "Online (Supabase)" sem precisar colar nada.
+  const DEFAULT_SB_URL = 'https://oakntljdkkoqwttkgzpk.supabase.co';
+  const DEFAULT_SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ha250bGpka2tvcXd0dGtnenBrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYwMzQzMDgsImV4cCI6MjA3MTYxMDMwOH0.jjxUzxyUoutDAVzZg9nrSi9kg5fYfs6F7PCd4xkT48c';
+
   // ======= Estado =======
   const state = {
     theme: localStorage.getItem('theme') || 'dark',
     board: new URL(location.href).searchParams.get('board') || localStorage.getItem('board') || 'default',
     author: localStorage.getItem('author') || 'Anônimo',
-    supabaseUrl: localStorage.getItem('supabaseUrl') || '',
-    supabaseKey: localStorage.getItem('supabaseKey') || '',
+    // Se não houver valores no localStorage, usamos os fixos acima
+    supabaseUrl: localStorage.getItem('supabaseUrl') || DEFAULT_SB_URL,
+    supabaseKey: localStorage.getItem('supabaseKey') || DEFAULT_SB_KEY,
     client: null,
     tasks: [],
     notes: [],
@@ -240,10 +243,7 @@
   };
 
   // Aplicar tema inicial
-  function applyTheme(){
-    if(state.theme === 'light') document.body.classList.add('light');
-    else document.body.classList.remove('light');
-  }
+  function applyTheme(){ if(state.theme === 'light') document.body.classList.add('light'); else document.body.classList.remove('light'); }
   applyTheme();
 
   // ======= Utils =======
@@ -251,55 +251,58 @@
   const qsa = sel => Array.from(document.querySelectorAll(sel));
   const id = x => document.getElementById(x);
   const fmtDate = (d) => d ? new Date(d).toLocaleDateString() : '';
-  const toCSV = (rows) => {
-    if(!rows.length) return '';
-    const head = Object.keys(rows[0]);
-    const body = rows.map(r => head.map(k => '"' + String(r[k] ?? '').replaceAll('"', '""') + '"').join(','));
-    return [head.join(','), ...body].join('\n');
-  };
+  const toCSV = (rows) => { if(!rows.length) return ''; const head = Object.keys(rows[0]); const body = rows.map(r => head.map(k => '"' + String(r[k] ?? '').replaceAll('"', '""') + '"').join(',')); return [head.join(','), ...body].join('\n'); };
   const unique = (arr) => [...new Set(arr)];
+
+  // Helper para exibir erros visíveis
+  function showErr(ctx, err){ console.error(ctx, err); alert(`${ctx}:\n${(err && err.message) || err}`); }
 
   // ======= LocalStorage fallback =======
   function lsKey(){ return `gst_${state.board}`; }
-  function loadLocal(){
-    const raw = localStorage.getItem(lsKey());
-    if(!raw) return {tasks:[], notes:[]};
-    try{ return JSON.parse(raw); }catch{ return {tasks:[], notes:[]}; }
-  }
+  function loadLocal(){ const raw = localStorage.getItem(lsKey()); if(!raw) return {tasks:[], notes:[]}; try{ return JSON.parse(raw); }catch{ return {tasks:[], notes:[]}; } }
   function saveLocal(){ localStorage.setItem(lsKey(), JSON.stringify({tasks: state.tasks, notes: state.notes})); }
 
   // ======= Supabase =======
   async function maybeInitSupabase(){
     if(state.supabaseUrl && state.supabaseKey){
-      state.client = window.supabase.createClient(state.supabaseUrl, state.supabaseKey, { auth: { persistSession: false } });
-      // Checar se há board
       try{
-        // garantir board
-        await state.client.from('boards').insert({ slug: state.board, title: state.board }).select().single().then(()=>{}).catch(()=>{});
-        state.online = true; id('onlineState').textContent = 'Online (Supabase)';
+        state.client = window.supabase.createClient(state.supabaseUrl, state.supabaseKey, { auth: { persistSession: false } });
+        // Garante o board (evita erro de FK em tasks)
+        const { error: upsertErr } = await state.client
+          .from('boards')
+          .upsert({ slug: state.board, title: state.board }, { onConflict: 'slug' })
+          .select();
+        if(upsertErr) throw upsertErr;
+
+        state.online = true;
+        id('onlineState').textContent = 'Online (Supabase)';
         id('modeLabel').innerHTML = `Online • Snapshots por link — board: <span id="boardLabel">${state.board}</span>`;
+
         // Realtime
         state.client.channel('ch-tasks')
           .on('postgres_changes', { event: '*', schema: 'public', table: 'tasks', filter: `board_slug=eq.${state.board}` }, handleRealtime)
           .on('postgres_changes', { event: '*', schema: 'public', table: 'notes', filter: `board_slug=eq.${state.board}` }, handleRealtime)
           .subscribe();
-      }catch(e){ console.warn('Supabase init falhou, usando LocalStorage', e); state.online = false; }
+      }catch(e){
+        state.online = false;
+        id('onlineState').textContent = 'Offline (LocalStorage)';
+        id('modeLabel').innerHTML = `Modo local • Snapshots por link — board: <span id="boardLabel">${state.board}</span>`;
+        showErr('Falha ao conectar ao Supabase (URL/KEY/Policies)', e);
+      }
     } else {
-      state.online = false; id('onlineState').textContent = 'Offline (LocalStorage)';
-      id('modeLabel').innerHTML = `Modo local • Snapshots por link — board: <span id="boardLabel">${state.board}</span>`;
+      state.online = false; id('onlineState').textContent = 'Offline (LocalStorage)'; id('modeLabel').innerHTML = `Modo local • Snapshots por link — board: <span id="boardLabel">${state.board}</span>`;
     }
   }
 
-  async function handleRealtime(payload){
-    await fetchAll();
-  }
+  async function handleRealtime(){ await fetchAll(); }
 
   // CRUD via Supabase ou Local
   async function fetchAll(){
     if(state.online){
-      const { data: t } = await state.client.from('tasks').select('*').eq('board_slug', state.board).order('created_at', { ascending: true });
-      const { data: n } = await state.client.from('notes').select('*').eq('board_slug', state.board).order('created_at', { ascending: true });
-      state.tasks = t || []; state.notes = n || [];
+      const { data: t, error: e1 } = await state.client.from('tasks').select('*').eq('board_slug', state.board).order('created_at', { ascending: true });
+      if(e1){ showErr('Erro ao carregar tarefas', e1); state.tasks = []; } else { state.tasks = t || []; }
+      const { data: n, error: e2 } = await state.client.from('notes').select('*').eq('board_slug', state.board).order('created_at', { ascending: true });
+      if(e2){ showErr('Erro ao carregar anotações', e2); state.notes = []; } else { state.notes = n || []; }
     } else {
       const {tasks, notes} = loadLocal(); state.tasks = tasks; state.notes = notes;
     }
@@ -308,8 +311,8 @@
 
   async function upsertTask(obj){
     if(state.online){
-      if(obj.id){ await state.client.from('tasks').update(obj).eq('id', obj.id); }
-      else { await state.client.from('tasks').insert({ ...obj, board_slug: state.board }); }
+      if(obj.id){ const { error } = await state.client.from('tasks').update(obj).eq('id', obj.id); if(error) return showErr('Erro ao atualizar tarefa', error); }
+      else { const payload = { ...obj, board_slug: state.board }; const { error } = await state.client.from('tasks').insert(payload); if(error) return showErr('Erro ao criar tarefa (FK/RLS)', error); }
     } else {
       if(!obj.id){ obj.id = crypto.randomUUID(); }
       const idx = state.tasks.findIndex(x => x.id === obj.id);
@@ -318,23 +321,15 @@
     }
     await fetchAll();
   }
-  async function deleteTask(idv){
-    if(state.online){ await state.client.from('tasks').delete().eq('id', idv); }
-    else { state.tasks = state.tasks.filter(t => t.id !== idv); saveLocal(); }
-    await fetchAll();
-  }
+  async function deleteTask(idv){ if(state.online){ const { error } = await state.client.from('tasks').delete().eq('id', idv); if(error) return showErr('Erro ao excluir tarefa', error); } else { state.tasks = state.tasks.filter(t => t.id !== idv); saveLocal(); } await fetchAll(); }
 
   async function addNote(content){
     if(!content.trim()) return;
-    if(state.online){ await state.client.from('notes').insert({ board_slug: state.board, conteudo: content, autor: state.author }); }
+    if(state.online){ const { error } = await state.client.from('notes').insert({ board_slug: state.board, conteudo: content, autor: state.author }); if(error) return showErr('Erro ao criar anotação', error); }
     else { state.notes.push({ id: crypto.randomUUID(), conteudo: content, autor: state.author, created_at: new Date().toISOString() }); saveLocal(); }
     id('noteInput').value = ''; await fetchAll();
   }
-  async function deleteNote(idv){
-    if(state.online){ await state.client.from('notes').delete().eq('id', idv); }
-    else { state.notes = state.notes.filter(n => n.id !== idv); saveLocal(); }
-    await fetchAll();
-  }
+  async function deleteNote(idv){ if(state.online){ const { error } = await state.client.from('notes').delete().eq('id', idv); if(error) return showErr('Erro ao excluir anotação', error); } else { state.notes = state.notes.filter(n => n.id !== idv); saveLocal(); } await fetchAll(); }
 
   // ======= Renderização =======
   function render(){
@@ -369,8 +364,7 @@
       (t.responsaveis||[]).forEach(p => { const el = document.createElement('span'); el.className='tag'; el.textContent = p; tags.append(el); });
 
       const actions = document.createElement('div'); actions.className = 'actions';
-      const bEdit = document.createElement('button'); bEdit.className = 'btn small'; bEdit.textContent = 'Editar';
-      bEdit.onclick = ()=> openTaskModal(t);
+      const bEdit = document.createElement('button'); bEdit.className = 'btn small'; bEdit.textContent = 'Editar'; bEdit.onclick = ()=> openTaskModal(t);
       const bDel = document.createElement('button'); bDel.className = 'btn small'; bDel.textContent = 'Excluir'; bDel.onclick = ()=> deleteTask(t.id);
       actions.append(bEdit, bDel);
 
@@ -380,10 +374,7 @@
     });
 
     // Atualizar badges de contagem
-    qsa('.col').forEach(col => {
-      const st = col.dataset.status; const badge = col.querySelector('.badge');
-      if(badge) badge.textContent = counts[st] || 0;
-    });
+    qsa('.col').forEach(col => { const st = col.dataset.status; const badge = col.querySelector('.badge'); if(badge) badge.textContent = counts[st] || 0; });
 
     // Drop handlers
     qsa('.dropzone').forEach(dz => {
@@ -442,57 +433,23 @@
     if(id('chkUpdateLink').checked) updateShareLink();
   }
 
-  function updateShareLink(){
-    const url = new URL(location.href);
-    url.searchParams.set('board', state.board);
-    url.searchParams.set('theme', state.theme);
-    history.replaceState({}, '', url.toString());
-  }
-
-  function generateShareLink(){
-    const url = new URL(location.href);
-    url.searchParams.set('board', state.board);
-    url.searchParams.set('theme', state.theme);
-    navigator.clipboard.writeText(url.toString());
-    alert('Link copiado! Cole no WhatsApp para compartilhar.');
-  }
-
-  function toggleTheme(){
-    state.theme = (state.theme === 'dark') ? 'light' : 'dark';
-    localStorage.setItem('theme', state.theme); applyTheme(); updateShareLink();
-  }
+  function updateShareLink(){ const url = new URL(location.href); url.searchParams.set('board', state.board); url.searchParams.set('theme', state.theme); history.replaceState({}, '', url.toString()); }
+  function generateShareLink(){ const url = new URL(location.href); url.searchParams.set('board', state.board); url.searchParams.set('theme', state.theme); navigator.clipboard.writeText(url.toString()); alert('Link copiado! Cole no WhatsApp para compartilhar.'); }
+  function toggleTheme(){ state.theme = (state.theme === 'dark') ? 'light' : 'dark'; localStorage.setItem('theme', state.theme); applyTheme(); updateShareLink(); }
 
   function exportCSV(){
-    const rows = state.tasks.map(t => ({
-      id: t.id,
-      board: state.board,
-      titulo: t.titulo,
-      descricao: t.descricao || '',
-      status: t.status,
-      prazo: t.prazo || '',
-      responsaveis: (t.responsaveis||[]).join('; '),
-      autor: t.autor || '',
-      criado_em: t.created_at || '',
-      atualizado_em: t.updated_at || ''
-    }));
-    const csv = toCSV(rows);
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `tarefas_${state.board}.csv`; a.click();
+    const rows = state.tasks.map(t => ({ id: t.id, board: state.board, titulo: t.titulo, descricao: t.descricao || '', status: t.status, prazo: t.prazo || '', responsaveis: (t.responsaveis||[]).join('; '), autor: t.autor || '', criado_em: t.created_at || '', atualizado_em: t.updated_at || '' }));
+    const csv = toCSV(rows); const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `tarefas_${state.board}.csv`; a.click();
   }
 
   // ======= Config =======
-  function openCfg(){
-    id('cfgAutor').value = state.author;
-    id('cfgBoard').value = state.board;
-    id('cfgUrl').value = state.supabaseUrl;
-    id('cfgKey').value = state.supabaseKey;
-    id('dlgCfg').showModal();
-  }
+  function openCfg(){ id('cfgAutor').value = state.author; id('cfgBoard').value = state.board; id('cfgUrl').value = state.supabaseUrl; id('cfgKey').value = state.supabaseKey; id('dlgCfg').showModal(); }
   async function saveCfg(){
     state.author = id('cfgAutor').value.trim() || 'Anônimo';
     state.board = (id('cfgBoard').value.trim() || 'default').toLowerCase().replace(/\s+/g,'-');
-    state.supabaseUrl = id('cfgUrl').value.trim();
-    state.supabaseKey = id('cfgKey').value.trim();
+    // Se o usuário apagar os campos, mantemos os padrões
+    state.supabaseUrl = id('cfgUrl').value.trim() || DEFAULT_SB_URL;
+    state.supabaseKey = id('cfgKey').value.trim() || DEFAULT_SB_KEY;
     localStorage.setItem('author', state.author);
     localStorage.setItem('board', state.board);
     localStorage.setItem('supabaseUrl', state.supabaseUrl);
@@ -500,7 +457,7 @@
     id('dlgCfg').close(); updateShareLink();
     await maybeInitSupabase(); await fetchAll();
   }
-  function clearCfg(){ localStorage.removeItem('supabaseUrl'); localStorage.removeItem('supabaseKey'); state.supabaseUrl=''; state.supabaseKey=''; alert('Chaves removidas deste navegador.'); }
+  function clearCfg(){ localStorage.removeItem('supabaseUrl'); localStorage.removeItem('supabaseKey'); state.supabaseUrl = DEFAULT_SB_URL; state.supabaseKey = DEFAULT_SB_KEY; alert('Chaves removidas deste navegador. Os padrões do app continuarão funcionando.'); }
 
   // ======= Eventos =======
   id('btnTheme').onclick = toggleTheme;
@@ -519,7 +476,6 @@
 
   // ======= Inicialização =======
   (async function init(){
-    // parâmetros de URL
     const params = new URL(location.href).searchParams;
     const themeFromUrl = params.get('theme'); if(themeFromUrl){ state.theme = themeFromUrl; localStorage.setItem('theme', state.theme); applyTheme(); }
     await maybeInitSupabase();
@@ -528,7 +484,8 @@
 
   </script>
 
-  <!--\n  ===================== IMPORTANTE (SQL do Supabase) =====================
+  <!--
+  ===================== IMPORTANTE (SQL do Supabase) =====================
   Execute este SQL no seu projeto Supabase ANTES de usar o app (Database > SQL Editor):
 
   -- Extensões
@@ -589,7 +546,7 @@
   create policy "notes_del"    on notes for delete using (true);
 
   -- Realtime (Database > Replication > supabase_realtime)
-  alter publication supabase_realtime add table tasks, notes;
+  alter publication supabase_realtime add table boards, tasks, notes;
 
   -- Seed inicial
   insert into boards(slug,title) values ('default','Default') on conflict do nothing;
@@ -598,3 +555,4 @@
   -->
 </body>
 </html>
+

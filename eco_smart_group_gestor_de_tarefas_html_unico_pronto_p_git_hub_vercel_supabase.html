@@ -1,0 +1,600 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Eco Smart Group — Gestor de Tarefas</title>
+  <!-- Supabase JS (v2) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --bg: #0b0d10;
+      --panel: #111418;
+      --card: #151922;
+      --muted: #9aa4b2;
+      --txt: #dfe6ee;
+      --brand: #6ea8fe; /* azul discreto */
+      --ok: #38c172;
+      --warn: #ffcc00;
+      --danger: #ef6b6b;
+      --border: #1f2430;
+      --shadow: 0 10px 24px rgba(0,0,0,.35);
+    }
+    .light {
+      --bg: #f7f9fc;
+      --panel: #ffffff;
+      --card: #ffffff;
+      --muted: #5c6675;
+      --txt: #101317;
+      --brand: #2b6cb0;
+      --ok: #2f855a;
+      --warn: #b7791f;
+      --danger: #c53030;
+      --border: #e6ebf2;
+      --shadow: 0 10px 24px rgba(16,19,23,.08);
+    }
+    html, body { height: 100%; }
+    body {
+      margin: 0; font: 14px/1.35 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: var(--bg); color: var(--txt);
+    }
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 28px 20px 40px; }
+    header { display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+    .logo { display:flex; align-items:center; gap:10px; }
+    .logo img { width: 36px; height: 36px; border-radius: 9px; box-shadow: var(--shadow); }
+    .brand { font-weight: 700; font-size: 22px; }
+    .muted { color: var(--muted); }
+    .pill { background: rgba(255,255,255,.06); color: var(--txt); padding: 6px 10px; border:1px solid var(--border); border-radius: 9px; }
+
+    .toolbar { margin-top: 16px; display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+    .btn, button { cursor:pointer; border:1px solid var(--border); background: var(--panel); color: var(--txt); padding: 9px 12px; border-radius: 10px; box-shadow: var(--shadow); }
+    .btn.primary { background: linear-gradient(180deg, var(--brand), #3b82f6); color: white; border:none; }
+    .btn.ghost { background: transparent; border:1px dashed var(--border); }
+    .btn.small { padding: 6px 9px; }
+    .btn.badge { font-size: 12px; }
+    .switch { display:inline-flex; align-items:center; gap:8px; }
+
+    .grid { display:grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 18px; }
+    .panel { background: var(--panel); border:1px solid var(--border); border-radius: 14px; box-shadow: var(--shadow); }
+    .panel h3 { margin: 16px; font-size: 16px; }
+
+    /* Kanban */
+    .kanban { display:grid; grid-template-columns: repeat(3, 1fr); gap: 16px; padding: 16px; }
+    .col { background: var(--card); border:1px solid var(--border); border-radius: 12px; min-height: 260px; display:flex; flex-direction:column; }
+    .col header { display:flex; align-items:center; justify-content:space-between; padding: 12px 12px; border-bottom:1px solid var(--border); }
+    .dropzone { flex:1; padding: 10px; min-height: 120px; }
+
+    .card { background: var(--panel); border:1px solid var(--border); border-radius: 12px; padding: 12px; margin: 8px 4px; box-shadow: var(--shadow); }
+    .title { font-weight:600; }
+    .tags { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+    .tag { background: rgba(255,255,255,.06); border:1px solid var(--border); padding: 4px 8px; border-radius: 8px; font-size: 12px; }
+    .row { display:flex; align-items:center; gap: 8px; flex-wrap:wrap; }
+    .actions { display:flex; gap:8px; margin-top:10px; }
+
+    .filters { display:flex; gap:10px; align-items:center; flex-wrap: wrap; }
+    select, input[type="date"], input[type="text"] { background: var(--panel); color: var(--txt); border:1px solid var(--border); border-radius: 10px; padding: 8px 10px; }
+
+    .note { background: var(--card); border:1px solid var(--border); border-radius: 12px; padding: 12px; margin: 10px 14px; }
+    textarea { width:100%; min-height: 64px; background: var(--panel); color: var(--txt); border:1px solid var(--border); border-radius: 10px; padding: 8px 10px; }
+
+    .badges { display:flex; align-items:center; gap:8px; }
+    .badge { font-size: 12px; padding: 2px 8px; border-radius: 999px; border:1px solid var(--border); background: var(--panel); }
+    .status-em_andamento { background: #1f2a44; color:#cfe1ff; }
+    .status-a_fazer { background: #2b313a; color:#d5dae1; }
+    .status-concluida { background: #203a2a; color:#c8f5dd; }
+
+    .foot { margin-top: 28px; display:flex; justify-content:space-between; align-items:center; color: var(--muted); }
+
+    /* Modal simples */
+    dialog { border: 1px solid var(--border); background: var(--panel); color: var(--txt); border-radius: 14px; padding: 0; box-shadow: var(--shadow); }
+    dialog::backdrop { background: rgba(0,0,0,.45); }
+    .modal-head { padding: 14px 16px; border-bottom:1px solid var(--border); font-weight: 600; }
+    .modal-body { padding: 14px 16px; display:grid; gap:12px; }
+    .modal-foot { padding: 14px 16px; border-top:1px solid var(--border); display:flex; gap:10px; justify-content:flex-end; }
+    .field { display:grid; gap:6px; }
+    label { font-size:12px; color: var(--muted); }
+
+    @media (max-width: 980px){ .grid { grid-template-columns: 1fr; } .kanban{ grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="wrap" id="app">
+    <header>
+      <div class="logo">
+        <img src="https://dummyimage.com/72x72/6ea8fe/ffffff.png&text=Eco" alt="EcoSmart" />
+        <div>
+          <div class="brand">Eco Smart Group — Gestor de Tarefas</div>
+          <div class="muted" id="modeLabel">Modo local • Snapshots por link — board: <span id="boardLabel">default</span></div>
+        </div>
+      </div>
+    </header>
+
+    <div class="toolbar">
+      <button class="btn primary" id="btnNova">+ Nova tarefa</button>
+
+      <div class="filters">
+        <span class="pill">Status: <select id="fStatus"><option value="todos">todos</option><option value="a_fazer">a fazer</option><option value="em_andamento">em andamento</option><option value="concluida">concluída</option></select></span>
+        <span class="pill">Responsável: <select id="fResp"><option value="todos">todos</option></select></span>
+        <span class="pill">Prazo: <select id="fPrazo"><option value="todos">todos</option><option value="hoje">hoje</option><option value="semana">esta semana</option><option value="atrasadas">atrasadas</option></select></span>
+      </div>
+
+      <button class="btn" id="btnExport">Exportar CSV</button>
+      <button class="btn" id="btnLink">Gerar link com dados</button>
+      <label class="switch"><input type="checkbox" id="chkUpdateLink" checked> atualizar link ao editar</label>
+      <button class="btn" id="btnConfig">Configurar (autor, board, Supabase)</button>
+
+      <span style="flex:1"></span>
+      <button class="btn" id="btnTheme">Alternar tema</button>
+    </div>
+
+    <div class="grid">
+      <section class="panel">
+        <h3>Tarefas</h3>
+        <div class="kanban">
+          <div class="col" data-status="a_fazer">
+            <header>
+              <div class="row"><strong>A fazer</strong><span class="badge">0</span></div>
+              <button class="btn small" data-add="a_fazer">+ adicionar</button>
+            </header>
+            <div class="dropzone" id="col-a_fazer" ondragover="event.preventDefault()"></div>
+          </div>
+          <div class="col" data-status="em_andamento">
+            <header>
+              <div class="row"><strong>Em andamento</strong><span class="badge">0</span></div>
+              <button class="btn small" data-add="em_andamento">+ adicionar</button>
+            </header>
+            <div class="dropzone" id="col-em_andamento" ondragover="event.preventDefault()"></div>
+          </div>
+          <div class="col" data-status="concluida">
+            <header>
+              <div class="row"><strong>Concluídas</strong><span class="badge">0</span></div>
+              <button class="btn small" data-add="concluida">+ adicionar</button>
+            </header>
+            <div class="dropzone" id="col-concluida" ondragover="event.preventDefault()"></div>
+          </div>
+        </div>
+      </section>
+      <section class="panel">
+        <h3>Anotações gerais</h3>
+        <div id="notes"></div>
+        <div class="note">
+          <textarea id="noteInput" placeholder="Escreva uma anotação…"></textarea>
+          <div class="actions">
+            <button class="btn" id="btnAnotar">Anotar</button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="foot">
+      <div>Feito com ❤ para equipes que precisam de algo simples, online e colaborativo.</div>
+      <div class="muted" id="onlineState">Offline (LocalStorage)</div>
+    </div>
+  </div>
+
+  <!-- MODAL: CONFIGURAÇÕES -->
+  <dialog id="dlgCfg">
+    <div class="modal-head">Configurar (autor, board, Supabase)</div>
+    <div class="modal-body">
+      <div class="field">
+        <label>Nome do autor (exibe nos cartões)</label>
+        <input id="cfgAutor" type="text" placeholder="Ex.: Bruno Ferreira" />
+      </div>
+      <div class="field">
+        <label>Board (slug em minúsculas, sem espaços)</label>
+        <input id="cfgBoard" type="text" placeholder="Ex.: default ou novo-agro" />
+      </div>
+      <hr style="border: none; border-top: 1px solid var(--border);" />
+      <div class="field">
+        <label>SUPABASE_URL</label>
+        <input id="cfgUrl" type="text" placeholder="https://xxxxxxxxxxxx.supabase.co" />
+      </div>
+      <div class="field">
+        <label>SUPABASE_ANON_KEY</label>
+        <input id="cfgKey" type="text" placeholder="eyJhbGciOi..." />
+      </div>
+      <div class="muted">As chaves ficam apenas no seu navegador (localStorage). Use a chave <strong>anon</strong> pública.</div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn ghost" id="cfgLimpar">Limpar</button>
+      <button class="btn" id="cfgFechar">Fechar</button>
+      <button class="btn primary" id="cfgSalvar">Salvar</button>
+    </div>
+  </dialog>
+
+  <!-- MODAL: EDIÇÃO TAREFA -->
+  <dialog id="dlgTask">
+    <div class="modal-head" id="taskModalTitle">Nova tarefa</div>
+    <div class="modal-body">
+      <div class="field"><label>Título</label><input id="tTitulo" type="text" placeholder="Ex.: Arquivos da Novo Agro" /></div>
+      <div class="field"><label>Descrição (opcional)</label><input id="tDesc" type="text" placeholder="Detalhes curtos…" /></div>
+      <div class="field"><label>Responsáveis (separe por vírgula)</label><input id="tResp" type="text" placeholder="Ex.: Bruno Ferreira, Bruno Santos" /></div>
+      <div class="field"><label>Prazo</label><input id="tPrazo" type="date" /></div>
+      <div class="field"><label>Status</label>
+        <select id="tStatus">
+          <option value="a_fazer">a fazer</option>
+          <option value="em_andamento">em andamento</option>
+          <option value="concluida">concluída</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" id="tCancelar">Cancelar</button>
+      <button class="btn primary" id="tSalvar">Salvar</button>
+    </div>
+  </dialog>
+
+  <script>
+  // ======= Estado =======
+  const state = {
+    theme: localStorage.getItem('theme') || 'dark',
+    board: new URL(location.href).searchParams.get('board') || localStorage.getItem('board') || 'default',
+    author: localStorage.getItem('author') || 'Anônimo',
+    supabaseUrl: localStorage.getItem('supabaseUrl') || '',
+    supabaseKey: localStorage.getItem('supabaseKey') || '',
+    client: null,
+    tasks: [],
+    notes: [],
+    editingTaskId: null,
+    online: false,
+  };
+
+  // Aplicar tema inicial
+  function applyTheme(){
+    if(state.theme === 'light') document.body.classList.add('light');
+    else document.body.classList.remove('light');
+  }
+  applyTheme();
+
+  // ======= Utils =======
+  const qs = sel => document.querySelector(sel);
+  const qsa = sel => Array.from(document.querySelectorAll(sel));
+  const id = x => document.getElementById(x);
+  const fmtDate = (d) => d ? new Date(d).toLocaleDateString() : '';
+  const toCSV = (rows) => {
+    if(!rows.length) return '';
+    const head = Object.keys(rows[0]);
+    const body = rows.map(r => head.map(k => '"' + String(r[k] ?? '').replaceAll('"', '""') + '"').join(','));
+    return [head.join(','), ...body].join('\n');
+  };
+  const unique = (arr) => [...new Set(arr)];
+
+  // ======= LocalStorage fallback =======
+  function lsKey(){ return `gst_${state.board}`; }
+  function loadLocal(){
+    const raw = localStorage.getItem(lsKey());
+    if(!raw) return {tasks:[], notes:[]};
+    try{ return JSON.parse(raw); }catch{ return {tasks:[], notes:[]}; }
+  }
+  function saveLocal(){ localStorage.setItem(lsKey(), JSON.stringify({tasks: state.tasks, notes: state.notes})); }
+
+  // ======= Supabase =======
+  async function maybeInitSupabase(){
+    if(state.supabaseUrl && state.supabaseKey){
+      state.client = window.supabase.createClient(state.supabaseUrl, state.supabaseKey, { auth: { persistSession: false } });
+      // Checar se há board
+      try{
+        // garantir board
+        await state.client.from('boards').insert({ slug: state.board, title: state.board }).select().single().then(()=>{}).catch(()=>{});
+        state.online = true; id('onlineState').textContent = 'Online (Supabase)';
+        id('modeLabel').innerHTML = `Online • Snapshots por link — board: <span id="boardLabel">${state.board}</span>`;
+        // Realtime
+        state.client.channel('ch-tasks')
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'tasks', filter: `board_slug=eq.${state.board}` }, handleRealtime)
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'notes', filter: `board_slug=eq.${state.board}` }, handleRealtime)
+          .subscribe();
+      }catch(e){ console.warn('Supabase init falhou, usando LocalStorage', e); state.online = false; }
+    } else {
+      state.online = false; id('onlineState').textContent = 'Offline (LocalStorage)';
+      id('modeLabel').innerHTML = `Modo local • Snapshots por link — board: <span id="boardLabel">${state.board}</span>`;
+    }
+  }
+
+  async function handleRealtime(payload){
+    await fetchAll();
+  }
+
+  // CRUD via Supabase ou Local
+  async function fetchAll(){
+    if(state.online){
+      const { data: t } = await state.client.from('tasks').select('*').eq('board_slug', state.board).order('created_at', { ascending: true });
+      const { data: n } = await state.client.from('notes').select('*').eq('board_slug', state.board).order('created_at', { ascending: true });
+      state.tasks = t || []; state.notes = n || [];
+    } else {
+      const {tasks, notes} = loadLocal(); state.tasks = tasks; state.notes = notes;
+    }
+    render(); updateFilters();
+  }
+
+  async function upsertTask(obj){
+    if(state.online){
+      if(obj.id){ await state.client.from('tasks').update(obj).eq('id', obj.id); }
+      else { await state.client.from('tasks').insert({ ...obj, board_slug: state.board }); }
+    } else {
+      if(!obj.id){ obj.id = crypto.randomUUID(); }
+      const idx = state.tasks.findIndex(x => x.id === obj.id);
+      if(idx>=0) state.tasks[idx] = { ...state.tasks[idx], ...obj } ; else state.tasks.push(obj);
+      saveLocal();
+    }
+    await fetchAll();
+  }
+  async function deleteTask(idv){
+    if(state.online){ await state.client.from('tasks').delete().eq('id', idv); }
+    else { state.tasks = state.tasks.filter(t => t.id !== idv); saveLocal(); }
+    await fetchAll();
+  }
+
+  async function addNote(content){
+    if(!content.trim()) return;
+    if(state.online){ await state.client.from('notes').insert({ board_slug: state.board, conteudo: content, autor: state.author }); }
+    else { state.notes.push({ id: crypto.randomUUID(), conteudo: content, autor: state.author, created_at: new Date().toISOString() }); saveLocal(); }
+    id('noteInput').value = ''; await fetchAll();
+  }
+  async function deleteNote(idv){
+    if(state.online){ await state.client.from('notes').delete().eq('id', idv); }
+    else { state.notes = state.notes.filter(n => n.id !== idv); saveLocal(); }
+    await fetchAll();
+  }
+
+  // ======= Renderização =======
+  function render(){
+    id('boardLabel').textContent = state.board;
+    const cols = { a_fazer: id('col-a_fazer'), em_andamento: id('col-em_andamento'), concluida: id('col-concluida') };
+    Object.values(cols).forEach(el => el.innerHTML = '');
+
+    const fSt = id('fStatus').value; const fResp = id('fResp').value; const fPrazo = id('fPrazo').value;
+    const now = new Date(); const endWeek = new Date(); endWeek.setDate(now.getDate() + (7 - now.getDay()));
+
+    let list = [...state.tasks];
+    if(fSt !== 'todos') list = list.filter(t => t.status === fSt);
+    if(fResp !== 'todos') list = list.filter(t => (t.responsaveis||[]).includes(fResp));
+    if(fPrazo === 'hoje') list = list.filter(t => t.prazo && new Date(t.prazo).toDateString() === now.toDateString());
+    if(fPrazo === 'semana') list = list.filter(t => t.prazo && new Date(t.prazo) <= endWeek);
+    if(fPrazo === 'atrasadas') list = list.filter(t => t.prazo && new Date(t.prazo) < now && t.status !== 'concluida');
+
+    const counts = { a_fazer:0, em_andamento:0, concluida:0 };
+
+    list.forEach(t => {
+      counts[t.status]++;
+      const card = document.createElement('div'); card.className = 'card'; card.draggable = true; card.dataset.id = t.id;
+      card.addEventListener('dragstart', (e)=>{ e.dataTransfer.setData('text/plain', t.id); });
+
+      const title = document.createElement('div'); title.className = 'title'; title.textContent = t.titulo || '(sem título)';
+      const badges = document.createElement('div'); badges.className = 'badges';
+      const status = document.createElement('span'); status.className = 'badge status-' + t.status; status.textContent = t.status.replace('_',' ');
+      const prazo = document.createElement('span'); prazo.className = 'badge'; prazo.textContent = t.prazo ? 'Prazo: ' + fmtDate(t.prazo) : 'Sem prazo';
+      badges.append(status, prazo);
+
+      const tags = document.createElement('div'); tags.className = 'tags';
+      (t.responsaveis||[]).forEach(p => { const el = document.createElement('span'); el.className='tag'; el.textContent = p; tags.append(el); });
+
+      const actions = document.createElement('div'); actions.className = 'actions';
+      const bEdit = document.createElement('button'); bEdit.className = 'btn small'; bEdit.textContent = 'Editar';
+      bEdit.onclick = ()=> openTaskModal(t);
+      const bDel = document.createElement('button'); bDel.className = 'btn small'; bDel.textContent = 'Excluir'; bDel.onclick = ()=> deleteTask(t.id);
+      actions.append(bEdit, bDel);
+
+      card.append(title); if(t.descricao){ const d=document.createElement('div'); d.className='muted'; d.textContent = t.descricao; card.append(d); }
+      card.append(badges, tags, actions);
+      cols[t.status].append(card);
+    });
+
+    // Atualizar badges de contagem
+    qsa('.col').forEach(col => {
+      const st = col.dataset.status; const badge = col.querySelector('.badge');
+      if(badge) badge.textContent = counts[st] || 0;
+    });
+
+    // Drop handlers
+    qsa('.dropzone').forEach(dz => {
+      dz.ondrop = async (e)=>{
+        e.preventDefault(); const idDrag = e.dataTransfer.getData('text/plain');
+        const novo = dz.id.replace('col-','');
+        const t = state.tasks.find(x => x.id === idDrag); if(!t) return;
+        await upsertTask({ id: t.id, status: novo });
+        if(id('chkUpdateLink').checked) updateShareLink();
+      };
+    });
+
+    // Render notas
+    const nWrap = id('notes'); nWrap.innerHTML = '';
+    state.notes.forEach(n => {
+      const dv = document.createElement('div'); dv.className = 'note';
+      const p = document.createElement('div'); p.textContent = n.conteudo; dv.append(p);
+      const row = document.createElement('div'); row.className='actions';
+      const bDel = document.createElement('button'); bDel.className='btn small'; bDel.textContent='Excluir'; bDel.onclick=()=>deleteNote(n.id);
+      row.append(bDel); dv.append(row); nWrap.append(dv);
+    });
+  }
+
+  function updateFilters(){
+    // Responsáveis
+    const opts = unique(state.tasks.flatMap(t => t.responsaveis||[])).sort();
+    const sel = id('fResp'); const val = sel.value; sel.innerHTML = '<option value="todos">todos</option>' + opts.map(o=>`<option value="${o}">${o}</option>`).join('');
+    if(opts.includes(val)) sel.value = val; else sel.value = 'todos';
+  }
+
+  // ======= Interações =======
+  function openTaskModal(t){
+    state.editingTaskId = t?.id || null;
+    id('taskModalTitle').textContent = t ? 'Editar tarefa' : 'Nova tarefa';
+    id('tTitulo').value = t?.titulo || '';
+    id('tDesc').value = t?.descricao || '';
+    id('tResp').value = (t?.responsaveis||[]).join(', ');
+    id('tPrazo').value = t?.prazo ? new Date(t.prazo).toISOString().slice(0,10) : '';
+    id('tStatus').value = t?.status || 'a_fazer';
+    id('dlgTask').showModal();
+  }
+
+  async function saveTaskFromModal(){
+    const obj = {
+      id: state.editingTaskId || undefined,
+      titulo: id('tTitulo').value.trim() || 'Sem título',
+      descricao: id('tDesc').value.trim() || null,
+      responsaveis: id('tResp').value.split(',').map(x=>x.trim()).filter(Boolean),
+      prazo: id('tPrazo').value || null,
+      status: id('tStatus').value,
+      autor: state.author,
+    };
+    if(!state.online){ obj.board_slug = state.board; }
+    await upsertTask(obj);
+    id('dlgTask').close();
+    if(id('chkUpdateLink').checked) updateShareLink();
+  }
+
+  function updateShareLink(){
+    const url = new URL(location.href);
+    url.searchParams.set('board', state.board);
+    url.searchParams.set('theme', state.theme);
+    history.replaceState({}, '', url.toString());
+  }
+
+  function generateShareLink(){
+    const url = new URL(location.href);
+    url.searchParams.set('board', state.board);
+    url.searchParams.set('theme', state.theme);
+    navigator.clipboard.writeText(url.toString());
+    alert('Link copiado! Cole no WhatsApp para compartilhar.');
+  }
+
+  function toggleTheme(){
+    state.theme = (state.theme === 'dark') ? 'light' : 'dark';
+    localStorage.setItem('theme', state.theme); applyTheme(); updateShareLink();
+  }
+
+  function exportCSV(){
+    const rows = state.tasks.map(t => ({
+      id: t.id,
+      board: state.board,
+      titulo: t.titulo,
+      descricao: t.descricao || '',
+      status: t.status,
+      prazo: t.prazo || '',
+      responsaveis: (t.responsaveis||[]).join('; '),
+      autor: t.autor || '',
+      criado_em: t.created_at || '',
+      atualizado_em: t.updated_at || ''
+    }));
+    const csv = toCSV(rows);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `tarefas_${state.board}.csv`; a.click();
+  }
+
+  // ======= Config =======
+  function openCfg(){
+    id('cfgAutor').value = state.author;
+    id('cfgBoard').value = state.board;
+    id('cfgUrl').value = state.supabaseUrl;
+    id('cfgKey').value = state.supabaseKey;
+    id('dlgCfg').showModal();
+  }
+  async function saveCfg(){
+    state.author = id('cfgAutor').value.trim() || 'Anônimo';
+    state.board = (id('cfgBoard').value.trim() || 'default').toLowerCase().replace(/\s+/g,'-');
+    state.supabaseUrl = id('cfgUrl').value.trim();
+    state.supabaseKey = id('cfgKey').value.trim();
+    localStorage.setItem('author', state.author);
+    localStorage.setItem('board', state.board);
+    localStorage.setItem('supabaseUrl', state.supabaseUrl);
+    localStorage.setItem('supabaseKey', state.supabaseKey);
+    id('dlgCfg').close(); updateShareLink();
+    await maybeInitSupabase(); await fetchAll();
+  }
+  function clearCfg(){ localStorage.removeItem('supabaseUrl'); localStorage.removeItem('supabaseKey'); state.supabaseUrl=''; state.supabaseKey=''; alert('Chaves removidas deste navegador.'); }
+
+  // ======= Eventos =======
+  id('btnTheme').onclick = toggleTheme;
+  id('btnNova').onclick = ()=> openTaskModal();
+  qsa('[data-add]').forEach(b => b.onclick = ()=> openTaskModal({ status: b.getAttribute('data-add') }));
+  id('btnExport').onclick = exportCSV;
+  id('btnLink').onclick = generateShareLink;
+  id('btnConfig').onclick = openCfg;
+  id('cfgSalvar').onclick = saveCfg;
+  id('cfgFechar').onclick = ()=> id('dlgCfg').close();
+  id('cfgLimpar').onclick = clearCfg;
+  id('tSalvar').onclick = saveTaskFromModal;
+  id('tCancelar').onclick = ()=> id('dlgTask').close();
+  id('btnAnotar').onclick = ()=> addNote(id('noteInput').value);
+  id('fStatus').onchange = render; id('fResp').onchange = render; id('fPrazo').onchange = render;
+
+  // ======= Inicialização =======
+  (async function init(){
+    // parâmetros de URL
+    const params = new URL(location.href).searchParams;
+    const themeFromUrl = params.get('theme'); if(themeFromUrl){ state.theme = themeFromUrl; localStorage.setItem('theme', state.theme); applyTheme(); }
+    await maybeInitSupabase();
+    await fetchAll();
+  })();
+
+  </script>
+
+  <!--\n  ===================== IMPORTANTE (SQL do Supabase) =====================
+  Execute este SQL no seu projeto Supabase ANTES de usar o app (Database > SQL Editor):
+
+  -- Extensões
+  create extension if not exists pgcrypto;
+
+  -- Boards
+  create table if not exists boards (
+    slug text primary key,
+    title text not null default 'default',
+    created_at timestamp with time zone default now()
+  );
+
+  -- Enum de status
+  do $$ begin
+    create type task_status as enum ('a_fazer','em_andamento','concluida');
+  exception when duplicate_object then null; end $$;
+
+  -- Tarefas
+  create table if not exists tasks (
+    id uuid primary key default gen_random_uuid(),
+    board_slug text not null references boards(slug) on delete cascade,
+    titulo text not null,
+    descricao text,
+    status task_status not null default 'a_fazer',
+    prazo date,
+    responsaveis text[] not null default '{}',
+    autor text,
+    created_at timestamp with time zone default now(),
+    updated_at timestamp with time zone default now()
+  );
+
+  -- Notas
+  create table if not exists notes (
+    id uuid primary key default gen_random_uuid(),
+    board_slug text not null references boards(slug) on delete cascade,
+    conteudo text not null,
+    autor text,
+    created_at timestamp with time zone default now()
+  );
+
+  -- RLS
+  alter table boards enable row level security;
+  alter table tasks enable row level security;
+  alter table notes enable row level security;
+
+  create policy "boards_select" on boards for select using (true);
+  create policy "boards_ins"    on boards for insert with check (true);
+  create policy "boards_upd"    on boards for update using (true) with check (true);
+
+  create policy "tasks_select" on tasks for select using (true);
+  create policy "tasks_ins"    on tasks for insert with check (true);
+  create policy "tasks_upd"    on tasks for update using (true) with check (true);
+  create policy "tasks_del"    on tasks for delete using (true);
+
+  create policy "notes_select" on notes for select using (true);
+  create policy "notes_ins"    on notes for insert with check (true);
+  create policy "notes_upd"    on notes for update using (true) with check (true);
+  create policy "notes_del"    on notes for delete using (true);
+
+  -- Realtime (Database > Replication > supabase_realtime)
+  alter publication supabase_realtime add table tasks, notes;
+
+  -- Seed inicial
+  insert into boards(slug,title) values ('default','Default') on conflict do nothing;
+
+  ========================================================================
+  -->
+</body>
+</html>

@@ -47,10 +47,11 @@
     .panel h3{margin:16px;font-size:16px}
 
     /* Kanban */
-    .kanban{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding:16px}
+    .kanban{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;padding:16px} /* agora 4 colunas */
     .col{background:var(--card);border:1px solid var(--border);border-radius:12px;min-height:260px;display:flex;flex-direction:column}
     .col header{display:flex;align-items:center;justify-content:space-between;padding:12px;border-bottom:1px solid var(--border)}
     .dropzone{flex:1;padding:10px;min-height:120px}
+    .dropzone.readonly{opacity:.9;pointer-events:none} /* Atrasadas não recebe drop */
 
     .card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:12px;margin:8px 4px;box-shadow:var(--shadow);transition:box-shadow .2s,transform .05s}
     .card:hover{box-shadow:0 10px 22px rgba(0,0,0,.25)}
@@ -62,6 +63,9 @@
 
     .filters{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
     select,input[type="date"],input[type="text"]{background:var(--panel);color:var(--txt);border:1px solid var(--border);border-radius:10px;padding:8px 10px}
+
+    /* Select de status dentro do card (compacto) */
+    .status-inline{font-size:12px;padding:4px 6px;border-radius:8px}
 
     /* Notas */
     .note{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;margin:10px 14px}
@@ -160,6 +164,15 @@
       <section class="panel">
         <h3>Tarefas</h3>
         <div class="kanban">
+          <!-- NOVA COLUNA: ATRASADAS (somente visual) -->
+          <div class="col" data-status="atrasadas">
+            <header>
+              <div class="row"><strong>Atrasadas</strong><span class="badge">0</span></div>
+              <!-- sem botão adicionar -->
+            </header>
+            <div class="dropzone readonly" id="col-atrasadas"></div>
+          </div>
+
           <div class="col" data-status="a_fazer">
             <header>
               <div class="row"><strong>A fazer</strong><span class="badge">0</span></div>
@@ -352,7 +365,10 @@
         if(error) return showErr('Erro ao criar tarefa', error);
       }
     }else{
-      if(!obj.id) obj.id = crypto.randomUUID();
+      if(!obj.id){
+        obj.id = crypto.randomUUID();
+        obj.created_at = new Date().toISOString(); // registra data/hora no offline
+      }
       const idx = state.tasks.findIndex(x=>x.id===obj.id);
       if(idx>=0) state.tasks[idx] = { ...state.tasks[idx], ...obj }; else state.tasks.push(obj);
       saveLocal();
@@ -383,7 +399,7 @@
   }
   async function startEditNote(note){
     state.editingNoteId = note.id;
-    renderNotes(); // re-render só a lista
+    renderNotes();
   }
   async function saveEditNote(idv){
     const area = id(`edit_area_${idv}`);
@@ -419,8 +435,55 @@
     renderNotes();
   }
 
+  // helper: cria card de tarefa
+  function makeTaskCard(t){
+    const card=document.createElement('div'); card.className='card'; card.draggable=true; card.dataset.id=t.id;
+    card.addEventListener('dragstart', e=>{ e.dataTransfer.setData('text/plain', t.id); });
+
+    const title=document.createElement('div'); title.className='title'; title.textContent=t.titulo||'(sem título)';
+
+    const badges=document.createElement('div'); badges.className='badges';
+    const stBadge=document.createElement('span'); stBadge.className='badge status-'+t.status; stBadge.textContent=t.status.replace('_',' ');
+    const prazo=document.createElement('span'); prazo.className='badge'; prazo.textContent=t.prazo ? 'Prazo: '+fmtDate(t.prazo) : 'Sem prazo';
+    badges.append(stBadge,prazo);
+
+    // seletor de status inline
+    const stRow=document.createElement('div'); stRow.className='row';
+    const stLabel=document.createElement('span'); stLabel.className='muted'; stLabel.style.fontSize='12px'; stLabel.textContent='Status:';
+    const stSel=document.createElement('select'); stSel.className='status-inline';
+    stSel.innerHTML = `
+      <option value="a_fazer">a fazer</option>
+      <option value="em_andamento">em andamento</option>
+      <option value="concluida">concluída</option>`;
+    stSel.value = t.status;
+    stSel.onchange = async (e)=>{ await upsertTask({ id:t.id, status:e.target.value }); };
+    stRow.append(stLabel, stSel);
+
+    // meta criada em
+    const meta=document.createElement('div'); meta.className='muted'; meta.style.fontSize='12px';
+    meta.textContent = 'Criada em: ' + (t.created_at ? fmtDateTime(t.created_at) : '—');
+
+    const tags=document.createElement('div'); tags.className='tags';
+    (t.responsaveis||[]).forEach(p=>{ const el=document.createElement('span'); el.className='tag'; el.textContent=p; tags.append(el); });
+
+    const actions=document.createElement('div'); actions.className='actions';
+    const bEdit=document.createElement('button'); bEdit.className='btn small'; bEdit.textContent='Editar'; bEdit.onclick=()=>openTaskModal(t);
+    const bDel=document.createElement('button'); bDel.className='btn small'; bDel.textContent='Excluir'; bDel.onclick=()=>deleteTask(t.id);
+    actions.append(bEdit,bDel);
+
+    card.append(title);
+    if(t.descricao){ const d=document.createElement('div'); d.className='muted'; d.textContent=t.descricao; card.append(d); }
+    card.append(badges, stRow, meta, tags, actions);
+    return card;
+  }
+
   function renderTasks(){
-    const cols = { a_fazer:id('col-a_fazer'), em_andamento:id('col-em_andamento'), concluida:id('col-concluida') };
+    const cols = {
+      atrasadas: id('col-atrasadas'),
+      a_fazer: id('col-a_fazer'),
+      em_andamento: id('col-em_andamento'),
+      concluida: id('col-concluida')
+    };
     Object.values(cols).forEach(el=>el.innerHTML='');
 
     const fSt=id('fStatus').value, fResp=id('fResp').value, fPrazo=id('fPrazo').value;
@@ -433,42 +496,36 @@
     if(fPrazo==='semana') list=list.filter(t=>t.prazo && new Date(t.prazo)<=endWeek);
     if(fPrazo==='atrasadas') list=list.filter(t=>t.prazo && new Date(t.prazo)<now && t.status!=='concluida');
 
+    const isOverdue = (t)=> t.prazo && new Date(t.prazo) < now && t.status!=='concluida';
+    const overdue = list.filter(isOverdue);
+    const notOverdue = list.filter(t=>!isOverdue(t));
+
+    // preenche atrasadas
+    overdue.forEach(t=> cols.atrasadas.append(makeTaskCard(t)));
+
+    // contadores
     const counts={a_fazer:0,em_andamento:0,concluida:0};
+    notOverdue.forEach(t=>counts[t.status] = (counts[t.status]||0)+1);
 
-    list.forEach(t=>{
-      counts[t.status]++;
-      const card=document.createElement('div'); card.className='card'; card.draggable=true; card.dataset.id=t.id;
-      card.addEventListener('dragstart', e=>{ e.dataTransfer.setData('text/plain', t.id); });
+    // preenche colunas por status (sem duplicar as atrasadas)
+    notOverdue.forEach(t=> cols[t.status].append(makeTaskCard(t)));
 
-      const title=document.createElement('div'); title.className='title'; title.textContent=t.titulo||'(sem título)';
-      const badges=document.createElement('div'); badges.className='badges';
-      const status=document.createElement('span'); status.className='badge status-'+t.status; status.textContent=t.status.replace('_',' ');
-      const prazo=document.createElement('span'); prazo.className='badge'; prazo.textContent=t.prazo ? 'Prazo: '+fmtDate(t.prazo) : 'Sem prazo';
-      badges.append(status,prazo);
-
-      const tags=document.createElement('div'); tags.className='tags';
-      (t.responsaveis||[]).forEach(p=>{ const el=document.createElement('span'); el.className='tag'; el.textContent=p; tags.append(el); });
-
-      const actions=document.createElement('div'); actions.className='actions';
-      const bEdit=document.createElement('button'); bEdit.className='btn small'; bEdit.textContent='Editar'; bEdit.onclick=()=>openTaskModal(t);
-      const bDel=document.createElement('button'); bDel.className='btn small'; bDel.textContent='Excluir'; bDel.onclick=()=>deleteTask(t.id);
-      actions.append(bEdit,bDel);
-
-      card.append(title);
-      if(t.descricao){ const d=document.createElement('div'); d.className='muted'; d.textContent=t.descricao; card.append(d); }
-      card.append(badges,tags,actions);
-      cols[t.status].append(card);
-    });
-
+    // Atualiza badges de contagem
     qsa('.col').forEach(col=>{
-      const st=col.dataset.status; const badge=col.querySelector('header .badge');
-      if(badge) badge.textContent = counts[st] || 0;
+      const st = col.dataset.status;
+      const badge = col.querySelector('header .badge');
+      if(!badge) return;
+      if(st==='atrasadas') badge.textContent = overdue.length;
+      else badge.textContent = counts[st] || 0;
     });
 
-    qsa('.dropzone').forEach(dz=>{
+    // Drop somente nas 3 colunas de status
+    ['col-a_fazer','col-em_andamento','col-concluida'].forEach(cid=>{
+      const dz = id(cid);
       dz.ondrop = async e=>{
-        e.preventDefault(); const idDrag=e.dataTransfer.getData('text/plain');
-        const novo=dz.id.replace('col-','');
+        e.preventDefault();
+        const idDrag=e.dataTransfer.getData('text/plain');
+        const novo=cid.replace('col-','');
         const t=state.tasks.find(x=>x.id===idDrag); if(!t) return;
         await upsertTask({ id:t.id, status:novo });
         if(id('chkUpdateLink').checked) updateShareLink();

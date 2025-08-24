@@ -20,7 +20,8 @@
 
     html,body{height:100%}
     body{margin:0;font:14px/1.35 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,Arial,"Apple Color Emoji","Segoe UI Emoji";background:var(--bg);color:var(--txt)}
-    .wrap{max-width:1200px;margin:0 auto;padding:18px 16px 32px}
+    /* mais largura para respirar no desktop */
+    .wrap{max-width:1400px;margin:0 auto;padding:22px 18px 36px}
 
     /* Cabeçalho */
     header{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
@@ -28,8 +29,7 @@
     .muted{color:var(--muted)}
 
     /* Barra de ações */
-    .toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px;padding:10px;border:1px solid var(--border);border-radius:14px;background:linear-gradient(180deg,rgba(255,255,255,.02),transparent);backdrop-filter:saturate(160%) blur(6px)}
-    /* desktop: sticky; mobile: estática p/ não cobrir conteúdo */
+    .toolbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:16px;padding:12px;border:1px solid var(--border);border-radius:14px;background:linear-gradient(180deg,rgba(255,255,255,.02),transparent);backdrop-filter:saturate(160%) blur(6px)}
     @media (min-width:981px){ .toolbar{position:sticky;top:0;z-index:10} }
 
     .pill{background:rgba(255,255,255,.05);color:var(--txt);padding:6px 10px;border:1px solid var(--border);border-radius:10px}
@@ -41,19 +41,19 @@
     .btn.primary:hover{filter:saturate(1.1);box-shadow:0 10px 22px rgba(24,91,36,.35)}
     .btn.small{padding:6px 9px}
 
-    /* Layout */
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:18px}
+    /* Layout: tarefas mais largas que notas */
+    .grid{display:grid;grid-template-columns:3fr 2fr;gap:28px;margin-top:26px}
     .panel{background:var(--panel);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow)}
-    .panel h3{margin:16px;font-size:16px}
+    .panel h3{margin:18px;font-size:16px}
 
-    /* Kanban */
-    .kanban{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;padding:16px} /* agora 4 colunas */
+    /* Kanban — mais “respiro” nas colunas */
+    .kanban{display:grid;grid-template-columns:repeat(4,minmax(300px,1fr));gap:24px;padding:24px}
     .col{background:var(--card);border:1px solid var(--border);border-radius:12px;min-height:260px;display:flex;flex-direction:column}
-    .col header{display:flex;align-items:center;justify-content:space-between;padding:12px;border-bottom:1px solid var(--border)}
-    .dropzone{flex:1;padding:10px;min-height:120px}
-    .dropzone.readonly{opacity:.9;pointer-events:none} /* Atrasadas não recebe drop */
+    .col header{display:flex;align-items:center;justify-content:space-between;padding:14px;border-bottom:1px solid var(--border)}
+    .dropzone{flex:1;padding:14px;min-height:160px}
+    .dropzone.readonly{opacity:.9;pointer-events:none}
 
-    .card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:12px;margin:8px 4px;box-shadow:var(--shadow);transition:box-shadow .2s,transform .05s}
+    .card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px;margin:12px 6px;box-shadow:var(--shadow);transition:box-shadow .2s,transform .05s}
     .card:hover{box-shadow:0 10px 22px rgba(0,0,0,.25)}
     .title{font-weight:700}
     .tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
@@ -164,11 +164,9 @@
       <section class="panel">
         <h3>Tarefas</h3>
         <div class="kanban">
-          <!-- NOVA COLUNA: ATRASADAS (somente visual) -->
           <div class="col" data-status="atrasadas">
             <header>
               <div class="row"><strong>Atrasadas</strong><span class="badge">0</span></div>
-              <!-- sem botão adicionar -->
             </header>
             <div class="dropzone readonly" id="col-atrasadas"></div>
           </div>
@@ -200,7 +198,6 @@
       <section class="panel">
         <h3>Anotações gerais</h3>
 
-        <!-- Criar nova anotação -->
         <div class="note">
           <div class="row" style="gap:10px;margin-bottom:8px">
             <label class="pill">Autor:
@@ -214,7 +211,6 @@
           </div>
         </div>
 
-        <!-- Lista -->
         <div id="notes"></div>
       </section>
     </div>
@@ -225,7 +221,7 @@
     </div>
   </div>
 
-  <!-- MODAL: EDIÇÃO TAREFA (agora claro) -->
+  <!-- MODAL: EDIÇÃO TAREFA (claro) -->
   <dialog id="dlgTask" class="modal-light">
     <div class="modal-head" id="taskModalTitle">Nova tarefa</div>
     <div class="modal-body">
@@ -277,12 +273,25 @@
   function applyTheme(){ if(state.theme==='light') document.body.classList.add('light'); else document.body.classList.remove('light'); }
   applyTheme();
 
-  /* Utils */
+  /* ===== Helpers de data (corrigem o “voltar 1 dia”) ===== */
   const id = x => document.getElementById(x);
   const qsa = sel => Array.from(document.querySelectorAll(sel));
   const unique = arr => [...new Set(arr)];
-  const fmtDate = d => d ? new Date(d).toLocaleDateString() : '';
-  const fmtDateTime = d => d ? new Date(d).toLocaleString() : '';
+
+  // Converte 'YYYY-MM-DD' em Date local (sem UTC)
+  function ymdToLocalDate(s){
+    if(!s) return null;
+    const [y,m,d] = s.split('-').map(Number);
+    return new Date(y, m-1, d); // local midnight
+  }
+  // Formata tanto 'YYYY-MM-DD' quanto ISO/Date para dd/mm/aaaa
+  function fmtDate(d){
+    if(!d) return '';
+    const dt = (typeof d==='string' && /^\d{4}-\d{2}-\d{2}$/.test(d)) ? ymdToLocalDate(d) : new Date(d);
+    return dt.toLocaleDateString();
+  }
+  function fmtDateTime(d){ return d ? new Date(d).toLocaleString() : ''; }
+
   const toCSV = rows=>{
     if(!rows.length) return '';
     const head = Object.keys(rows[0]);
@@ -317,10 +326,7 @@
   async function maybeInitSupabase(){
     try{
       state.client = window.supabase.createClient(state.supabaseUrl, state.supabaseKey, { auth: { persistSession:false }});
-      // garante board
-      await state.client.from('boards')
-        .upsert({ slug: state.board, title: state.board }, { onConflict: 'slug' })
-        .select();
+      await state.client.from('boards').upsert({ slug: state.board, title: state.board }, { onConflict: 'slug' }).select();
       state.online = true;
       id('onlineState').textContent = 'Online (Supabase)';
       id('modeLabel').innerHTML = `Online • Snapshots por link — board: <span id="boardLabel">${state.board}</span>`;
@@ -367,7 +373,7 @@
     }else{
       if(!obj.id){
         obj.id = crypto.randomUUID();
-        obj.created_at = new Date().toISOString(); // registra data/hora no offline
+        obj.created_at = new Date().toISOString();
       }
       const idx = state.tasks.findIndex(x=>x.id===obj.id);
       if(idx>=0) state.tasks[idx] = { ...state.tasks[idx], ...obj }; else state.tasks.push(obj);
@@ -435,7 +441,7 @@
     renderNotes();
   }
 
-  // helper: cria card de tarefa
+  // cria card de tarefa
   function makeTaskCard(t){
     const card=document.createElement('div'); card.className='card'; card.draggable=true; card.dataset.id=t.id;
     card.addEventListener('dragstart', e=>{ e.dataTransfer.setData('text/plain', t.id); });
@@ -487,30 +493,37 @@
     Object.values(cols).forEach(el=>el.innerHTML='');
 
     const fSt=id('fStatus').value, fResp=id('fResp').value, fPrazo=id('fPrazo').value;
-    const now=new Date(); const endWeek=new Date(); endWeek.setDate(now.getDate()+(7-now.getDay()));
+
+    // Datas de referência (sem horas) para evitar bugs de fuso
+    const today = new Date(); today.setHours(0,0,0,0);
+    const endWeek = new Date(today); endWeek.setDate(today.getDate() + (7 - today.getDay())); endWeek.setHours(23,59,59,999);
 
     let list=[...state.tasks];
     if(fSt!=='todos') list=list.filter(t=>t.status===fSt);
     if(fResp!=='todos') list=list.filter(t=>(t.responsaveis||[]).includes(fResp));
-    if(fPrazo==='hoje') list=list.filter(t=>t.prazo && new Date(t.prazo).toDateString()===now.toDateString());
-    if(fPrazo==='semana') list=list.filter(t=>t.prazo && new Date(t.prazo)<=endWeek);
-    if(fPrazo==='atrasadas') list=list.filter(t=>t.prazo && new Date(t.prazo)<now && t.status!=='concluida');
 
-    const isOverdue = (t)=> t.prazo && new Date(t.prazo) < now && t.status!=='concluida';
+    const prazoToLocal = (t)=> t.prazo ? ymdToLocalDate(t.prazo) : null;
+
+    if(fPrazo==='hoje') list=list.filter(t=>{
+      const p=prazoToLocal(t); return p && p.getTime()===today.getTime();
+    });
+    if(fPrazo==='semana') list=list.filter(t=>{
+      const p=prazoToLocal(t); return p && p>=today && p<=endWeek;
+    });
+    if(fPrazo==='atrasadas') list=list.filter(t=>{
+      const p=prazoToLocal(t); return p && p<today && t.status!=='concluida';
+    });
+
+    const isOverdue = (t)=>{ const p=prazoToLocal(t); return p && p<today && t.status!=='concluida'; };
     const overdue = list.filter(isOverdue);
     const notOverdue = list.filter(t=>!isOverdue(t));
 
-    // preenche atrasadas
     overdue.forEach(t=> cols.atrasadas.append(makeTaskCard(t)));
 
-    // contadores
     const counts={a_fazer:0,em_andamento:0,concluida:0};
     notOverdue.forEach(t=>counts[t.status] = (counts[t.status]||0)+1);
-
-    // preenche colunas por status (sem duplicar as atrasadas)
     notOverdue.forEach(t=> cols[t.status].append(makeTaskCard(t)));
 
-    // Atualiza badges de contagem
     qsa('.col').forEach(col=>{
       const st = col.dataset.status;
       const badge = col.querySelector('header .badge');
@@ -519,7 +532,7 @@
       else badge.textContent = counts[st] || 0;
     });
 
-    // Drop somente nas 3 colunas de status
+    // Drop apenas nas 3 colunas de status
     ['col-a_fazer','col-em_andamento','col-concluida'].forEach(cid=>{
       const dz = id(cid);
       dz.ondrop = async e=>{
@@ -579,7 +592,8 @@
     id('tTitulo').value = t?.titulo || '';
     id('tDesc').value = t?.descricao || '';
     renderRespChoices(t?.responsaveis||[]);
-    id('tPrazo').value = t?.prazo ? new Date(t.prazo).toISOString().slice(0,10) : '';
+    // ⚠️ Sem conversão para ISO: evita “menos um dia”
+    id('tPrazo').value = t?.prazo || '';
     id('tStatus').value = t?.status || 'a_fazer';
     id('dlgTask').showModal();
   }
@@ -590,7 +604,7 @@
       titulo: id('tTitulo').value.trim() || 'Sem título',
       descricao: id('tDesc').value.trim() || null,
       responsaveis: selected,
-      prazo: id('tPrazo').value || null,
+      prazo: id('tPrazo').value || null, // envia 'YYYY-MM-DD'
       status: id('tStatus').value,
       autor: state.author,
     };

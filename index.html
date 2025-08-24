@@ -147,10 +147,7 @@
 
       <button class="btn" id="btnExport">Exportar CSV</button>
       <button class="btn" id="btnLink">Gerar link com dados</button>
-      <label class="switch"><input type="checkbox" id="chkUpdateLink" checked> atualizar link ao editar</label>
-      <button class="btn" id="btnConfig">Configurar (autor, board, Supabase)</button>
-
-      <span style="flex:1"></span>
+      <label class="switch"><input type="checkbox" id="chkUpdateLink" checked> atualizar link ao editar</label> <span style="flex:1"></span>
       <button class="btn" id="btnTheme">Alternar tema</button>
     </div>
 
@@ -198,36 +195,6 @@
       <div class="muted" id="onlineState">Offline (LocalStorage)</div>
     </div>
   </div>
-
-  <!-- MODAL: CONFIGURAÇÕES -->
-  <dialog id="dlgCfg">
-    <div class="modal-head">Configurar (autor, board, Supabase)</div>
-    <div class="modal-body">
-      <div class="field">
-        <label>Nome do autor (exibe nos cartões)</label>
-        <input id="cfgAutor" type="text" placeholder="Ex.: Bruno Ferreira" />
-      </div>
-      <div class="field">
-        <label>Board (slug em minúsculas, sem espaços)</label>
-        <input id="cfgBoard" type="text" placeholder="Ex.: default ou novo-agro" />
-      </div>
-      <hr style="border: none; border-top: 1px solid var(--border);" />
-      <div class="field">
-        <label>SUPABASE_URL</label>
-        <input id="cfgUrl" type="text" placeholder="https://xxxxxxxxxxxx.supabase.co" />
-      </div>
-      <div class="field">
-        <label>SUPABASE_ANON_KEY</label>
-        <input id="cfgKey" type="text" placeholder="eyJhbGciOi..." />
-      </div>
-      <div class="muted">As chaves ficam apenas no seu navegador (localStorage). Use a chave <strong>anon</strong> pública.</div>
-    </div>
-    <div class="modal-foot">
-      <button class="btn ghost" id="cfgLimpar">Limpar</button>
-      <button class="btn" id="cfgFechar">Fechar</button>
-      <button class="btn primary" id="cfgSalvar">Salvar</button>
-    </div>
-  </dialog>
 
   <!-- MODAL: EDIÇÃO TAREFA -->
   <dialog id="dlgTask">
@@ -489,33 +456,12 @@
     const rows = state.tasks.map(t => ({ id: t.id, board: state.board, titulo: t.titulo, descricao: t.descricao || '', status: t.status, prazo: t.prazo || '', responsaveis: (t.responsaveis||[]).join('; '), autor: t.autor || '', criado_em: t.created_at || '', atualizado_em: t.updated_at || '' }));
     const csv = toCSV(rows); const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `tarefas_${state.board}.csv`; a.click();
   }
-
-  // Config
-  function openCfg(){ id('cfgAutor').value = state.author; id('cfgBoard').value = state.board; id('cfgUrl').value = state.supabaseUrl; id('cfgKey').value = state.supabaseKey; id('dlgCfg').showModal(); }
-  async function saveCfg(){
-    state.author = id('cfgAutor').value.trim() || 'Anônimo';
-    state.board = (id('cfgBoard').value.trim() || 'default').toLowerCase().replace(/\s+/g,'-');
-    state.supabaseUrl = id('cfgUrl').value.trim() || DEFAULT_SB_URL;
-    state.supabaseKey = id('cfgKey').value.trim() || DEFAULT_SB_KEY;
-    localStorage.setItem('author', state.author);
-    localStorage.setItem('board', state.board);
-    localStorage.setItem('supabaseUrl', state.supabaseUrl);
-    localStorage.setItem('supabaseKey', state.supabaseKey);
-    id('dlgCfg').close(); updateShareLink();
-    await maybeInitSupabase(); await fetchAll();
-  }
-  function clearCfg(){ localStorage.removeItem('supabaseUrl'); localStorage.removeItem('supabaseKey'); state.supabaseUrl = DEFAULT_SB_URL; state.supabaseKey = DEFAULT_SB_KEY; alert('Chaves removidas deste navegador. Os padrões do app continuarão funcionando.'); }
-
   // Eventos
   id('btnTheme').onclick = toggleTheme;
   id('btnNova').onclick = ()=> openTaskModal();
   qsa('[data-add]').forEach(b => b.onclick = ()=> openTaskModal({ status: b.getAttribute('data-add') }));
   id('btnExport').onclick = exportCSV;
   id('btnLink').onclick = generateShareLink;
-  id('btnConfig').onclick = openCfg;
-  id('cfgSalvar').onclick = saveCfg;
-  id('cfgFechar').onclick = ()=> id('dlgCfg').close();
-  id('cfgLimpar').onclick = clearCfg;
   id('tSalvar').onclick = saveTaskFromModal;
   id('tCancelar').onclick = ()=> id('dlgTask').close();
   id('btnAnotar').onclick = ()=> addNote(id('noteInput').value);

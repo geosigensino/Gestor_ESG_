@@ -18,6 +18,33 @@
       --border:#e6ebf2; --shadow:0 10px 24px rgba(16,19,23,.08); --ring:0 0 0 3px rgba(27,106,42,.18);
     }
 
+    /* ===== Tokens de status (cores suaves) ===== */
+    /* Escuro */
+    :root{
+      --st-todo-bg:    rgba(99,102,241,.14);  /* índigo */
+      --st-todo-bd:    rgba(99,102,241,.40);
+      --st-todo-tx:    #c7d2fe;
+
+      --st-prog-bg:    rgba(59,130,246,.14);  /* azul */
+      --st-prog-bd:    rgba(59,130,246,.40);
+      --st-prog-tx:    #bfdbfe;
+
+      --st-done-bg:    rgba(16,185,129,.14);  /* verde */
+      --st-done-bd:    rgba(16,185,129,.35);
+      --st-done-tx:    #a7f3d0;
+
+      --st-late-bg:    rgba(239,68,68,.16);   /* vermelho */
+      --st-late-bd:    rgba(239,68,68,.45);
+      --st-late-tx:    #fecaca;
+    }
+    /* Claro */
+    .light{
+      --st-todo-bg:    #eef2ff;  --st-todo-bd:#c7d2fe;  --st-todo-tx:#3730a3;
+      --st-prog-bg:    #eff6ff;  --st-prog-bd:#bfdbfe;  --st-prog-tx:#1d4ed8;
+      --st-done-bg:    #ecfdf5;  --st-done-bd:#a7f3d0;  --st-done-tx:#065f46;
+      --st-late-bg:    #fef2f2;  --st-late-bd:#fecaca;  --st-late-tx:#991b1b;
+    }
+
     html,body{height:100%}
     body{margin:0;font:14px/1.35 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,Arial,"Apple Color Emoji","Segoe UI Emoji";background:var(--bg);color:var(--txt)}
     /* mais largura para respirar no desktop */
@@ -86,9 +113,33 @@
 
     .badges{display:flex;align-items:center;gap:8px}
     .badge{font-size:12px;padding:2px 8px;border-radius:999px;border:1px solid var(--border);background:var(--panel)}
-    .status-em_andamento{background:#1f2a44;color:#cfe1ff}
-    .status-a_fazer{background:#2b313a;color:#d5dae1}
-    .status-concluida{background:#203a2a;color:#c8f5dd}
+
+    /* ===== ESTILO pelos status (chips) ===== */
+    .badge.status-a_fazer{
+      background:var(--st-todo-bg); color:var(--st-todo-tx); border-color:var(--st-todo-bd);
+    }
+    .badge.status-em_andamento{
+      background:var(--st-prog-bg); color:var(--st-prog-tx); border-color:var(--st-prog-bd);
+    }
+    .badge.status-concluida{
+      background:var(--st-done-bg); color:var(--st-done-tx); border-color:var(--st-done-bd);
+    }
+
+    /* ===== Coluna Atrasadas com leve destaque ===== */
+    .col[data-status="atrasadas"] .card{
+      background:var(--st-late-bg);
+      border-color:var(--st-late-bd);
+    }
+    .col[data-status="atrasadas"] .badge{
+      background:transparent;
+      color:var(--st-late-tx);
+      border-color:var(--st-late-bd);
+    }
+
+    /* ===== “Fio” colorido na lateral do cartão (opcional) ===== */
+    .card.is-a_fazer{ box-shadow: inset 3px 0 0 0 var(--st-todo-bd); }
+    .card.is-em_andamento{ box-shadow: inset 3px 0 0 0 var(--st-prog-bd); }
+    .card.is-concluida{ box-shadow: inset 3px 0 0 0 var(--st-done-bd); }
 
     .foot{margin-top:28px;display:flex;justify-content:space-between;align-items:center;color:var(--muted)}
 
@@ -289,13 +340,11 @@
   const qsa = sel => Array.from(document.querySelectorAll(sel));
   const unique = arr => [...new Set(arr)];
 
-  // Converte 'YYYY-MM-DD' em Date local (sem UTC)
   function ymdToLocalDate(s){
     if(!s) return null;
     const [y,m,d] = s.split('-').map(Number);
-    return new Date(y, m-1, d); // local midnight
+    return new Date(y, m-1, d);
   }
-  // Formata tanto 'YYYY-MM-DD' quanto ISO/Date para dd/mm/aaaa
   function fmtDate(d){
     if(!d) return '';
     const dt = (typeof d==='string' && /^\d{4}-\d{2}-\d{2}$/.test(d)) ? ymdToLocalDate(d) : new Date(d);
@@ -454,7 +503,11 @@
 
   // cria card de tarefa
   function makeTaskCard(t){
-    const card=document.createElement('div'); card.className='card'; card.draggable=true; card.dataset.id=t.id;
+    const card=document.createElement('div');
+    card.className='card';
+    card.classList.add('is-' + t.status); // fio colorido conforme status
+    card.draggable=true;
+    card.dataset.id=t.id;
     card.addEventListener('dragstart', e=>{ e.dataTransfer.setData('text/plain', t.id); });
 
     const title=document.createElement('div'); title.className='title'; title.textContent=t.titulo||'(sem título)';

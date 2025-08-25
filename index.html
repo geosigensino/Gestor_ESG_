@@ -89,7 +89,8 @@
     .col{background:var(--card);border:1px solid var(--border);border-radius:12px;min-height:260px;display:flex;flex-direction:column}
     .col header{display:flex;align-items:center;justify-content:space-between;padding:14px;border-bottom:1px solid var(--border)}
     .dropzone{flex:1;padding:14px;min-height:160px}
-    .dropzone.readonly{opacity:.9;pointer-events:none}
+    /* 🔧 Liberado para clique/edição; continua sem drop handler */
+    .dropzone.readonly{opacity:.95}
 
     .card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px;margin:12px 6px;box-shadow:var(--shadow);transition:box-shadow .2s,transform .05s}
     .card:hover{box-shadow:0 10px 22px rgba(0,0,0,.25)}
@@ -230,6 +231,7 @@
             <header>
               <div class="row"><strong>Atrasadas</strong><span class="badge">0</span></div>
             </header>
+            <!-- Sem ondragover/ondrop => não recebe drop, mas aceita clique/edição -->
             <div class="dropzone readonly" id="col-atrasadas"></div>
           </div>
 
@@ -335,7 +337,7 @@
   function applyTheme(){ if(state.theme==='light') document.body.classList.add('light'); else document.body.classList.remove('light'); }
   applyTheme();
 
-  /* ===== Helpers de data (corrigem o “voltar 1 dia”) ===== */
+  /* ===== Helpers de data ===== */
   const id = x => document.getElementById(x);
   const qsa = sel => Array.from(document.querySelectorAll(sel));
   const unique = arr => [...new Set(arr)];
@@ -596,7 +598,7 @@
       else badge.textContent = counts[st] || 0;
     });
 
-    // Drop apenas nas 3 colunas de status
+    // Drop apenas nas 3 colunas de status (Atrasadas não recebe drop)
     ['col-a_fazer','col-em_andamento','col-concluida'].forEach(cid=>{
       const dz = id(cid);
       dz.ondrop = async e=>{

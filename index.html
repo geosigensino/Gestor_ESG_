@@ -413,7 +413,11 @@
       state.tasks = e1 ? [] : (t||[]);
       if(e1) showErr('Erro ao carregar tarefas', e1);
 
-      const { data: n, error: e2 } = await state.client.from('notes').select('*').eq('board_slug', state.board).order('created_at',{ascending:true});
+      // 🔄 Agora busca notas mais recentes primeiro
+      const { data: n, error: e2 } = await state.client
+        .from('notes').select('*')
+        .eq('board_slug', state.board)
+        .order('created_at',{ascending:false});
       state.notes = e2 ? [] : (n||[]);
       if(e2) showErr('Erro ao carregar anotações', e2);
     }else{
@@ -614,7 +618,13 @@
 
   function renderNotes(){
     const wrap=id('notes'); wrap.innerHTML='';
-    state.notes.forEach(n=>{
+
+    // 🆕 Ordena as notas por created_at (desc)
+    const ordered = [...state.notes].sort((a,b) =>
+      new Date(b.created_at || 0) - new Date(a.created_at || 0)
+    );
+
+    ordered.forEach(n=>{
       const dv=document.createElement('div'); dv.className='note';
       if(state.editingNoteId===n.id){
         const edit=document.createElement('div'); edit.className='note-edit';

@@ -22,7 +22,7 @@
     /* Escuro */
     :root{
       /* A FAZER -> amarelo suave */
-      --st-todo-bg:    rgba(251,191,36,.14);  /* amarelo */
+      --st-todo-bg:    rgba(251,191,36,.14);
       --st-todo-bd:    rgba(251,191,36,.40);
       --st-todo-tx:    #fde68a;
 
@@ -52,28 +52,23 @@
 
     html,body{height:100%}
     body{margin:0;font:14px/1.35 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,Arial,"Apple Color Emoji","Segoe UI Emoji";background:var(--bg);color:var(--txt)}
-    /* mais largura para respirar no desktop */
     .wrap{max-width:1400px;margin:0 auto;padding:22px 18px 36px}
 
-    /* Cabeçalho */
     header{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
     .brand{font-weight:800;font-size:22px;letter-spacing:.2px}
     .muted{color:var(--muted)}
 
-    /* Barra de ações */
     .toolbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:16px;padding:12px;border:1px solid var(--border);border-radius:14px;background:linear-gradient(180deg,rgba(255,255,255,.02),transparent);backdrop-filter:saturate(160%) blur(6px)}
     @media (min-width:981px){ .toolbar{position:sticky;top:0;z-index:10} }
 
     .pill{background:rgba(255,255,255,.05);color:var(--txt);padding:6px 10px;border:1px solid var(--border);border-radius:10px}
 
-    /* Botões */
     .btn,button{cursor:pointer;border:1px solid var(--border);background:var(--panel);color:var(--txt);padding:9px 12px;border-radius:10px;box-shadow:var(--shadow);transition:transform .05s,box-shadow .2s,background .2s}
     .btn:active{transform:translateY(1px)}
     .btn.primary{background:linear-gradient(180deg,var(--brand),var(--brand-2));color:#fff;border:none}
     .btn.primary:hover{filter:saturate(1.1);box-shadow:0 10px 22px rgba(24,91,36,.35)}
     .btn.small{padding:6px 9px}
 
-    /* Layout: tarefas | notas (evita overflow e mantém alinhado) */
     .grid{
       display:grid;
       grid-template-columns: minmax(0,1.8fr) minmax(320px,1fr);
@@ -84,7 +79,6 @@
     .panel{background:var(--panel);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
     .panel h3{margin:18px;font-size:16px}
 
-    /* Kanban — responsiva (não “empurra” o painel de notas) */
     .kanban{
       display:grid;
       grid-template-columns: repeat(auto-fit, minmax(280px,1fr));
@@ -94,7 +88,6 @@
     .col{background:var(--card);border:1px solid var(--border);border-radius:12px;min-height:260px;display:flex;flex-direction:column}
     .col header{display:flex;align-items:center;justify-content:space-between;padding:14px;border-bottom:1px solid var(--border)}
     .dropzone{flex:1;padding:14px;min-height:160px}
-    /* 🔧 Liberado para clique/edição; continua sem drop handler */
     .dropzone.readonly{opacity:.95}
 
     .card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px;margin:12px 6px;box-shadow:var(--shadow);transition:box-shadow .2s,transform .05s}
@@ -108,7 +101,6 @@
     .filters{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
     select,input[type="date"],input[type="text"]{background:var(--panel);color:var(--txt);border:1px solid var(--border);border-radius:10px;padding:8px 10px}
 
-    /* Select de status dentro do card (compacto) */
     .status-inline{font-size:12px;padding:4px 6px;border-radius:8px}
 
     /* Notas */
@@ -120,50 +112,32 @@
     .badges{display:flex;align-items:center;gap:8px}
     .badge{font-size:12px;padding:2px 8px;border-radius:999px;border:1px solid var(--border);background:var(--panel)}
 
-    /* ===== ESTILO pelos status (chips) ===== */
-    .badge.status-a_fazer{
-      background:var(--st-todo-bg); color:var(--st-todo-tx); border-color:var(--st-todo-bd);
-    }
-    .badge.status-em_andamento{
-      background:var(--st-prog-bg); color:var(--st-prog-tx); border-color:var(--st-prog-bd);
-    }
-    .badge.status-concluida{
-      background:var(--st-done-bg); color:var(--st-done-tx); border-color:var(--st-done-bd);
-    }
+    /* Chips por status */
+    .badge.status-a_fazer{ background:var(--st-todo-bg); color:var(--st-todo-tx); border-color:var(--st-todo-bd); }
+    .badge.status-em_andamento{ background:var(--st-prog-bg); color:var(--st-prog-tx); border-color:var(--st-prog-bd); }
+    .badge.status-concluida{ background:var(--st-done-bg); color:var(--st-done-tx); border-color:var(--st-done-bd); }
 
-    /* ===== Coluna Atrasadas com leve destaque ===== */
-    .col[data-status="atrasadas"] .card{
-      background:var(--st-late-bg);
-      border-color:var(--st-late-bd);
-    }
-    .col[data-status="atrasadas"] .badge{
-      background:transparent;
-      color:var(--st-late-tx);
-      border-color:var(--st-late-bd);
-    }
+    /* Coluna Atrasadas */
+    .col[data-status="atrasadas"] .card{ background:var(--st-late-bg); border-color:var(--st-late-bd); }
+    .col[data-status="atrasadas"] .badge{ background:transparent; color:var(--st-late-tx); border-color:var(--st-late-bd); }
 
-    /* ===== “Fio” colorido na lateral do cartão (opcional) ===== */
+    /* Fio lateral por status */
     .card.is-a_fazer{ box-shadow: inset 3px 0 0 0 var(--st-todo-bd); }
     .card.is-em_andamento{ box-shadow: inset 3px 0 0 0 var(--st-prog-bd); }
     .card.is-concluida{ box-shadow: inset 3px 0 0 0 var(--st-done-bd); }
 
-    /* ===== Fundo suave por status (exceto na coluna Atrasadas) ===== */
-    .col:not([data-status="atrasadas"]) .card.is-a_fazer{
-      background:var(--st-todo-bg);
-      border-color:var(--st-todo-bd);
-    }
-    .col:not([data-status="atrasadas"]) .card.is-em_andamento{
-      background:var(--st-prog-bg);
-      border-color:var(--st-prog-bd);
-    }
-    .col:not([data-status="atrasadas"]) .card.is-concluida{
-      background:var(--st-done-bg);
-      border-color:var(--st-done-bd);
-    }
+    /* Fundo suave por status (exceto Atrasadas) */
+    .col:not([data-status="atrasadas"]) .card.is-a_fazer{ background:var(--st-todo-bg); border-color:var(--st-todo-bd); }
+    .col:not([data-status="atrasadas"]) .card.is-em_andamento{ background:var(--st-prog-bg); border-color:var(--st-prog-bd); }
+    .col:not([data-status="atrasadas"]) .card.is-concluida{ background:var(--st-done-bg); border-color:var(--st-done-bd); }
+
+    /* ⚠ Aviso: prazo em até 2 dias */
+    .badge.warn{ background:var(--st-todo-bg); border-color:var(--st-todo-bd); color:var(--st-todo-tx); font-weight:600; }
+    .card.due-soon{ outline:1px solid var(--st-todo-bd); box-shadow: inset 3px 0 0 0 var(--st-todo-bd); }
 
     .foot{margin-top:28px;display:flex;justify-content:space-between;align-items:center;color:var(--muted)}
 
-    /* Chips de responsáveis (modal de tarefas) */
+    /* Chips de responsáveis (modal) */
     .assignees{display:flex;gap:8px;flex-wrap:wrap}
     .assignees input[type="checkbox"]{display:none}
     .assignees label{user-select:none;cursor:pointer;padding:6px 10px;border-radius:999px;border:1px solid var(--border);background:var(--panel);transition:background .2s,color .2s,box-shadow .2s}
@@ -250,7 +224,6 @@
             <header>
               <div class="row"><strong>Atrasadas</strong><span class="badge">0</span></div>
             </header>
-            <!-- Sem ondragover/ondrop => não recebe drop, mas aceita clique/edição -->
             <div class="dropzone readonly" id="col-atrasadas"></div>
           </div>
 
@@ -352,11 +325,9 @@
     online: false,
   };
 
-  /* Tema */
   function applyTheme(){ if(state.theme==='light') document.body.classList.add('light'); else document.body.classList.remove('light'); }
   applyTheme();
 
-  /* ===== Helpers de data ===== */
   const id = x => document.getElementById(x);
   const qsa = sel => Array.from(document.querySelectorAll(sel));
   const unique = arr => [...new Set(arr)];
@@ -386,7 +357,6 @@
   function loadLocal(){ const raw = localStorage.getItem(lsKey()); if(!raw) return {tasks:[],notes:[]}; try{return JSON.parse(raw);}catch{return{tasks:[],notes:[]}} }
   function saveLocal(){ localStorage.setItem(lsKey(), JSON.stringify({tasks:state.tasks, notes:state.notes})); }
 
-  /* Chips de responsáveis (modal de tarefa) */
   function renderRespChoices(selected=[]){
     const wrap = id('tRespGroup'); wrap.innerHTML='';
     FIXED_RESPONSAVEIS.forEach((name, idx)=>{
@@ -396,14 +366,12 @@
     });
   }
 
-  /* Popular autores nas anotações */
   function renderNoteAuthors(){
     const sel = id('noteAuthor');
     sel.innerHTML = FIXED_RESPONSAVEIS.map(n=>`<option value="${n}">${n}</option>`).join('');
     id('noteNow').textContent = `agora: ${fmtDateTime(new Date())}`;
   }
 
-  /* Supabase */
   async function maybeInitSupabase(){
     try{
       state.client = window.supabase.createClient(state.supabaseUrl, state.supabaseKey, { auth: { persistSession:false }});
@@ -526,11 +494,13 @@
     renderNotes();
   }
 
-  // cria card de tarefa
-  function makeTaskCard(t){
+  // cria card de tarefa (agora aceita extras)
+  function makeTaskCard(t, extra={}){
     const card=document.createElement('div');
     card.className='card';
-    card.classList.add('is-' + t.status); // fio colorido conforme status
+    card.classList.add('is-' + t.status);
+    if(extra.dueSoon) card.classList.add('due-soon');
+
     card.draggable=true;
     card.dataset.id=t.id;
     card.addEventListener('dragstart', e=>{ e.dataTransfer.setData('text/plain', t.id); });
@@ -541,6 +511,14 @@
     const stBadge=document.createElement('span'); stBadge.className='badge status-'+t.status; stBadge.textContent=t.status.replace('_',' ');
     const prazo=document.createElement('span'); prazo.className='badge'; prazo.textContent=t.prazo ? 'Prazo: '+fmtDate(t.prazo) : 'Sem prazo';
     badges.append(stBadge,prazo);
+
+    // ⚠ badge de aviso (≤2 dias)
+    if(extra.dueSoon){
+      const warn=document.createElement('span'); warn.className='badge warn';
+      const d=extra.daysLeft;
+      warn.textContent = d===0 ? '⚠ vence hoje' : (d===1 ? '⚠ vence amanhã' : `⚠ vence em ${d} dias`);
+      badges.append(warn);
+    }
 
     // seletor de status inline
     const stRow=document.createElement('div'); stRow.className='row';
@@ -554,7 +532,6 @@
     stSel.onchange = async (e)=>{ await upsertTask({ id:t.id, status:e.target.value }); };
     stRow.append(stLabel, stSel);
 
-    // meta criada em
     const meta=document.createElement('div'); meta.className='muted'; meta.style.fontSize='12px';
     meta.textContent = 'Criada em: ' + (t.created_at ? fmtDateTime(t.created_at) : '—');
 
@@ -583,9 +560,10 @@
 
     const fSt=id('fStatus').value, fResp=id('fResp').value, fPrazo=id('fPrazo').value;
 
-    // Datas de referência (sem horas) para evitar bugs de fuso
+    // Datas de referência
     const today = new Date(); today.setHours(0,0,0,0);
     const endWeek = new Date(today); endWeek.setDate(today.getDate() + (7 - today.getDay())); endWeek.setHours(23,59,59,999);
+    const msDay = 24*60*60*1000;
 
     let list=[...state.tasks];
     if(fSt!=='todos') list=list.filter(t=>t.status===fSt);
@@ -607,11 +585,21 @@
     const overdue = list.filter(isOverdue);
     const notOverdue = list.filter(t=>!isOverdue(t));
 
+    // Atrasadas
     overdue.forEach(t=> cols.atrasadas.append(makeTaskCard(t)));
 
+    // Contadores
     const counts={a_fazer:0,em_andamento:0,concluida:0};
     notOverdue.forEach(t=>counts[t.status] = (counts[t.status]||0)+1);
-    notOverdue.forEach(t=> cols[t.status].append(makeTaskCard(t)));
+
+    // Restantes (checa se faltam ≤2 dias)
+    notOverdue.forEach(t=>{
+      const p = prazoToLocal(t);
+      let daysLeft = null;
+      if(p){ daysLeft = Math.floor((p.getTime() - today.getTime())/msDay); } // hoje=0, amanhã=1, depois=2
+      const dueSoon = (daysLeft!==null && daysLeft>=0 && daysLeft<=2 && t.status!=='concluida');
+      cols[t.status].append(makeTaskCard(t, { dueSoon, daysLeft }));
+    });
 
     qsa('.col').forEach(col=>{
       const st = col.dataset.status;
@@ -680,14 +668,12 @@
     if(opts.includes(val)) sel.value=val; else sel.value='todos';
   }
 
-  /* Interações gerais */
   function openTaskModal(t){
     state.editingTaskId = t?.id || null;
     id('taskModalTitle').textContent = t ? 'Editar tarefa' : 'Nova tarefa';
     id('tTitulo').value = t?.titulo || '';
     id('tDesc').value = t?.descricao || '';
     renderRespChoices(t?.responsaveis||[]);
-    // ⚠️ Sem conversão para ISO: evita “menos um dia”
     id('tPrazo').value = t?.prazo || '';
     id('tStatus').value = t?.status || 'a_fazer';
     id('dlgTask').showModal();
@@ -699,7 +685,7 @@
       titulo: id('tTitulo').value.trim() || 'Sem título',
       descricao: id('tDesc').value.trim() || null,
       responsaveis: selected,
-      prazo: id('tPrazo').value || null, // envia 'YYYY-MM-DD'
+      prazo: id('tPrazo').value || null, // 'YYYY-MM-DD'
       status: id('tStatus').value,
       autor: state.author,
     };
@@ -735,7 +721,6 @@
   document.getElementById('fResp').onchange = render;
   document.getElementById('fPrazo').onchange = render;
 
-  /* Inicialização */
   (async function init(){
     const params=new URL(location.href).searchParams;
     const themeFromUrl=params.get('theme'); if(themeFromUrl){ state.theme=themeFromUrl; localStorage.setItem('theme',state.theme); applyTheme(); }

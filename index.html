@@ -21,10 +21,9 @@
     /* ===== Tokens de status (cores suaves) ===== */
     /* Escuro */
     :root{
-      /* A FAZER -> amarelo suave */
-      --st-todo-bg:    rgba(251,191,36,.14);  /* amarelo */
-      --st-todo-bd:    rgba(251,191,36,.40);
-      --st-todo-tx:    #fde68a;
+      --st-todo-bg:    rgba(99,102,241,.14);  /* índigo */
+      --st-todo-bd:    rgba(99,102,241,.40);
+      --st-todo-tx:    #c7d2fe;
 
       --st-prog-bg:    rgba(59,130,246,.14);  /* azul */
       --st-prog-bd:    rgba(59,130,246,.40);
@@ -37,43 +36,44 @@
       --st-late-bg:    rgba(239,68,68,.16);   /* vermelho */
       --st-late-bd:    rgba(239,68,68,.45);
       --st-late-tx:    #fecaca;
+
+      /* 🟡 Prazo próximo (até 2 dias) */
+      --st-soon-bg:    rgba(234,179,8,.12);
+      --st-soon-bd:    rgba(234,179,8,.46);
+      --st-soon-tx:    #fde68a;
     }
     /* Claro */
     .light{
-      /* A FAZER -> amarelo suave */
-      --st-todo-bg:    #fffbeb;
-      --st-todo-bd:    #fde68a;
-      --st-todo-tx:    #92400e;
-
+      --st-todo-bg:    #eef2ff;  --st-todo-bd:#c7d2fe;  --st-todo-tx:#3730a3;
       --st-prog-bg:    #eff6ff;  --st-prog-bd:#bfdbfe;  --st-prog-tx:#1d4ed8;
       --st-done-bg:    #ecfdf5;  --st-done-bd:#a7f3d0;  --st-done-tx:#065f46;
       --st-late-bg:    #fef2f2;  --st-late-bd:#fecaca;  --st-late-tx:#991b1b;
+
+      /* 🟡 Prazo próximo (até 2 dias) */
+      --st-soon-bg:    #fefce8;
+      --st-soon-bd:    #fde68a;
+      --st-soon-tx:    #92400e;
     }
 
     html,body{height:100%}
     body{margin:0;font:14px/1.35 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,Arial,"Apple Color Emoji","Segoe UI Emoji";background:var(--bg);color:var(--txt)}
-    /* mais largura para respirar no desktop */
     .wrap{max-width:1400px;margin:0 auto;padding:22px 18px 36px}
 
-    /* Cabeçalho */
     header{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
     .brand{font-weight:800;font-size:22px;letter-spacing:.2px}
     .muted{color:var(--muted)}
 
-    /* Barra de ações */
     .toolbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:16px;padding:12px;border:1px solid var(--border);border-radius:14px;background:linear-gradient(180deg,rgba(255,255,255,.02),transparent);backdrop-filter:saturate(160%) blur(6px)}
     @media (min-width:981px){ .toolbar{position:sticky;top:0;z-index:10} }
 
     .pill{background:rgba(255,255,255,.05);color:var(--txt);padding:6px 10px;border:1px solid var(--border);border-radius:10px}
 
-    /* Botões */
     .btn,button{cursor:pointer;border:1px solid var(--border);background:var(--panel);color:var(--txt);padding:9px 12px;border-radius:10px;box-shadow:var(--shadow);transition:transform .05s,box-shadow .2s,background .2s}
     .btn:active{transform:translateY(1px)}
     .btn.primary{background:linear-gradient(180deg,var(--brand),var(--brand-2));color:#fff;border:none}
     .btn.primary:hover{filter:saturate(1.1);box-shadow:0 10px 22px rgba(24,91,36,.35)}
     .btn.small{padding:6px 9px}
 
-    /* Layout: tarefas | notas (evita overflow e mantém alinhado) */
     .grid{
       display:grid;
       grid-template-columns: minmax(0,1.8fr) minmax(320px,1fr);
@@ -84,7 +84,6 @@
     .panel{background:var(--panel);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
     .panel h3{margin:18px;font-size:16px}
 
-    /* Kanban — responsiva (não “empurra” o painel de notas) */
     .kanban{
       display:grid;
       grid-template-columns: repeat(auto-fit, minmax(280px,1fr));
@@ -94,7 +93,6 @@
     .col{background:var(--card);border:1px solid var(--border);border-radius:12px;min-height:260px;display:flex;flex-direction:column}
     .col header{display:flex;align-items:center;justify-content:space-between;padding:14px;border-bottom:1px solid var(--border)}
     .dropzone{flex:1;padding:14px;min-height:160px}
-    /* 🔧 Liberado para clique/edição; continua sem drop handler */
     .dropzone.readonly{opacity:.95}
 
     .card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px;margin:12px 6px;box-shadow:var(--shadow);transition:box-shadow .2s,transform .05s}
@@ -108,10 +106,8 @@
     .filters{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
     select,input[type="date"],input[type="text"]{background:var(--panel);color:var(--txt);border:1px solid var(--border);border-radius:10px;padding:8px 10px}
 
-    /* Select de status dentro do card (compacto) */
     .status-inline{font-size:12px;padding:4px 6px;border-radius:8px}
 
-    /* Notas */
     .note{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;margin:10px 14px}
     .note-meta{display:flex;gap:8px;flex-wrap:wrap;color:var(--muted);font-size:12px;margin-top:6px}
     .note-edit{display:grid;gap:8px}
@@ -131,7 +127,7 @@
       background:var(--st-done-bg); color:var(--st-done-tx); border-color:var(--st-done-bd);
     }
 
-    /* ===== Coluna Atrasadas com leve destaque ===== */
+    /* ===== Coluna Atrasadas (vermelho) ===== */
     .col[data-status="atrasadas"] .card{
       background:var(--st-late-bg);
       border-color:var(--st-late-bd);
@@ -142,28 +138,24 @@
       border-color:var(--st-late-bd);
     }
 
-    /* ===== “Fio” colorido na lateral do cartão (opcional) ===== */
+    /* ===== Fio lateral pelo status ===== */
     .card.is-a_fazer{ box-shadow: inset 3px 0 0 0 var(--st-todo-bd); }
     .card.is-em_andamento{ box-shadow: inset 3px 0 0 0 var(--st-prog-bd); }
     .card.is-concluida{ box-shadow: inset 3px 0 0 0 var(--st-done-bd); }
 
-    /* ===== Fundo suave por status (exceto na coluna Atrasadas) ===== */
-    .col:not([data-status="atrasadas"]) .card.is-a_fazer{
-      background:var(--st-todo-bg);
-      border-color:var(--st-todo-bd);
+    /* 🟡 Destaque: prazo próximo (<= 2 dias) */
+    .card.due-soon{
+      background:var(--st-soon-bg);
+      border-color:var(--st-soon-bd);
     }
-    .col:not([data-status="atrasadas"]) .card.is-em_andamento{
-      background:var(--st-prog-bg);
-      border-color:var(--st-prog-bd);
-    }
-    .col:not([data-status="atrasadas"]) .card.is-concluida{
-      background:var(--st-done-bg);
-      border-color:var(--st-done-bd);
+    .badge.warn{
+      background:var(--st-soon-bg);
+      border-color:var(--st-soon-bd);
+      color:var(--st-soon-tx);
     }
 
     .foot{margin-top:28px;display:flex;justify-content:space-between;align-items:center;color:var(--muted)}
 
-    /* Chips de responsáveis (modal de tarefas) */
     .assignees{display:flex;gap:8px;flex-wrap:wrap}
     .assignees input[type="checkbox"]{display:none}
     .assignees label{user-select:none;cursor:pointer;padding:6px 10px;border-radius:999px;border:1px solid var(--border);background:var(--panel);transition:background .2s,color .2s,box-shadow .2s}
@@ -175,7 +167,6 @@
       .toolbar{position:static;top:auto}
     }
 
-    /* --- MODAL CLARO (sempre) --- */
     dialog{ width:min(680px, calc(100% - 32px)); }
     dialog.modal-light{ background:#ffffff; color:#111827; border:1px solid #e6ebf2; border-radius:14px; box-shadow:var(--shadow); }
     dialog.modal-light::backdrop{ background:rgba(0,0,0,.45); }
@@ -250,7 +241,6 @@
             <header>
               <div class="row"><strong>Atrasadas</strong><span class="badge">0</span></div>
             </header>
-            <!-- Sem ondragover/ondrop => não recebe drop, mas aceita clique/edição -->
             <div class="dropzone readonly" id="col-atrasadas"></div>
           </div>
 
@@ -332,7 +322,7 @@
   <script>
   /* ===== Supabase (fixo) ===== */
   const DEFAULT_SB_URL = 'https://oakntljdkkoqwttkgzpk.supabase.co';
-  const DEFAULT_SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ha250bGpka2tvcXd0dGtnenBrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYwMzQzMDgsImV4cCI6MjA3MTYxMDMwOH0.jjxUzxyUoutDAVzZg9nrSi9kg5fYfs6F7PCd4xkT48c';
+  const DEFAULT_SB_KEY = '...';
 
   /* ===== Responsáveis fixos ===== */
   const FIXED_RESPONSAVEIS = ['Bruno Ferreira', 'Bruno Santos', 'Carlos Barretto', 'João Tenório'];
@@ -352,11 +342,9 @@
     online: false,
   };
 
-  /* Tema */
   function applyTheme(){ if(state.theme==='light') document.body.classList.add('light'); else document.body.classList.remove('light'); }
   applyTheme();
 
-  /* ===== Helpers de data ===== */
   const id = x => document.getElementById(x);
   const qsa = sel => Array.from(document.querySelectorAll(sel));
   const unique = arr => [...new Set(arr)];
@@ -381,12 +369,10 @@
   };
   function showErr(ctx, err){ console.error(ctx, err); alert(`${ctx}:\n${(err && err.message) || err}`); }
 
-  /* LocalStorage fallback */
   function lsKey(){ return `gst_${state.board}`; }
   function loadLocal(){ const raw = localStorage.getItem(lsKey()); if(!raw) return {tasks:[],notes:[]}; try{return JSON.parse(raw);}catch{return{tasks:[],notes:[]}} }
   function saveLocal(){ localStorage.setItem(lsKey(), JSON.stringify({tasks:state.tasks, notes:state.notes})); }
 
-  /* Chips de responsáveis (modal de tarefa) */
   function renderRespChoices(selected=[]){
     const wrap = id('tRespGroup'); wrap.innerHTML='';
     FIXED_RESPONSAVEIS.forEach((name, idx)=>{
@@ -396,14 +382,12 @@
     });
   }
 
-  /* Popular autores nas anotações */
   function renderNoteAuthors(){
     const sel = id('noteAuthor');
     sel.innerHTML = FIXED_RESPONSAVEIS.map(n=>`<option value="${n}">${n}</option>`).join('');
     id('noteNow').textContent = `agora: ${fmtDateTime(new Date())}`;
   }
 
-  /* Supabase */
   async function maybeInitSupabase(){
     try{
       state.client = window.supabase.createClient(state.supabaseUrl, state.supabaseKey, { auth: { persistSession:false }});
@@ -425,18 +409,13 @@
   }
   async function handleRealtime(){ await fetchAll(); }
 
-  /* CRUD */
   async function fetchAll(){
     if(state.online){
       const { data: t, error: e1 } = await state.client.from('tasks').select('*').eq('board_slug', state.board).order('created_at',{ascending:true});
       state.tasks = e1 ? [] : (t||[]);
       if(e1) showErr('Erro ao carregar tarefas', e1);
 
-      // Notas mais recentes primeiro
-      const { data: n, error: e2 } = await state.client
-        .from('notes').select('*')
-        .eq('board_slug', state.board)
-        .order('created_at',{ascending:false});
+      const { data: n, error: e2 } = await state.client.from('notes').select('*').eq('board_slug', state.board).order('created_at',{ascending:true});
       state.notes = e2 ? [] : (n||[]);
       if(e2) showErr('Erro ao carregar anotações', e2);
     }else{
@@ -519,7 +498,6 @@
     await fetchAll();
   }
 
-  /* Renderização */
   function render(){
     id('boardLabel').textContent = state.board;
     renderTasks();
@@ -542,6 +520,24 @@
     const prazo=document.createElement('span'); prazo.className='badge'; prazo.textContent=t.prazo ? 'Prazo: '+fmtDate(t.prazo) : 'Sem prazo';
     badges.append(stBadge,prazo);
 
+    /* 🟡 Aviso de prazo próximo (<= 2 dias) */
+    (function(){
+      if(!t.prazo || t.status==='concluida') return;
+      const p = ymdToLocalDate(t.prazo);
+      if(!p) return;
+      const today = new Date(); today.setHours(0,0,0,0);
+      const soonLimit = new Date(today); soonLimit.setDate(today.getDate()+2);
+      if(p >= today && p <= soonLimit){
+        card.classList.add('due-soon');
+        const diffDays = Math.round((p - today)/(1000*60*60*24));
+        const label = diffDays===0 ? 'vence hoje' : diffDays===1 ? 'vence amanhã' : `vence em ${diffDays} dias`;
+        const warn = document.createElement('span');
+        warn.className = 'badge warn';
+        warn.textContent = `⚠️ ${label}`;
+        badges.append(warn);
+      }
+    })();
+
     // seletor de status inline
     const stRow=document.createElement('div'); stRow.className='row';
     const stLabel=document.createElement('span'); stLabel.className='muted'; stLabel.style.fontSize='12px'; stLabel.textContent='Status:';
@@ -554,7 +550,6 @@
     stSel.onchange = async (e)=>{ await upsertTask({ id:t.id, status:e.target.value }); };
     stRow.append(stLabel, stSel);
 
-    // meta criada em
     const meta=document.createElement('div'); meta.className='muted'; meta.style.fontSize='12px';
     meta.textContent = 'Criada em: ' + (t.created_at ? fmtDateTime(t.created_at) : '—');
 
@@ -583,7 +578,6 @@
 
     const fSt=id('fStatus').value, fResp=id('fResp').value, fPrazo=id('fPrazo').value;
 
-    // Datas de referência (sem horas) para evitar bugs de fuso
     const today = new Date(); today.setHours(0,0,0,0);
     const endWeek = new Date(today); endWeek.setDate(today.getDate() + (7 - today.getDay())); endWeek.setHours(23,59,59,999);
 
@@ -621,7 +615,6 @@
       else badge.textContent = counts[st] || 0;
     });
 
-    // Drop apenas nas 3 colunas de status (Atrasadas não recebe drop)
     ['col-a_fazer','col-em_andamento','col-concluida'].forEach(cid=>{
       const dz = id(cid);
       dz.ondrop = async e=>{
@@ -637,13 +630,7 @@
 
   function renderNotes(){
     const wrap=id('notes'); wrap.innerHTML='';
-
-    // Ordena notas por created_at desc (mais novas no topo)
-    const ordered = [...state.notes].sort((a,b) =>
-      new Date(b.created_at || 0) - new Date(a.created_at || 0)
-    );
-
-    ordered.forEach(n=>{
+    state.notes.forEach(n=>{
       const dv=document.createElement('div'); dv.className='note';
       if(state.editingNoteId===n.id){
         const edit=document.createElement('div'); edit.className='note-edit';
@@ -680,14 +667,12 @@
     if(opts.includes(val)) sel.value=val; else sel.value='todos';
   }
 
-  /* Interações gerais */
   function openTaskModal(t){
     state.editingTaskId = t?.id || null;
     id('taskModalTitle').textContent = t ? 'Editar tarefa' : 'Nova tarefa';
     id('tTitulo').value = t?.titulo || '';
     id('tDesc').value = t?.descricao || '';
     renderRespChoices(t?.responsaveis||[]);
-    // ⚠️ Sem conversão para ISO: evita “menos um dia”
     id('tPrazo').value = t?.prazo || '';
     id('tStatus').value = t?.status || 'a_fazer';
     id('dlgTask').showModal();
@@ -699,7 +684,7 @@
       titulo: id('tTitulo').value.trim() || 'Sem título',
       descricao: id('tDesc').value.trim() || null,
       responsaveis: selected,
-      prazo: id('tPrazo').value || null, // envia 'YYYY-MM-DD'
+      prazo: id('tPrazo').value || null,
       status: id('tStatus').value,
       autor: state.author,
     };
@@ -722,7 +707,6 @@
     const csv=toCSV(rows); const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`tarefas_${state.board}.csv`; a.click();
   }
 
-  /* Eventos */
   document.getElementById('btnTheme').onclick = toggleTheme;
   document.getElementById('btnNova').onclick = ()=>openTaskModal();
   qsa('[data-add]').forEach(b=>b.onclick=()=>openTaskModal({status:b.getAttribute('data-add')}));
@@ -735,7 +719,6 @@
   document.getElementById('fResp').onchange = render;
   document.getElementById('fPrazo').onchange = render;
 
-  /* Inicialização */
   (async function init(){
     const params=new URL(location.href).searchParams;
     const themeFromUrl=params.get('theme'); if(themeFromUrl){ state.theme=themeFromUrl; localStorage.setItem('theme',state.theme); applyTheme(); }

@@ -21,9 +21,10 @@
     /* ===== Tokens de status (cores suaves) ===== */
     /* Escuro */
     :root{
-      --st-todo-bg:    rgba(99,102,241,.14);  /* índigo */
-      --st-todo-bd:    rgba(99,102,241,.40);
-      --st-todo-tx:    #c7d2fe;
+      /* A FAZER -> amarelo suave */
+      --st-todo-bg:    rgba(251,191,36,.14);  /* amarelo */
+      --st-todo-bd:    rgba(251,191,36,.40);
+      --st-todo-tx:    #fde68a;
 
       --st-prog-bg:    rgba(59,130,246,.14);  /* azul */
       --st-prog-bd:    rgba(59,130,246,.40);
@@ -39,7 +40,11 @@
     }
     /* Claro */
     .light{
-      --st-todo-bg:    #eef2ff;  --st-todo-bd:#c7d2fe;  --st-todo-tx:#3730a3;
+      /* A FAZER -> amarelo suave */
+      --st-todo-bg:    #fffbeb;
+      --st-todo-bd:    #fde68a;
+      --st-todo-tx:    #92400e;
+
       --st-prog-bg:    #eff6ff;  --st-prog-bd:#bfdbfe;  --st-prog-tx:#1d4ed8;
       --st-done-bg:    #ecfdf5;  --st-done-bd:#a7f3d0;  --st-done-tx:#065f46;
       --st-late-bg:    #fef2f2;  --st-late-bd:#fecaca;  --st-late-tx:#991b1b;
@@ -141,6 +146,20 @@
     .card.is-a_fazer{ box-shadow: inset 3px 0 0 0 var(--st-todo-bd); }
     .card.is-em_andamento{ box-shadow: inset 3px 0 0 0 var(--st-prog-bd); }
     .card.is-concluida{ box-shadow: inset 3px 0 0 0 var(--st-done-bd); }
+
+    /* ===== Fundo suave por status (exceto na coluna Atrasadas) ===== */
+    .col:not([data-status="atrasadas"]) .card.is-a_fazer{
+      background:var(--st-todo-bg);
+      border-color:var(--st-todo-bd);
+    }
+    .col:not([data-status="atrasadas"]) .card.is-em_andamento{
+      background:var(--st-prog-bg);
+      border-color:var(--st-prog-bd);
+    }
+    .col:not([data-status="atrasadas"]) .card.is-concluida{
+      background:var(--st-done-bg);
+      border-color:var(--st-done-bd);
+    }
 
     .foot{margin-top:28px;display:flex;justify-content:space-between;align-items:center;color:var(--muted)}
 
@@ -413,7 +432,11 @@
       state.tasks = e1 ? [] : (t||[]);
       if(e1) showErr('Erro ao carregar tarefas', e1);
 
-      const { data: n, error: e2 } = await state.client.from('notes').select('*').eq('board_slug', state.board).order('created_at',{ascending:true});
+      // Notas mais recentes primeiro
+      const { data: n, error: e2 } = await state.client
+        .from('notes').select('*')
+        .eq('board_slug', state.board)
+        .order('created_at',{ascending:false});
       state.notes = e2 ? [] : (n||[]);
       if(e2) showErr('Erro ao carregar anotações', e2);
     }else{
@@ -614,7 +637,13 @@
 
   function renderNotes(){
     const wrap=id('notes'); wrap.innerHTML='';
-    state.notes.forEach(n=>{
+
+    // Ordena notas por created_at desc (mais novas no topo)
+    const ordered = [...state.notes].sort((a,b) =>
+      new Date(b.created_at || 0) - new Date(a.created_at || 0)
+    );
+
+    ordered.forEach(n=>{
       const dv=document.createElement('div'); dv.className='note';
       if(state.editingNoteId===n.id){
         const edit=document.createElement('div'); edit.className='note-edit';

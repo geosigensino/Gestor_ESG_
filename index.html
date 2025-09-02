@@ -19,82 +19,46 @@
     }
 
     /* ===== Tokens de status (cores suaves) ===== */
-    /* Escuro */
     :root{
-      /* A FAZER -> amarelo suave */
-      --st-todo-bg:    rgba(251,191,36,.14);  /* amarelo */
-      --st-todo-bd:    rgba(251,191,36,.40);
-      --st-todo-tx:    #fde68a;
-
-      --st-prog-bg:    rgba(59,130,246,.14);  /* azul */
-      --st-prog-bd:    rgba(59,130,246,.40);
-      --st-prog-tx:    #bfdbfe;
-
-      --st-done-bg:    rgba(16,185,129,.14);  /* verde */
-      --st-done-bd:    rgba(16,185,129,.35);
-      --st-done-tx:    #a7f3d0;
-
-      --st-late-bg:    rgba(239,68,68,.16);   /* vermelho */
-      --st-late-bd:    rgba(239,68,68,.45);
-      --st-late-tx:    #fecaca;
+      --st-todo-bg:rgba(251,191,36,.14); --st-todo-bd:rgba(251,191,36,.40); --st-todo-tx:#fde68a;
+      --st-prog-bg:rgba(59,130,246,.14); --st-prog-bd:rgba(59,130,246,.40); --st-prog-tx:#bfdbfe;
+      --st-done-bg:rgba(16,185,129,.14); --st-done-bd:rgba(16,185,129,.35); --st-done-tx:#a7f3d0;
+      --st-late-bg:rgba(239,68,68,.16); --st-late-bd:rgba(239,68,68,.45); --st-late-tx:#fecaca;
     }
-    /* Claro */
     .light{
-      /* A FAZER -> amarelo suave */
-      --st-todo-bg:    #fffbeb;
-      --st-todo-bd:    #fde68a;
-      --st-todo-tx:    #92400e;
-
-      --st-prog-bg:    #eff6ff;  --st-prog-bd:#bfdbfe;  --st-prog-tx:#1d4ed8;
-      --st-done-bg:    #ecfdf5;  --st-done-bd:#a7f3d0;  --st-done-tx:#065f46;
-      --st-late-bg:    #fef2f2;  --st-late-bd:#fecaca;  --st-late-tx:#991b1b;
+      --st-todo-bg:#fffbeb; --st-todo-bd:#fde68a; --st-todo-tx:#92400e;
+      --st-prog-bg:#eff6ff; --st-prog-bd:#bfdbfe; --st-prog-tx:#1d4ed8;
+      --st-done-bg:#ecfdf5; --st-done-bd:#a7f3d0; --st-done-tx:#065f46;
+      --st-late-bg:#fef2f2; --st-late-bd:#fecaca; --st-late-tx:#991b1b;
     }
 
     html,body{height:100%}
     body{margin:0;font:14px/1.35 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,Arial,"Apple Color Emoji","Segoe UI Emoji";background:var(--bg);color:var(--txt)}
-    /* mais largura para respirar no desktop */
     .wrap{max-width:1400px;margin:0 auto;padding:22px 18px 36px}
 
-    /* Cabeçalho */
     header{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
     .brand{font-weight:800;font-size:22px;letter-spacing:.2px}
     .muted{color:var(--muted)}
 
-    /* Barra de ações */
     .toolbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:16px;padding:12px;border:1px solid var(--border);border-radius:14px;background:linear-gradient(180deg,rgba(255,255,255,.02),transparent);backdrop-filter:saturate(160%) blur(6px); position:sticky; top:0; z-index:10}
     @media (max-width:980px){ .toolbar{position:static;top:auto} }
 
     .pill{background:rgba(255,255,255,.05);color:var(--txt);padding:6px 10px;border:1px solid var(--border);border-radius:10px}
 
-    /* Botões */
     .btn,button{cursor:pointer;border:1px solid var(--border);background:var(--panel);color:var(--txt);padding:9px 12px;border-radius:10px;box-shadow:var(--shadow);transition:transform .05s,box-shadow .2s,background .2s}
     .btn:active{transform:translateY(1px)}
     .btn.primary{background:linear-gradient(180deg,var(--brand),var(--brand-2));color:#fff;border:none}
     .btn.primary:hover{filter:saturate(1.1);box-shadow:0 10px 22px rgba(24,91,36,.35)}
     .btn.small{padding:6px 9px}
 
-    /* Layout: tarefas | notas (evita overflow e mantém alinhado) */
-    .grid{
-      display:grid;
-      grid-template-columns: minmax(0,1.8fr) minmax(320px,1fr);
-      gap:28px;
-      margin-top:26px;
-      align-items:start;
-    }
+    .grid{display:grid;grid-template-columns:minmax(0,1.8fr) minmax(320px,1fr);gap:28px;margin-top:26px;align-items:start}
     .panel{background:var(--panel);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
     .panel h3{margin:18px;font-size:16px}
 
-    /* Kanban — responsiva (não “empurra” o painel de notas) */
-    .kanban{
-      display:grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px,1fr));
-      gap:24px;
-      padding:24px;
-    }
+    .kanban{display:grid;grid-template-columns:repeat(auto-fit, minmax(280px,1fr));gap:24px;padding:24px}
     .col{background:var(--card);border:1px solid var(--border);border-radius:12px;min-height:260px;display:flex;flex-direction:column}
     .col header{display:flex;align-items:center;justify-content:space-between;padding:14px;border-bottom:1px solid var(--border)}
     .dropzone{flex:1;padding:14px;min-height:160px}
-    /* 🔧 Liberado para clique/edição; continua sem drop handler */
     .dropzone.readonly{opacity:.95}
 
     .card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px;margin:12px 6px;box-shadow:var(--shadow);transition:box-shadow .2s,transform .05s}
@@ -108,10 +72,8 @@
     .filters{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
     select,input[type="date"],input[type="text"]{background:var(--panel);color:var(--txt);border:1px solid var(--border);border-radius:10px;padding:8px 10px}
 
-    /* Select de status dentro do card (compacto) */
     .status-inline{font-size:12px;padding:4px 6px;border-radius:8px}
 
-    /* Notas */
     .note{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;margin:10px 14px}
     .note-meta{display:flex;gap:8px;flex-wrap:wrap;color:var(--muted);font-size:12px;margin-top:6px}
     .note-edit{display:grid;gap:8px}
@@ -119,51 +81,23 @@
 
     .badges{display:flex;align-items:center;gap:8px}
     .badge{font-size:12px;padding:2px 8px;border-radius:999px;border:1px solid var(--border);background:var(--panel)}
+    .badge.status-a_fazer{background:var(--st-todo-bg);color:var(--st-todo-tx);border-color:var(--st-todo-bd)}
+    .badge.status-em_andamento{background:var(--st-prog-bg);color:var(--st-prog-tx);border-color:var(--st-prog-bd)}
+    .badge.status-concluida{background:var(--st-done-bg);color:var(--st-done-tx);border-color:var(--st-done-bd)}
 
-    /* ===== ESTILO pelos status (chips) ===== */
-    .badge.status-a_fazer{
-      background:var(--st-todo-bg); color:var(--st-todo-tx); border-color:var(--st-todo-bd);
-    }
-    .badge.status-em_andamento{
-      background:var(--st-prog-bg); color:var(--st-prog-tx); border-color:var(--st-prog-bd);
-    }
-    .badge.status-concluida{
-      background:var(--st-done-bg); color:var(--st-done-tx); border-color:var(--st-done-bd);
-    }
+    .col[data-status="atrasadas"] .card{background:var(--st-late-bg);border-color:var(--st-late-bd)}
+    .col[data-status="atrasadas"] .badge{background:transparent;color:var(--st-late-tx);border-color:var(--st-late-bd)}
 
-    /* ===== Coluna Atrasadas com leve destaque ===== */
-    .col[data-status="atrasadas"] .card{
-      background:var(--st-late-bg);
-      border-color:var(--st-late-bd);
-    }
-    .col[data-status="atrasadas"] .badge{
-      background:transparent;
-      color:var(--st-late-tx);
-      border-color:var(--st-late-bd);
-    }
+    .card.is-a_fazer{box-shadow:inset 3px 0 0 0 var(--st-todo-bd)}
+    .card.is-em_andamento{box-shadow:inset 3px 0 0 0 var(--st-prog-bd)}
+    .card.is-concluida{box-shadow:inset 3px 0 0 0 var(--st-done-bd)}
 
-    /* ===== “Fio” colorido na lateral do cartão (opcional) ===== */
-    .card.is-a_fazer{ box-shadow: inset 3px 0 0 0 var(--st-todo-bd); }
-    .card.is-em_andamento{ box-shadow: inset 3px 0 0 0 var(--st-prog-bd); }
-    .card.is-concluida{ box-shadow: inset 3px 0 0 0 var(--st-done-bd); }
-
-    /* ===== Fundo suave por status (exceto na coluna Atrasadas) ===== */
-    .col:not([data-status="atrasadas"]) .card.is-a_fazer{
-      background:var(--st-todo-bg);
-      border-color:var(--st-todo-bd);
-    }
-    .col:not([data-status="atrasadas"]) .card.is-em_andamento{
-      background:var(--st-prog-bg);
-      border-color:var(--st-prog-bd);
-    }
-    .col:not([data-status="atrasadas"]) .card.is-concluida{
-      background:var(--st-done-bg);
-      border-color:var(--st-done-bd);
-    }
+    .col:not([data-status="atrasadas"]) .card.is-a_fazer{background:var(--st-todo-bg);border-color:var(--st-todo-bd)}
+    .col:not([data-status="atrasadas"]) .card.is-em_andamento{background:var(--st-prog-bg);border-color:var(--st-prog-bd)}
+    .col:not([data-status="atrasadas"]) .card.is-concluida{background:var(--st-done-bg);border-color:var(--st-done-bd)}
 
     .foot{margin-top:28px;display:flex;justify-content:space-between;align-items:center;color:var(--muted)}
 
-    /* Chips de responsáveis (modal de tarefas) */
     .assignees{display:flex;gap:8px;flex-wrap:wrap}
     .assignees input[type="checkbox"]{display:none}
     .assignees label{user-select:none;cursor:pointer;padding:6px 10px;border-radius:999px;border:1px solid var(--border);background:var(--panel);transition:background .2s,color .2s,box-shadow .2s}
@@ -175,7 +109,6 @@
       .toolbar{position:static;top:auto}
     }
 
-    /* --- MODAL CLARO (sempre) --- */
     dialog{ width:min(680px, calc(100% - 32px)); }
     dialog.modal-light{ background:#ffffff; color:#111827; border:1px solid #e6ebf2; border-radius:14px; box-shadow:var(--shadow); }
     dialog.modal-light::backdrop{ background:rgba(0,0,0,.45); }
@@ -190,9 +123,7 @@
     dialog.modal-light textarea{
       background:#f8fafc; color:#0f172a; border:1px solid #e5e7eb; border-radius:10px; padding:8px 10px;
     }
-    dialog.modal-light .assignees label{
-      background:#f1f5f9; color:#0f172a; border:1px solid #e5e7eb;
-    }
+    dialog.modal-light .assignees label{ background:#f1f5f9; color:#0f172a; border:1px solid #e5e7eb; }
     dialog.modal-light .assignees input[type="checkbox"]:checked + label{
       background:var(--brand); color:#fff; border-color:transparent; box-shadow:0 0 0 3px rgba(24,91,36,.25);
     }
@@ -200,7 +131,10 @@
     dialog.modal-light .btn.primary{ background:linear-gradient(180deg,var(--brand),var(--brand-2)); color:#fff; border:none; }
 
     /* ===== Mini-calendário (filtro por dia) ===== */
-    .cal-pop{ position:absolute; z-index:20; width:280px; background:var(--panel); border:1px solid var(--border); border-radius:12px; box-shadow:var(--shadow); padding:8px; }
+    .cal-pop{
+      position:fixed; z-index:20; width:280px; max-width:96vw;
+      background:var(--panel); border:1px solid var(--border); border-radius:12px; box-shadow:var(--shadow); padding:8px;
+    }
     .cal-pop.hidden{ display:none; }
     .cal{ display:grid; gap:8px; }
     .cal-head{ display:flex; justify-content:space-between; align-items:center; padding:4px 6px; }
@@ -212,12 +146,19 @@
     .cal-day:hover{ box-shadow:0 4px 14px rgba(0,0,0,.18); }
     .cal-day.is-today{ outline:2px solid var(--brand); outline-offset:-2px; }
     .cal-day.is-selected{ background:linear-gradient(180deg,var(--brand),var(--brand-2)); color:#fff; border-color:transparent; }
-    .cal-day.has-task::after{
-      content:""; position:absolute; left:50%; transform:translateX(-50%); bottom:6px; width:6px; height:6px; border-radius:50%;
-      background:var(--warn);
-    }
-    /* chip "dia selecionado" */
+    .cal-day.has-task::after{ content:""; position:absolute; left:50%; transform:translateX(-50%); bottom:6px; width:6px; height:6px; border-radius:50%; background:var(--warn); }
     #selDiaTag .btn.small{ padding:2px 6px; }
+
+    /* Modo bottom-sheet em telas estreitas */
+    @media (max-width:420px){
+      .cal-pop{
+        left:50% !important;
+        transform:translateX(-50%) !important;
+        top:auto !important;
+        bottom:calc(env(safe-area-inset-bottom, 0px) + 8px) !important;
+        width:calc(100vw - 16px);
+      }
+    }
   </style>
 </head>
 <body>
@@ -253,11 +194,11 @@
           </select>
         </span>
 
-        <!-- Botão para abrir calendário + chip do "dia" -->
+        <!-- Botão calendário + chip do "dia" -->
         <button class="btn small" id="btnCal" title="Abrir calendário">📅</button>
         <span id="selDiaTag" class="pill" style="display:none">dia: <strong id="selDiaText"></strong> <button class="btn small" id="btnClearDia" title="Limpar">×</button></span>
 
-        <!-- Popover do calendário (posicionado via JS) -->
+        <!-- Popover do calendário -->
         <div id="calPopover" class="cal-pop hidden" role="dialog" aria-label="Calendário"></div>
       </div>
 
@@ -277,7 +218,6 @@
             <header>
               <div class="row"><strong>Atrasadas</strong><span class="badge">0</span></div>
             </header>
-            <!-- Sem ondragover/ondrop => não recebe drop, mas aceita clique/edição -->
             <div class="dropzone readonly" id="col-atrasadas"></div>
           </div>
 
@@ -379,8 +319,8 @@
     online: false,
 
     /* Calendário/filtro por dia */
-    filterDate: null,     // 'YYYY-MM-DD' quando um dia é escolhido
-    calMonth: null        // Date apontando para o 1º dia do mês exibido
+    filterDate: null,     // 'YYYY-MM-DD'
+    calMonth: null        // Date (1º dia do mês exibido)
   };
 
   /* Tema */
@@ -394,34 +334,21 @@
   const pad2 = n => String(n).padStart(2,'0');
   const toYMD = d => `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
 
-  function ymdToLocalDate(s){
-    if(!s) return null;
-    const [y,m,d] = s.split('-').map(Number);
-    return new Date(y, m-1, d);
-  }
-  function fmtDate(d){
-    if(!d) return '';
-    const dt = (typeof d==='string' && /^\d{4}-\d{2}-\d{2}$/.test(d)) ? ymdToLocalDate(d) : new Date(d);
-    return dt.toLocaleDateString();
-  }
+  function ymdToLocalDate(s){ if(!s) return null; const [y,m,d] = s.split('-').map(Number); return new Date(y, m-1, d); }
+  function fmtDate(d){ if(!d) return ''; const dt=(typeof d==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(d))?ymdToLocalDate(d):new Date(d); return dt.toLocaleDateString(); }
   function fmtDateTime(d){ return d ? new Date(d).toLocaleString() : ''; }
 
-  const toCSV = rows=>{
-    if(!rows.length) return '';
-    const head = Object.keys(rows[0]);
-    const body = rows.map(r => head.map(k => `"${String(r[k]??'').replaceAll('"','""')}"`).join(','));
-    return [head.join(','), ...body].join('\n');
-  };
+  const toCSV = rows=>{ if(!rows.length) return ''; const head=Object.keys(rows[0]); const body=rows.map(r=>head.map(k=>`"${String(r[k]??'').replaceAll('"','""')}"`).join(',')); return [head.join(','),...body].join('\n'); };
   function showErr(ctx, err){ console.error(ctx, err); alert(`${ctx}:\n${(err && err.message) || err}`); }
 
   /* LocalStorage fallback */
   function lsKey(){ return `gst_${state.board}`; }
-  function loadLocal(){ const raw = localStorage.getItem(lsKey()); if(!raw) return {tasks:[],notes:[]}; try{return JSON.parse(raw);}catch{return{tasks:[],notes:[]}} }
+  function loadLocal(){ const raw=localStorage.getItem(lsKey()); if(!raw) return {tasks:[],notes:[]}; try{return JSON.parse(raw);}catch{return{tasks:[],notes:[]}} }
   function saveLocal(){ localStorage.setItem(lsKey(), JSON.stringify({tasks:state.tasks, notes:state.notes})); }
 
   /* Chips de responsáveis (modal de tarefa) */
   function renderRespChoices(selected=[]){
-    const wrap = id('tRespGroup'); wrap.innerHTML='';
+    const wrap=id('tRespGroup'); wrap.innerHTML='';
     FIXED_RESPONSAVEIS.forEach((name, idx)=>{
       const input=document.createElement('input'); input.type='checkbox'; input.id=`resp_${idx}`; input.value=name; if(selected.includes(name)) input.checked=true;
       const label=document.createElement('label'); label.htmlFor=input.id; label.textContent=name;
@@ -431,9 +358,9 @@
 
   /* Popular autores nas anotações */
   function renderNoteAuthors(){
-    const sel = id('noteAuthor');
-    sel.innerHTML = FIXED_RESPONSAVEIS.map(n=>`<option value="${n}">${n}</option>`).join('');
-    id('noteNow').textContent = `agora: ${fmtDateTime(new Date())}`;
+    const sel=id('noteAuthor');
+    sel.innerHTML=FIXED_RESPONSAVEIS.map(n=>`<option value="${n}">${n}</option>`).join('');
+    id('noteNow').textContent=`agora: ${fmtDateTime(new Date())}`;
   }
 
   /* Supabase */
@@ -465,11 +392,7 @@
       state.tasks = e1 ? [] : (t||[]);
       if(e1) showErr('Erro ao carregar tarefas', e1);
 
-      // Notas mais recentes primeiro
-      const { data: n, error: e2 } = await state.client
-        .from('notes').select('*')
-        .eq('board_slug', state.board)
-        .order('created_at',{ascending:false});
+      const { data: n, error: e2 } = await state.client.from('notes').select('*').eq('board_slug', state.board).order('created_at',{ascending:false});
       state.notes = e2 ? [] : (n||[]);
       if(e2) showErr('Erro ao carregar anotações', e2);
     }else{
@@ -489,10 +412,7 @@
         if(error) return showErr('Erro ao criar tarefa', error);
       }
     }else{
-      if(!obj.id){
-        obj.id = crypto.randomUUID();
-        obj.created_at = new Date().toISOString();
-      }
+      if(!obj.id){ obj.id = crypto.randomUUID(); obj.created_at = new Date().toISOString(); }
       const idx = state.tasks.findIndex(x=>x.id===obj.id);
       if(idx>=0) state.tasks[idx] = { ...state.tasks[idx], ...obj }; else state.tasks.push(obj);
       saveLocal();
@@ -510,7 +430,7 @@
   }
 
   async function addNote(content){
-    const autor = id('noteAuthor').value;
+    const autor=id('noteAuthor').value;
     if(!content.trim()) return;
     if(state.online){
       const { error } = await state.client.from('notes').insert({ board_slug: state.board, conteudo: content, autor });
@@ -521,25 +441,18 @@
     }
     id('noteInput').value=''; await fetchAll();
   }
-  async function startEditNote(note){
-    state.editingNoteId = note.id;
-    renderNotes();
-  }
+  async function startEditNote(note){ state.editingNoteId = note.id; renderNotes(); }
   async function saveEditNote(idv){
-    const area = id(`edit_area_${idv}`);
-    const sel  = id(`edit_author_${idv}`);
-    const newText = area.value.trim();
-    const newAuthor = sel.value;
-    if(!newText) return;
+    const area=id(`edit_area_${idv}`), sel=id(`edit_author_${idv}`);
+    const newText=area.value.trim(); const newAuthor=sel.value; if(!newText) return;
     if(state.online){
       const { error } = await state.client.from('notes').update({ conteudo:newText, autor:newAuthor }).eq('id', idv);
       if(error) return showErr('Erro ao salvar edição', error);
     }else{
-      const idx = state.notes.findIndex(n=>n.id===idv);
+      const idx=state.notes.findIndex(n=>n.id===idv);
       if(idx>=0){ state.notes[idx].conteudo=newText; state.notes[idx].autor=newAuthor; state.notes[idx].updated_at=new Date().toISOString(); saveLocal(); }
     }
-    state.editingNoteId = null;
-    await fetchAll();
+    state.editingNoteId=null; await fetchAll();
   }
   function cancelEditNote(){ state.editingNoteId=null; renderNotes(); }
   async function deleteNote(idv){
@@ -560,7 +473,6 @@
     updateSelectedDayChip();
   }
 
-  // cria card de tarefa
   function makeTaskCard(t){
     const card=document.createElement('div');
     card.className='card';
@@ -579,16 +491,13 @@
     const stRow=document.createElement('div'); stRow.className='row';
     const stLabel=document.createElement('span'); stLabel.className='muted'; stLabel.style.fontSize='12px'; stLabel.textContent='Status:';
     const stSel=document.createElement('select'); stSel.className='status-inline';
-    stSel.innerHTML = `
-      <option value="a_fazer">a fazer</option>
-      <option value="em_andamento">em andamento</option>
-      <option value="concluida">concluída</option>`;
-    stSel.value = t.status;
-    stSel.onchange = async (e)=>{ await upsertTask({ id:t.id, status:e.target.value }); };
+    stSel.innerHTML=`<option value="a_fazer">a fazer</option><option value="em_andamento">em andamento</option><option value="concluida">concluída</option>`;
+    stSel.value=t.status;
+    stSel.onchange=async e=>{ await upsertTask({ id:t.id, status:e.target.value }); };
     stRow.append(stLabel, stSel);
 
     const meta=document.createElement('div'); meta.className='muted'; meta.style.fontSize='12px';
-    meta.textContent = 'Criada em: ' + (t.created_at ? fmtDateTime(t.created_at) : '—');
+    meta.textContent='Criada em: ' + (t.created_at ? fmtDateTime(t.created_at) : '—');
 
     const tags=document.createElement('div'); tags.className='tags';
     (t.responsaveis||[]).forEach(p=>{ const el=document.createElement('span'); el.className='tag'; el.textContent=p; tags.append(el); });
@@ -605,19 +514,13 @@
   }
 
   function renderTasks(){
-    const cols = {
-      atrasadas: id('col-atrasadas'),
-      a_fazer: id('col-a_fazer'),
-      em_andamento: id('col-em_andamento'),
-      concluida: id('col-concluida')
-    };
+    const cols = { atrasadas:id('col-atrasadas'), a_fazer:id('col-a_fazer'), em_andamento:id('col-em_andamento'), concluida:id('col-concluida') };
     Object.values(cols).forEach(el=>el.innerHTML='');
 
     const fSt=id('fStatus').value, fResp=id('fResp').value, fPrazo=id('fPrazo').value;
 
-    // Datas de referência (sem horas) para evitar bugs de fuso
-    const today = new Date(); today.setHours(0,0,0,0);
-    const endWeek = new Date(today); endWeek.setDate(today.getDate() + (7 - today.getDay())); endWeek.setHours(23,59,59,999);
+    const today=new Date(); today.setHours(0,0,0,0);
+    const endWeek=new Date(today); endWeek.setDate(today.getDate() + (7 - today.getDay())); endWeek.setHours(23,59,59,999);
 
     let list=[...state.tasks];
     if(fSt!=='todos') list=list.filter(t=>t.status===fSt);
@@ -625,43 +528,32 @@
 
     const prazoToLocal = (t)=> t.prazo ? ymdToLocalDate(t.prazo) : null;
 
-    /* >>> Prioridade: dia escolhido no mini-calendário */
     if(state.filterDate){
-      list = list.filter(t => t.prazo === state.filterDate);
+      list=list.filter(t=>t.prazo===state.filterDate);
     }else{
-      if(fPrazo==='hoje') list=list.filter(t=>{
-        const p=prazoToLocal(t); return p && p.getTime()===today.getTime();
-      });
-      if(fPrazo==='semana') list=list.filter(t=>{
-        const p=prazoToLocal(t); return p && p>=today && p<=endWeek;
-      });
-      if(fPrazo==='atrasadas') list=list.filter(t=>{
-        const p=prazoToLocal(t); return p && p<today && t.status!=='concluida';
-      });
+      if(fPrazo==='hoje') list=list.filter(t=>{ const p=prazoToLocal(t); return p && p.getTime()===today.getTime(); });
+      if(fPrazo==='semana') list=list.filter(t=>{ const p=prazoToLocal(t); return p && p>=today && p<=endWeek; });
+      if(fPrazo==='atrasadas') list=list.filter(t=>{ const p=prazoToLocal(t); return p && p<today && t.status!=='concluida'; });
     }
 
     const isOverdue = (t)=>{ const p=prazoToLocal(t); return p && p<today && t.status!=='concluida'; };
-    const overdue = list.filter(isOverdue);
-    const notOverdue = list.filter(t=>!isOverdue(t));
+    const overdue=list.filter(isOverdue);
+    const notOverdue=list.filter(t=>!isOverdue(t));
 
     overdue.forEach(t=> cols.atrasadas.append(makeTaskCard(t)));
 
     const counts={a_fazer:0,em_andamento:0,concluida:0};
-    notOverdue.forEach(t=>counts[t.status] = (counts[t.status]||0)+1);
+    notOverdue.forEach(t=>counts[t.status]=(counts[t.status]||0)+1);
     notOverdue.forEach(t=> cols[t.status].append(makeTaskCard(t)));
 
     qsa('.col').forEach(col=>{
-      const st = col.dataset.status;
-      const badge = col.querySelector('header .badge');
-      if(!badge) return;
-      if(st==='atrasadas') badge.textContent = overdue.length;
-      else badge.textContent = counts[st] || 0;
+      const st=col.dataset.status; const badge=col.querySelector('header .badge'); if(!badge) return;
+      if(st==='atrasadas') badge.textContent=overdue.length; else badge.textContent=counts[st]||0;
     });
 
-    // Drop apenas nas 3 colunas de status (Atrasadas não recebe drop)
     ['col-a_fazer','col-em_andamento','col-concluida'].forEach(cid=>{
-      const dz = id(cid);
-      dz.ondrop = async e=>{
+      const dz=id(cid);
+      dz.ondrop=async e=>{
         e.preventDefault();
         const idDrag=e.dataTransfer.getData('text/plain');
         const novo=cid.replace('col-','');
@@ -674,30 +566,23 @@
 
   function renderNotes(){
     const wrap=id('notes'); wrap.innerHTML='';
-
-    // Ordena notas por created_at desc (mais novas no topo)
-    const ordered = [...state.notes].sort((a,b) =>
-      new Date(b.created_at || 0) - new Date(a.created_at || 0)
-    );
-
+    const ordered=[...state.notes].sort((a,b)=> new Date(b.created_at||0) - new Date(a.created_at||0));
     ordered.forEach(n=>{
       const dv=document.createElement('div'); dv.className='note';
       if(state.editingNoteId===n.id){
         const edit=document.createElement('div'); edit.className='note-edit';
         const sel=document.createElement('select'); sel.id=`edit_author_${n.id}`;
-        sel.innerHTML = FIXED_RESPONSAVEIS.map(a=>`<option ${a===n.autor?'selected':''} value="${a}">${a}</option>`).join('');
+        sel.innerHTML=FIXED_RESPONSAVEIS.map(a=>`<option ${a===n.autor?'selected':''} value="${a}">${a}</option>`).join('');
         const ta=document.createElement('textarea'); ta.id=`edit_area_${n.id}`; ta.value=n.conteudo||'';
         const row=document.createElement('div'); row.className='actions';
         const bCancel=document.createElement('button'); bCancel.className='btn'; bCancel.textContent='Cancelar'; bCancel.onclick=()=>cancelEditNote();
         const bSave=document.createElement('button'); bSave.className='btn primary'; bSave.textContent='Salvar'; bSave.onclick=()=>saveEditNote(n.id);
-        row.append(bCancel,bSave);
-        edit.append(sel,ta,row); dv.append(edit);
+        row.append(bCancel,bSave); edit.append(sel,ta,row); dv.append(edit);
       }else{
         const p=document.createElement('div'); p.textContent=n.conteudo; dv.append(p);
         const meta=document.createElement('div'); meta.className='note-meta';
-        const created = fmtDateTime(n.created_at);
-        const updated = n.updated_at ? fmtDateTime(n.updated_at) : null;
-        meta.innerHTML = `<span>por <strong>${n.autor||'—'}</strong></span><span>•</span><span>${created}</span>` + (updated ? ` <span>•</span><span>(editado em ${updated})</span>` : '');
+        const created=fmtDateTime(n.created_at); const updated=n.updated_at?fmtDateTime(n.updated_at):null;
+        meta.innerHTML=`<span>por <strong>${n.autor||'—'}</strong></span><span>•</span><span>${created}</span>` + (updated?` <span>•</span><span>(editado em ${updated})</span>`:'');
         dv.append(meta);
         const row=document.createElement('div'); row.className='actions';
         const bEdit=document.createElement('button'); bEdit.className='btn small'; bEdit.textContent='Editar'; bEdit.onclick=()=>startEditNote(n);
@@ -720,70 +605,67 @@
   /* ===== Mini-calendário ===== */
   function toggleCalendar(){
     const pop = id('calPopover');
-    if(pop.classList.contains('hidden')){
-      openCalendar();
-    }else{
-      closeCalendar();
-    }
+    if(pop.classList.contains('hidden')) openCalendar(); else closeCalendar();
   }
   function openCalendar(){
-    const btn = id('btnCal');
-    const pop = id('calPopover');
-
     // mês base: dia selecionado, senão mês atual
     if(!state.calMonth){
       const base = state.filterDate ? ymdToLocalDate(state.filterDate) : new Date();
       state.calMonth = new Date(base.getFullYear(), base.getMonth(), 1);
     }
-
     renderCalendar();
+    id('calPopover').classList.remove('hidden');
+    // posiciona depois de renderizar
+    requestAnimationFrame(placeCalendarPopover);
+  }
+  function placeCalendarPopover(){
+    const pop=id('calPopover'); const btn=id('btnCal');
+    const vw=window.innerWidth, vh=window.innerHeight;
+    const r=btn.getBoundingClientRect();
+    const popW=pop.offsetWidth||280, popH=pop.offsetHeight||280;
 
-    // posiciona sob o botão dentro da toolbar
-    const tb = document.querySelector('.toolbar').getBoundingClientRect();
-    const r  = btn.getBoundingClientRect();
-    pop.style.left = (r.left - tb.left) + 'px';
-    pop.style.top  = (r.bottom - tb.top + 8) + 'px';
+    // telas estreitas: bottom-sheet (CSS já cuida)
+    if(vw<=420){
+      pop.style.left='50%'; pop.style.transform='translateX(-50%)';
+      pop.style.top=''; pop.style.bottom='calc(env(safe-area-inset-bottom, 0px) + 8px)';
+      pop.style.width='calc(100vw - 16px)';
+      return;
+    }else{
+      pop.style.bottom=''; pop.style.transform=''; pop.style.width='280px';
+    }
 
-    pop.classList.remove('hidden');
+    // centraliza abaixo do botão, com clamp nas bordas
+    let left = r.left + (r.width/2) - (popW/2);
+    left = Math.max(8, Math.min(left, vw - popW - 8));
+
+    let top = r.bottom + 8;
+    if(top + popH > vh - 8) top = r.top - popH - 8; // se não cabe abaixo, mostra acima
+    top = Math.max(8, Math.min(top, vh - popH - 8));
+
+    pop.style.left = left + 'px';
+    pop.style.top  = top  + 'px';
   }
   function closeCalendar(){ id('calPopover').classList.add('hidden'); }
 
   function getTaskDatesSet(){
-    const set = new Set();
-    (state.tasks||[]).forEach(t=>{ if(t.prazo) set.add(t.prazo); });
-    return set;
+    const set=new Set(); (state.tasks||[]).forEach(t=>{ if(t.prazo) set.add(t.prazo); }); return set;
   }
 
   function renderCalendar(){
-    const pop = id('calPopover');
-    const d = state.calMonth || new Date();
-    const y = d.getFullYear(), m = d.getMonth();
-    const first = new Date(y,m,1);
-    const firstDow = first.getDay(); // 0..6
-    const daysInMonth = new Date(y, m+1, 0).getDate();
+    const pop=id('calPopover');
+    const d=state.calMonth||new Date(); const y=d.getFullYear(), m=d.getMonth();
+    const first=new Date(y,m,1); const firstDow=first.getDay(); const daysInMonth=new Date(y,m+1,0).getDate();
+    const title=first.toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+    const dows=['D','S','T','Q','Q','S','S']; const taskSet=getTaskDatesSet(); const todayStr=toYMD(new Date());
 
-    const title = first.toLocaleDateString('pt-BR', { month:'long', year:'numeric' });
-
-    const dows = ['D','S','T','Q','Q','S','S'];
-    const taskSet = getTaskDatesSet();
-    const todayStr = toYMD(new Date());
-
-    let grid = '';
-    // cabeçalho DOW
-    grid += dows.map(x=>`<div class="cal-dow">${x}</div>`).join('');
-    // espaços vazios antes do 1
-    for(let i=0;i<firstDow;i++) grid += `<div></div>`;
-    // dias
+    let grid=''; grid += dows.map(x=>`<div class="cal-dow">${x}</div>`).join(''); for(let i=0;i<firstDow;i++) grid+=`<div></div>`;
     for(let day=1; day<=daysInMonth; day++){
-      const dt = new Date(y,m,day);
-      const ymd = toYMD(dt);
-      const has = taskSet.has(ymd);
-      const isToday = ymd===todayStr;
-      const isSel = state.filterDate===ymd;
+      const dt=new Date(y,m,day); const ymd=toYMD(dt);
+      const has=taskSet.has(ymd); const isToday=ymd===todayStr; const isSel=state.filterDate===ymd;
       grid += `<div class="cal-day${has?' has-task':''}${isToday?' is-today':''}${isSel?' is-selected':''}" data-ymd="${ymd}">${day}</div>`;
     }
 
-    pop.innerHTML = `
+    pop.innerHTML=`
       <div class="cal">
         <div class="cal-head">
           <button class="btn small" id="calPrev">‹</button>
@@ -798,30 +680,20 @@
       </div>
     `;
 
-    id('calPrev').onclick = ()=>{ state.calMonth = new Date(y, m-1, 1); renderCalendar(); };
-    id('calNext').onclick = ()=>{ state.calMonth = new Date(y, m+1, 1); renderCalendar(); };
-    id('calHoje').onclick = ()=>{ const now=new Date(); state.calMonth=new Date(now.getFullYear(), now.getMonth(), 1); renderCalendar(); };
+    id('calPrev').onclick = ()=>{ state.calMonth=new Date(y,m-1,1); renderCalendar(); placeCalendarPopover(); };
+    id('calNext').onclick = ()=>{ state.calMonth=new Date(y,m+1,1); renderCalendar(); placeCalendarPopover(); };
+    id('calHoje').onclick = ()=>{ const now=new Date(); state.calMonth=new Date(now.getFullYear(), now.getMonth(), 1); renderCalendar(); placeCalendarPopover(); };
     id('calFechar').onclick = closeCalendar;
 
-    // clique nos dias
     qsa('#calPopover .cal-day').forEach(el=>{
-      el.onclick = ()=>{
-        state.filterDate = el.dataset.ymd; // aplica filtro por dia
-        id('fPrazo').value = 'todos';      // mantém select neutro
-        closeCalendar();
-        render();
-      };
+      el.onclick=()=>{ state.filterDate=el.dataset.ymd; id('fPrazo').value='todos'; closeCalendar(); render(); };
     });
   }
 
   function updateSelectedDayChip(){
-    const chip = id('selDiaTag'), txt = id('selDiaText');
-    if(state.filterDate){
-      chip.style.display = '';
-      txt.textContent = fmtDate(state.filterDate);
-    }else{
-      chip.style.display = 'none';
-    }
+    const chip=id('selDiaTag'), txt=id('selDiaText');
+    if(state.filterDate){ chip.style.display=''; txt.textContent=fmtDate(state.filterDate); }
+    else{ chip.style.display='none'; }
   }
 
   /* Interações gerais */
@@ -836,13 +708,13 @@
     id('dlgTask').showModal();
   }
   async function saveTaskFromModal(){
-    const selected = Array.from(document.querySelectorAll('#tRespGroup input:checked')).map(i=>i.value);
-    const obj = {
+    const selected=Array.from(document.querySelectorAll('#tRespGroup input:checked')).map(i=>i.value);
+    const obj={
       id: state.editingTaskId || undefined,
       titulo: id('tTitulo').value.trim() || 'Sem título',
       descricao: id('tDesc').value.trim() || null,
       responsaveis: selected,
-      prazo: id('tPrazo').value || null, // 'YYYY-MM-DD'
+      prazo: id('tPrazo').value || null,
       status: id('tStatus').value,
       autor: state.author,
     };
@@ -857,11 +729,7 @@
   function toggleTheme(){ state.theme=(state.theme==='dark')?'light':'dark'; localStorage.setItem('theme',state.theme); applyTheme(); updateShareLink(); }
 
   function exportCSV(){
-    const rows = state.tasks.map(t=>({
-      id:t.id, board:state.board, titulo:t.titulo, descricao:t.descricao||'',
-      status:t.status, prazo:t.prazo||'', responsaveis:(t.responsaveis||[]).join('; '),
-      autor:t.autor||'', criado_em:t.created_at||'', atualizado_em:t.updated_at||''
-    }));
+    const rows=state.tasks.map(t=>({ id:t.id, board:state.board, titulo:t.titulo, descricao:t.descricao||'', status:t.status, prazo:t.prazo||'', responsaveis:(t.responsaveis||[]).join('; '), autor:t.autor||'', criado_em:t.created_at||'', atualizado_em:t.updated_at||'' }));
     const csv=toCSV(rows); const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`tarefas_${state.board}.csv`; a.click();
   }
 
@@ -876,17 +744,24 @@
   document.getElementById('btnAnotar').onclick = ()=>addNote(id('noteInput').value);
   document.getElementById('fStatus').onchange = render;
   document.getElementById('fResp').onchange = render;
-  document.getElementById('fPrazo').onchange = ()=>{ state.filterDate=null; render(); }; // mudar select limpa filtro de dia
+  document.getElementById('fPrazo').onchange = ()=>{ state.filterDate=null; render(); };
 
   // mini-calendário
   document.getElementById('btnCal').onclick = toggleCalendar;
   document.getElementById('btnClearDia').onclick = ()=>{ state.filterDate=null; render(); };
   document.addEventListener('click', (ev)=>{
-    const pop=id('calPopover');
-    if(pop.classList.contains('hidden')) return;
+    const pop=id('calPopover'); if(pop.classList.contains('hidden')) return;
     if(!pop.contains(ev.target) && ev.target!==id('btnCal')) closeCalendar();
   });
   document.addEventListener('keydown', (ev)=>{ if(ev.key==='Escape') closeCalendar(); });
+
+  // reposiciona popover em resize/scroll
+  window.addEventListener('resize', ()=>{
+    const pop=id('calPopover'); if(!pop.classList.contains('hidden')) placeCalendarPopover();
+  });
+  window.addEventListener('scroll', ()=>{
+    const pop=id('calPopover'); if(!pop.classList.contains('hidden')) placeCalendarPopover();
+  }, true);
 
   /* Inicialização */
   (async function init(){

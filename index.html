@@ -404,7 +404,7 @@
       state.client.channel('ch-app')
         .on('postgres_changes', { event:'*', schema:'public', table:'tasks',    filter:`board_slug=eq.${state.board}` }, handleRealtime)
         .on('postgres_changes', { event:'*', schema:'public', table:'notes',    filter:`board_slug=eq.${state.board}` }, handleRealtime)
-        .on('postgres_changes', { event:'*', schema:'public', table:'meetings', filter:`board_slug=eq.${state.board}` }, handleRealtime) // << realtime de reuniões
+        .on('postgres_changes', { event:'*', schema:'public', table:'meetings', filter:`board_slug=eq.${state.board}` }, handleRealtime)
         .subscribe();
     }catch(e){
       state.online=false;
@@ -423,13 +423,14 @@
       const { data: n, error: e2 } = await state.client.from('notes').select('*').eq('board_slug', state.board).order('created_at',{ascending:false});
       state.notes = e2 ? [] : (n||[]); if(e2) showErr('Erro ao carregar anotações', e2);
 
-      // reuniões: mais recentes no topo (created_at desc)
       const { data: m, error: e3 } = await state.client.from('meetings').select('*').eq('board_slug', state.board).order('created_at',{ascending:false});
       state.meetings = e3 ? [] : (m||[]); if(e3) showErr('Erro ao carregar reuniões', e3);
     }else{
       const {tasks,notes,meetings} = loadLocal(); state.tasks=tasks; state.notes=notes; state.meetings=meetings;
     }
     render(); updateFilters(); renderNoteAuthors();
+
+    renderMeetingList(); // CHANGED: mantém a lista do modal sincronizada
   }
 
   async function upsertTask(obj){
@@ -464,34 +465,65 @@
   async function upsertMeeting(obj){
     if(state.online){
       if(obj.id){
-        const { error } = await state.client.from('meetings').update({ ...obj, updated_at:new Date().toISOString() }).eq('id', obj.id);
+        const { error } = await state.client
+          .from('meetings')
+          .update({ ...obj, updated_at:new Date().toISOString() })
+          .eq('id', obj.id);
         if(error) return showErr('Erro ao atualizar reunião', error);
       }else{
-        const payload = { ...obj, board_slug: state.board };
-        const { error } = await state.client.from('meetings').insert(payload);
-        if(error) return showErr('Erro ao criar reunião', error);
+        // CHANGED: inclusão otimista (aparece na hora)
+        const tempId = crypto.randomUUID();
+        const optimistic = { id: tempId, board_slug: state.board, created_at: new Date().toISOString(), ...obj };
+        state.meetings = [optimistic, ...(state.meetings||[])];
+        renderMeetingList();
+
+        // grava no Supabase e substitui pelo registro real
+        const { data, error } = await state.client
+          .from('meetings')
+          .insert({ ...obj, board_slug: state.board })
+          .select()
+          .single();
+
+        if(error){
+          // desfaz se der erro
+          state.meetings = state.meetings.filter(m => m.id !== tempId);
+          renderMeetingList();
+          return showErr('Erro ao criar reunião', error);
+        }
+        const ix = state.meetings.findIndex(m => m.id === tempId);
+        if(ix >= 0) state.meetings[ix] = data;
+        renderMeetingList();
+        return;
       }
     }else{
       if(!obj.id){ obj.id=crypto.randomUUID(); obj.created_at=new Date().toISOString(); }
       const idx=state.meetings.findIndex(x=>x.id===obj.id);
-      if(idx>=0) state.meetings[idx]={...state.meetings[idx],...obj}; else state.meetings.unshift(obj); // novas no topo
+      if(idx>=0) state.meetings[idx]={...state.meetings[idx],...obj}; else state.meetings.unshift(obj);
       saveLocal();
     }
     await fetchAll();
   }
+
   async function deleteMeeting(idv){
+    // CHANGED: remoção otimista (some na hora)
+    const backup = [...(state.meetings||[])];
+    state.meetings = state.meetings.filter(m => m.id !== idv);
+    renderMeetingList();
+
     if(state.online){
       const { error } = await state.client.from('meetings').delete().eq('id', idv);
-      if(error) return showErr('Erro ao excluir reunião', error);
+      if(error){
+        state.meetings = backup; // volta se falhar
+        renderMeetingList();
+        return showErr('Erro ao excluir reunião', error);
+      }
     }else{
-      state.meetings = state.meetings.filter(n=>n.id!==idv); saveLocal();
+      saveLocal();
     }
-    await fetchAll();
   }
 
   function openMeetings(){
     renderMeetingResponsaveis();
-    // limpa form
     id('mResp').value = FIXED_RESPONSAVEIS[0] || '';
     id('mTitulo').value = '';
     id('mDesc').value = '';
@@ -501,8 +533,9 @@
     id('dlgMeetings').showModal();
   }
   function renderMeetingList(){
-    const wrap=id('meetingList'); wrap.innerHTML='';
-    const list = [...state.meetings].sort((a,b) => new Date(b.created_at||0) - new Date(a.created_at||0));
+    const wrap=id('meetingList'); if(!wrap) return;
+    wrap.innerHTML='';
+    const list = [...(state.meetings||[])].sort((a,b) => new Date(b.created_at||0) - new Date(a.created_at||0));
     if(!list.length){
       wrap.innerHTML = `<div class="muted">Sem reuniões registradas.</div>`;
       return;
@@ -531,8 +564,8 @@
     const responsavel=id('mResp').value;
     const titulo=(id('mTitulo').value||'').trim();
     const descricao=(id('mDesc').value||'').trim() || null;
-    const data=id('mData').value || null; // texto 'YYYY-MM-DD' (combina com sua tabela)
-    const hora=id('mHora').value || null; // texto 'HH:MM'
+    const data=id('mData').value || null;
+    const hora=id('mHora').value || null;
 
     if(!titulo || !responsavel || !data || !hora){
       return showErr('Formulário incompleto','Preencha responsável, título, dia e hora.');
@@ -540,7 +573,6 @@
     const obj = { titulo, descricao, responsavel, data, hora, autor: state.author };
     if(!state.online) obj.board_slug=state.board;
     await upsertMeeting(obj);
-    // após salvar, mantém o modal aberto e limpa os campos para novo registro
     id('mTitulo').value=''; id('mDesc').value=''; id('mData').value=''; id('mHora').value='';
   }
 

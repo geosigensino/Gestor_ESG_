@@ -69,7 +69,7 @@
     .actions{display:flex;gap:8px;margin-top:10px}
 
     .filters{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-    select,input[type="date"],input[type="text"]{background:var(--panel);color:var(--txt);border:1px solid var(--border);border-radius:10px;padding:8px 10px}
+    select,input[type="date"],input[type="time"],input[type="text"]{background:var(--panel);color:var(--txt);border:1px solid var(--border);border-radius:10px;padding:8px 10px}
 
     .status-inline{font-size:12px;padding:4px 6px;border-radius:8px}
 
@@ -117,10 +117,9 @@
     dialog.modal-light label{ color:#4b5563; }
     dialog.modal-light input[type="text"],
     dialog.modal-light input[type="date"],
+    dialog.modal-light input[type="time"],
     dialog.modal-light select,
     dialog.modal-light textarea{ background:#f8fafc; color:#0f172a; border:1px solid #e5e7eb; border-radius:10px; padding:8px 10px; }
-    dialog.modal-light .assignees label{ background:#f1f5f9; color:#0f172a; border:1px solid #e5e7eb; }
-    dialog.modal-light .assignees input[type="checkbox"]:checked + label{ background:var(--brand); color:#fff; border-color:transparent; box-shadow:0 0 0 3px rgba(24,91,36,.25); }
     dialog.modal-light .btn{ background:#f8fafc; color:#0f172a; border:1px solid #e5e7eb; }
     dialog.modal-light .btn.primary{ background:linear-gradient(180deg,var(--brand),var(--brand-2)); color:#fff; border:none; }
 
@@ -143,7 +142,6 @@
     .cal-day.has-task::after{ content:""; position:absolute; left:50%; transform:translateX(-50%); bottom:6px; width:6px; height:6px; border-radius:50%; background:var(--warn); }
     #selDiaTag .btn.small{ padding:2px 6px; }
 
-    /* Modo bottom-sheet em telas estreitas */
     @media (max-width:420px){
       .cal-pop{
         left:50% !important;
@@ -159,6 +157,17 @@
     .badge.due-today{ background:var(--st-todo-bg); color:var(--st-todo-tx); border-color:var(--st-todo-bd) }
     .badge.due-soon{ background:var(--st-prog-bg); color:var(--st-prog-tx); border-color:var(--st-prog-bd) }
     .badge.due-overdue{ background:var(--st-late-bg); color:var(--st-late-tx); border-color:var(--st-late-bd) }
+
+    /* ===== Reuniões (lista dentro do modal) ===== */
+    .meet-item{ background:#fff; border:1px solid #e6ebf2; border-radius:12px; padding:10px 12px; }
+    .meet-item + .meet-item{ margin-top:10px; }
+    .meet-title{ font-weight:700; color:#0f172a; }
+    .meet-meta{ color:#6b7280; font-size:12px; display:flex; gap:8px; flex-wrap:wrap; margin-top:4px; }
+    .meet-actions{ display:flex; gap:8px; margin-top:8px; }
+    .light .meet-item{ background:#fff; }
+    :not(.light) .meet-item{ background:#0f1317; border-color:#1f2430; color:#dde6ee; }
+    :not(.light) .meet-title{ color:#dde6ee; }
+    :not(.light) .meet-meta{ color:#9aa4b2; }
   </style>
 </head>
 <body>
@@ -199,6 +208,9 @@
         <span id="selDiaTag" class="pill" style="display:none">dia: <strong id="selDiaText"></strong> <button class="btn small" id="btnClearDia" title="Limpar">×</button></span>
 
         <div id="calPopover" class="cal-pop hidden" role="dialog" aria-label="Calendário"></div>
+
+        <!-- NOVO: botão Reuniões -->
+        <button class="btn small" id="btnMeetings" title="Reuniões">🗓 Reuniões</button>
       </div>
 
       <button class="btn" id="btnExport">Exportar CSV</button>
@@ -268,7 +280,7 @@
     </div>
   </div>
 
-  <!-- MODAL -->
+  <!-- MODAL: TAREFA -->
   <dialog id="dlgTask" class="modal-light">
     <div class="modal-head" id="taskModalTitle">Nova tarefa</div>
     <div class="modal-body">
@@ -290,6 +302,32 @@
     </div>
   </dialog>
 
+  <!-- NOVO: MODAL REUNIÕES -->
+  <dialog id="dlgMeetings" class="modal-light">
+    <div class="modal-head">Reuniões</div>
+    <div class="modal-body">
+      <!-- Formulário -->
+      <div class="field"><label>Responsável</label>
+        <select id="mResp"></select>
+      </div>
+      <div class="field"><label>Título</label><input id="mTitulo" type="text" placeholder="Ex.: Reunião com cliente" /></div>
+      <div class="field"><label>Descrição (opcional)</label><input id="mDesc" type="text" placeholder="Pauta, link, etc." /></div>
+      <div class="row" style="gap:8px">
+        <div class="field" style="flex:1"><label>Dia</label><input id="mData" type="date" /></div>
+        <div class="field" style="flex:1"><label>Hora</label><input id="mHora" type="time" step="60" /></div>
+      </div>
+      <div class="actions" style="justify-content:flex-end">
+        <button class="btn" id="mCancelar">Fechar</button>
+        <button class="btn primary" id="mSalvar">Salvar reunião</button>
+      </div>
+
+      <hr style="border:none;border-top:1px solid #e6ebf2;margin:8px 0"/>
+
+      <!-- Lista -->
+      <div id="meetingList" style="max-height:360px; overflow:auto"></div>
+    </div>
+  </dialog>
+
   <script>
   const DEFAULT_SB_URL = 'https://oakntljdkkoqwttkgzpk.supabase.co';
   const DEFAULT_SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ha250bGpka2tvcXd0dGtnenBrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYwMzQzMDgsImV4cCI6MjA3MTYxMDMwOH0.jjxUzxyUoutDAVzZg9nrSi9kg5fYfs6F7PCd4xkT48c';
@@ -301,8 +339,15 @@
     board: new URL(location.href).searchParams.get('board') || 'default',
     author: 'Anônimo',
     supabaseUrl: DEFAULT_SB_URL, supabaseKey: DEFAULT_SB_KEY, client: null,
-    tasks: [], notes: [], editingTaskId: null, editingNoteId: null, online:false,
-    filterDate:null, calMonth:null
+    tasks: [], notes: [], meetings: [],
+    editingTaskId: null, editingNoteId: null,
+    online:false,
+
+    /* mini-calendário de filtro por dia */
+    filterDate:null, calMonth:null,
+
+    /* fallback específico de reuniões (se tabela não existir) */
+    meetingsLocalOnly:false,
   };
 
   function applyTheme(){ if(state.theme==='light') document.body.classList.add('light'); else document.body.classList.remove('light'); } applyTheme();
@@ -316,13 +361,25 @@
   function ymdToLocalDate(s){ if(!s) return null; const [y,m,d]=s.split('-').map(Number); return new Date(y,m-1,d); }
   function fmtDate(d){ if(!d) return ''; const dt=(typeof d==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(d))?ymdToLocalDate(d):new Date(d); return dt.toLocaleDateString(); }
   function fmtDateTime(d){ return d?new Date(d).toLocaleString():''; }
+  function fmtDateHour(ymd, hm){
+    if(!ymd) return '';
+    const dt=ymdToLocalDate(ymd);
+    if(hm){ const [H,M]=hm.split(':').map(Number); dt.setHours(H||0,M||0,0,0); }
+    return dt.toLocaleString();
+  }
 
   const toCSV = rows=>{ if(!rows.length) return ''; const head=Object.keys(rows[0]); const body=rows.map(r=>head.map(k=>`"${String(r[k]??'').replaceAll('"','""')}"`).join(',')); return [head.join(','),...body].join('\n'); };
   function showErr(ctx, err){ console.error(ctx, err); alert(`${ctx}:\n${(err && err.message) || err}`); }
 
   function lsKey(){ return `gst_${state.board}`; }
-  function loadLocal(){ const raw=localStorage.getItem(lsKey()); if(!raw) return {tasks:[],notes:[]}; try{return JSON.parse(raw);}catch{return{tasks:[],notes:[]}} }
-  function saveLocal(){ localStorage.setItem(lsKey(), JSON.stringify({tasks:state.tasks, notes:state.notes})); }
+  function loadLocal(){
+    const raw=localStorage.getItem(lsKey()); if(!raw) return {tasks:[],notes:[],meetings:[]};
+    try{
+      const obj=JSON.parse(raw);
+      return { tasks:obj.tasks||[], notes:obj.notes||[], meetings:obj.meetings||[] };
+    }catch{ return {tasks:[],notes:[],meetings:[]}; }
+  }
+  function saveLocal(){ localStorage.setItem(lsKey(), JSON.stringify({tasks:state.tasks, notes:state.notes, meetings:state.meetings})); }
 
   function renderRespChoices(selected=[]){
     const wrap=id('tRespGroup'); wrap.innerHTML='';
@@ -346,15 +403,16 @@
       state.online=true;
       id('onlineState').textContent='Online (Supabase)';
       id('modeLabel').innerHTML=`Online • Snapshots por link — board: <span id="boardLabel">${state.board}</span>`;
-      state.client.channel('ch-app')
+      const ch = state.client.channel('ch-app')
         .on('postgres_changes', { event:'*', schema:'public', table:'tasks', filter:`board_slug=eq.${state.board}` }, handleRealtime)
         .on('postgres_changes', { event:'*', schema:'public', table:'notes', filter:`board_slug=eq.${state.board}` }, handleRealtime)
-        .subscribe();
+        .on('postgres_changes', { event:'*', schema:'public', table:'meetings', filter:`board_slug=eq.${state.board}` }, handleRealtime);
+      ch.subscribe();
     }catch(e){
       state.online=false;
       id('onlineState').textContent='Offline (LocalStorage)';
       id('modeLabel').innerHTML=`Modo local • Snapshots por link — board: <span id="boardLabel">${state.board}</span>`;
-      showErr('Falha ao conectar ao Supabase', e);
+      console.warn('Supabase indisponível, usando LocalStorage.');
     }
   }
   async function handleRealtime(){ await fetchAll(); }
@@ -363,92 +421,108 @@
     if(state.online){
       const { data: t, error: e1 } = await state.client.from('tasks').select('*').eq('board_slug', state.board).order('created_at',{ascending:true});
       state.tasks = e1 ? [] : (t||[]); if(e1) showErr('Erro ao carregar tarefas', e1);
+
       const { data: n, error: e2 } = await state.client.from('notes').select('*').eq('board_slug', state.board).order('created_at',{ascending:false});
       state.notes = e2 ? [] : (n||[]); if(e2) showErr('Erro ao carregar anotações', e2);
+
+      await fetchMeetings(); // separa a lógica de reuniões
     }else{
-      const {tasks,notes} = loadLocal(); state.tasks=tasks; state.notes=notes;
+      const {tasks,notes,meetings} = loadLocal(); state.tasks=tasks; state.notes=notes; state.meetings=meetings;
     }
     render(); updateFilters(); renderNoteAuthors();
   }
 
-  async function upsertTask(obj){
-    if(state.online){
+  /* ===== Reuniões: CRUD + render ===== */
+  async function fetchMeetings(){
+    if(state.online && !state.meetingsLocalOnly){
+      const { data, error } = await state.client
+        .from('meetings').select('*')
+        .eq('board_slug', state.board)
+        .order('created_at',{ascending:false});
+      if(error){
+        // se tabela não existir, cai para local apenas para reuniões
+        console.warn('meetings: usando LocalStorage (', error.message, ')');
+        state.meetingsLocalOnly = true;
+        const { meetings } = loadLocal(); state.meetings = meetings||[];
+      }else{
+        state.meetings = data || [];
+      }
+    }else{
+      const { meetings } = loadLocal(); state.meetings = meetings||[];
+    }
+  }
+  async function upsertMeeting(obj){
+    if(state.online && !state.meetingsLocalOnly){
       if(obj.id){
-        const { error } = await state.client.from('tasks').update(obj).eq('id', obj.id);
-        if(error) return showErr('Erro ao atualizar tarefa', error);
+        const { error } = await state.client.from('meetings').update(obj).eq('id', obj.id);
+        if(error){ showErr('Erro ao atualizar reunião', error); return; }
       }else{
         const payload = { ...obj, board_slug: state.board };
-        const { error } = await state.client.from('tasks').insert(payload);
-        if(error) return showErr('Erro ao criar tarefa', error);
+        const { error } = await state.client.from('meetings').insert(payload);
+        if(error){ showErr('Erro ao criar reunião', error); return; }
       }
     }else{
       if(!obj.id){ obj.id=crypto.randomUUID(); obj.created_at=new Date().toISOString(); }
-      const idx=state.tasks.findIndex(x=>x.id===obj.id);
-      if(idx>=0) state.tasks[idx]={...state.tasks[idx],...obj}; else state.tasks.push(obj);
+      const idx=state.meetings.findIndex(x=>x.id===obj.id);
+      if(idx>=0) state.meetings[idx]={...state.meetings[idx],...obj}; else state.meetings.unshift(obj);
       saveLocal();
     }
-    await fetchAll();
+    await fetchMeetings();
+    renderMeetings();
   }
-  async function deleteTask(idv){
-    if(state.online){
-      const { error } = await state.client.from('tasks').delete().eq('id', idv);
-      if(error) return showErr('Erro ao excluir tarefa', error);
+  async function deleteMeeting(idv){
+    if(state.online && !state.meetingsLocalOnly){
+      const { error } = await state.client.from('meetings').delete().eq('id', idv);
+      if(error){ showErr('Erro ao excluir reunião', error); return; }
     }else{
-      state.tasks = state.tasks.filter(t=>t.id!==idv); saveLocal();
+      state.meetings = state.meetings.filter(m=>m.id!==idv); saveLocal();
     }
-    await fetchAll();
+    await fetchMeetings();
+    renderMeetings();
   }
 
-  async function addNote(content){
-    const autor=id('noteAuthor').value;
-    if(!content.trim()) return;
-    if(state.online){
-      const { error } = await state.client.from('notes').insert({ board_slug: state.board, conteudo: content, autor });
-      if(error) return showErr('Erro ao criar anotação', error);
-    }else{
-      state.notes.push({ id: crypto.randomUUID(), conteudo: content, autor, created_at: new Date().toISOString(), updated_at: null });
-      saveLocal();
-    }
-    id('noteInput').value=''; await fetchAll();
+  function openMeetingsModal(){
+    // popular responsáveis
+    id('mResp').innerHTML = FIXED_RESPONSAVEIS.map(n=>`<option value="${n}">${n}</option>`).join('');
+    // preencher data/hora padrão
+    const now=new Date();
+    id('mData').value = toYMD(now);
+    id('mHora').value = `${pad2(now.getHours())}:${pad2(now.getMinutes())}`;
+    renderMeetings();
+    id('dlgMeetings').showModal();
   }
-  async function startEditNote(note){ state.editingNoteId=note.id; renderNotes(); }
-  async function saveEditNote(idv){
-    const area=id(`edit_area_${idv}`), sel=id(`edit_author_${idv}`);
-    const newText=area.value.trim(), newAuthor=sel.value; if(!newText) return;
-    if(state.online){
-      const { error } = await state.client.from('notes').update({ conteudo:newText, autor:newAuthor }).eq('id', idv);
-      if(error) return showErr('Erro ao salvar edição', error);
-    }else{
-      const idx=state.notes.findIndex(n=>n.id===idv);
-      if(idx>=0){ state.notes[idx].conteudo=newText; state.notes[idx].autor=newAuthor; state.notes[idx].updated_at=new Date().toISOString(); saveLocal(); }
-    }
-    state.editingNoteId=null; await fetchAll();
-  }
-  function cancelEditNote(){ state.editingNoteId=null; renderNotes(); }
-  async function deleteNote(idv){
-    if(state.online){
-      const { error } = await state.client.from('notes').delete().eq('id', idv);
-      if(error) return showErr('Erro ao excluir anotação', error);
-    }else{
-      state.notes = state.notes.filter(n=>n.id!==idv); saveLocal();
-    }
-    await fetchAll();
-  }
-
-  function render(){
-    id('boardLabel').textContent=state.board;
-    renderTasks();
-    renderNotes();
-    updateSelectedDayChip();
+  function renderMeetings(){
+    const wrap=id('meetingList'); wrap.innerHTML='';
+    // ordenar por created_at desc (mais recente primeiro)
+    const list=[...state.meetings].sort((a,b)=> new Date(b.created_at||0) - new Date(a.created_at||0));
+    list.forEach(m=>{
+      const dv=document.createElement('div'); dv.className='meet-item';
+      const tt=document.createElement('div'); tt.className='meet-title'; tt.textContent=m.titulo || '(sem título)';
+      const meta=document.createElement('div'); meta.className='meet-meta';
+      meta.innerHTML = `
+        <span>👤 ${m.responsavel||'—'}</span>
+        <span>•</span>
+        <span>🕒 ${fmtDateHour(m.data, m.hora)}</span>
+      `;
+      if(m.descricao){
+        const desc=document.createElement('div'); desc.style.marginTop='6px'; desc.textContent=m.descricao;
+        dv.append(tt, meta, desc);
+      }else{
+        dv.append(tt, meta);
+      }
+      const actions=document.createElement('div'); actions.className='meet-actions';
+      const bDel=document.createElement('button'); bDel.className='btn small'; bDel.textContent='Excluir'; bDel.onclick=()=>deleteMeeting(m.id);
+      actions.append(bDel); dv.append(actions);
+      wrap.append(dv);
+    });
   }
 
-  /* ===== Aviso de vencimento ===== */
+  /* ===== Aviso de vencimento das tarefas ===== */
   function getDueBadge(prazo, status){
     if(!prazo || status==='concluida') return null;
     const today=new Date(); today.setHours(0,0,0,0);
     const d=ymdToLocalDate(prazo);
-    const diff=Math.round((d - today)/(1000*60*60*24)); // dias até o prazo
-
+    const diff=Math.round((d - today)/(1000*60*60*24));
     if(diff<0) return { cls:'due due-overdue', text:`atrasada há ${Math.abs(diff)}d` };
     if(diff===0) return { cls:'due due-today', text:'vence hoje' };
     if(diff===1) return { cls:'due due-soon', text:'vence amanhã' };
@@ -588,7 +662,7 @@
     if(opts.includes(val)) sel.value=val; else sel.value='todos';
   }
 
-  /* ===== Calendário ===== */
+  /* ===== Mini-calendário ===== */
   function toggleCalendar(){ const pop=id('calPopover'); if(pop.classList.contains('hidden')) openCalendar(); else closeCalendar(); }
   function openCalendar(){
     if(!state.calMonth){
@@ -699,6 +773,25 @@
     if(id('chkUpdateLink').checked) updateShareLink();
   }
 
+  /* Salvar reunião */
+  async function saveMeetingFromModal(){
+    const payload = {
+      titulo: (id('mTitulo').value||'').trim() || 'Sem título',
+      descricao: (id('mDesc').value||'').trim() || null,
+      responsavel: id('mResp').value,
+      data: id('mData').value || null,
+      hora: id('mHora').value || null
+    };
+    if(!payload.data || !payload.hora){
+      return showErr('Validação', new Error('Informe dia e hora da reunião.'));
+    }
+    if(!state.online || state.meetingsLocalOnly) payload.board_slug = state.board;
+    await upsertMeeting(payload);
+
+    // limpa e mantém dia/hora
+    id('mTitulo').value=''; id('mDesc').value='';
+  }
+
   function updateShareLink(){ const url=new URL(location.href); url.searchParams.set('board',state.board); url.searchParams.set('theme',state.theme); history.replaceState({},'',url.toString()); }
   function generateShareLink(){ const url=new URL(location.href); url.searchParams.set('board',state.board); url.searchParams.set('theme',state.theme); navigator.clipboard.writeText(url.toString()); alert('Link copiado! Cole no WhatsApp para compartilhar.'); }
   function toggleTheme(){ state.theme=(state.theme==='dark')?'light':'dark'; localStorage.setItem('theme',state.theme); applyTheme(); updateShareLink(); }
@@ -708,6 +801,7 @@
     const csv=toCSV(rows); const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`tarefas_${state.board}.csv`; a.click();
   }
 
+  /* Eventos */
   document.getElementById('btnTheme').onclick = toggleTheme;
   document.getElementById('btnNova').onclick = ()=>openTaskModal();
   qsa('[data-add]').forEach(b=>b.onclick=()=>openTaskModal({status:b.getAttribute('data-add')}));
@@ -726,6 +820,48 @@
   document.addEventListener('keydown', (ev)=>{ if(ev.key==='Escape') closeCalendar(); });
   window.addEventListener('resize', ()=>{ const pop=id('calPopover'); if(!pop.classList.contains('hidden')) placeCalendarPopover(); });
   window.addEventListener('scroll', ()=>{ const pop=id('calPopover'); if(!pop.classList.contains('hidden')) placeCalendarPopover(); }, true);
+
+  // Reuniões
+  document.getElementById('btnMeetings').onclick = openMeetingsModal;
+  document.getElementById('mSalvar').onclick = saveMeetingFromModal;
+  document.getElementById('mCancelar').onclick = ()=>id('dlgMeetings').close();
+
+  /* Notas */
+  async function addNote(content){
+    const autor=id('noteAuthor').value;
+    if(!content.trim()) return;
+    if(state.online){
+      const { error } = await state.client.from('notes').insert({ board_slug: state.board, conteudo: content, autor });
+      if(error) return showErr('Erro ao criar anotação', error);
+    }else{
+      state.notes.push({ id: crypto.randomUUID(), conteudo: content, autor, created_at: new Date().toISOString(), updated_at: null });
+      saveLocal();
+    }
+    id('noteInput').value=''; await fetchAll();
+  }
+  async function startEditNote(note){ state.editingNoteId=note.id; renderNotes(); }
+  async function saveEditNote(idv){
+    const area=id(`edit_area_${idv}`), sel=id(`edit_author_${idv}`);
+    const newText=area.value.trim(), newAuthor=sel.value; if(!newText) return;
+    if(state.online){
+      const { error } = await state.client.from('notes').update({ conteudo:newText, autor:newAuthor }).eq('id', idv);
+      if(error) return showErr('Erro ao salvar edição', error);
+    }else{
+      const idx=state.notes.findIndex(n=>n.id===idv);
+      if(idx>=0){ state.notes[idx].conteudo=newText; state.notes[idx].autor=newAuthor; state.notes[idx].updated_at=new Date().toISOString(); saveLocal(); }
+    }
+    state.editingNoteId=null; await fetchAll();
+  }
+  function cancelEditNote(){ state.editingNoteId=null; renderNotes(); }
+  async function deleteNote(idv){
+    if(state.online){
+      const { error } = await state.client.from('notes').delete().eq('id', idv);
+      if(error) return showErr('Erro ao excluir anotação', error);
+    }else{
+      state.notes = state.notes.filter(n=>n.id!==idv); saveLocal();
+    }
+    await fetchAll();
+  }
 
   (async function init(){
     const params=new URL(location.href).searchParams;

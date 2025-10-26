@@ -60,13 +60,14 @@
     .dropzone{flex:1;padding:14px;min-height:160px}
     .dropzone.readonly{opacity:.95}
 
-    .card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px;margin:12px 6px;box-shadow:var(--shadow);transition:box-shadow .2s,transform .05s}
+    .card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px;margin:12px 6px;box-shadow:var(--shadow);transition:box-shadow .2s,transform .05s;cursor:pointer}
     .card:hover{box-shadow:0 10px 22px rgba(0,0,0,.25)}
     .title{font-weight:700}
     .tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
     .tag{background:rgba(255,255,255,.06);border:1px solid var(--border);padding:4px 8px;border-radius:999px;font-size:12px}
     .row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
     .actions{display:flex;gap:8px;margin-top:10px}
+    .actions .btn.small{cursor:pointer}
 
     .filters{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
     select,input[type="date"],input[type="text"],input[type="time"]{background:var(--panel);color:var(--txt);border:1px solid var(--border);border-radius:10px;padding:8px 10px}
@@ -78,7 +79,7 @@
     .note-edit{display:grid;gap:8px}
     textarea{width:100%;min-height:64px;background:var(--panel);color:var(--txt);border:1px solid var(--border);border-radius:10px;padding:8px 10px}
 
-    .badges{display:flex;align-items:center;gap:8px}
+    .badges{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
     .badge{font-size:12px;padding:2px 8px;border-radius:999px;border:1px solid var(--border);background:var(--panel)}
     .badge.status-a_fazer{background:var(--st-todo-bg);color:var(--st-todo-tx);border-color:var(--st-todo-bd)}
     .badge.status-em_andamento{background:var(--st-prog-bg);color:var(--st-prog-tx);border-color:var(--st-prog-bd)}
@@ -119,7 +120,7 @@
     dialog.modal-light input[type="date"],
     dialog.modal-light input[type="time"],
     dialog.modal-light select,
-    dialog.modal-light textarea{ background:#f8fafc; color:#0f172a; border:1px solid #e5e7eb; border-radius:10px; padding:8px 10px; }
+    dialog.modal-light textarea{ background:#f8fafc; color:#0f172a; border:1px solid #e5e7eb; border-radius:10px; padding:8px 10px; width:100%; box-sizing:border-box; }
     dialog.modal-light .btn{ background:#f8fafc; color:#0f172a; border:1px solid #e5e7eb; }
     dialog.modal-light .btn.primary{ background:linear-gradient(180deg,var(--brand),var(--brand-2)); color:#fff; border:none; }
 
@@ -166,6 +167,31 @@
     .meeting-meta{ color:var(--muted); font-size:12px; display:flex; gap:8px; flex-wrap:wrap; }
     .meeting-actions{ display:flex; gap:8px; }
     .pill-inline{ background:rgba(255,255,255,.06); border:1px solid var(--border); border-radius:999px; padding:2px 8px; font-size:12px; }
+
+    /* ===== Timeline (histórico da tarefa) ===== */
+    .timeline-form{ display:grid; gap:8px; border:1px solid var(--border); background:var(--panel); border-radius:10px; padding:10px; }
+    .timeline-form-head{ font-weight:700; color:#0f172a; display:flex; justify-content:space-between; align-items:center; }
+    .timeline-list{ display:grid; gap:10px; max-height:45vh; overflow:auto; padding-right:2px; }
+    .tl-item{ border:1px solid var(--border); background:var(--panel); border-radius:10px; padding:10px; display:grid; gap:6px; }
+    .tl-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:8px; }
+    .tl-left{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+    .tl-dot{ width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+    .dot-concluido{ background:var(--ok); }
+    .dot-andamento{ background:var(--warn); }
+    .dot-parado{ background:var(--danger); }
+    .tl-titulo{ font-weight:600; color:#0f172a; }
+    .tl-actions{ display:flex; gap:8px; }
+    .tl-actions .btn.small{ padding:4px 8px; font-size:12px; line-height:1.1; }
+    .tl-meta{ font-size:12px; color:var(--muted); display:flex; flex-wrap:wrap; gap:6px; }
+    .tl-desc{ font-size:13px; color:#4b5563; white-space:pre-wrap; word-break:break-word; }
+
+    .tl-edit-block{ display:grid; gap:6px; }
+    .tl-edit-row{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+    .tl-edit-row label{ font-size:12px; color:#4b5563; }
+    .tl-edit-row input[type="text"],
+    .tl-edit-row textarea,
+    .tl-edit-row select{ font-size:13px; }
+    .tl-save-row{ display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
   </style>
 </head>
 <body>
@@ -208,7 +234,7 @@
         <div id="calPopover" class="cal-pop hidden" role="dialog" aria-label="Calendário"></div>
       </div>
 
-      <!-- Novo: botão das reuniões -->
+      <!-- Botão das reuniões -->
       <button class="btn" id="btnMeetings" title="Reuniões">🗓 Reuniões</button>
 
       <button class="btn" id="btnExport">Exportar CSV</button>
@@ -332,6 +358,45 @@
     </div>
   </dialog>
 
+  <!-- MODAL: TIMELINE DA TAREFA -->
+  <dialog id="dlgTimeline" class="modal-light">
+    <div class="modal-head" id="tlTaskTitle">Timeline / Histórico</div>
+    <div class="modal-body">
+      <!-- Formulário para novo registro de timeline (só aparece para autor) -->
+      <div id="tlFormWrap" class="timeline-form" style="display:none">
+        <div class="timeline-form-head">
+          <span>Novo registro</span>
+        </div>
+        <div class="tl-edit-row">
+          <label style="min-width:60px">Título</label>
+          <input id="tlNovoTitulo" type="text" placeholder="Ex.: Reunião feita / Documento entregue" />
+        </div>
+        <div class="tl-edit-row">
+          <label style="min-width:60px">Descrição</label>
+          <textarea id="tlNovoDesc" placeholder="Descreva rapidamente o que aconteceu…"></textarea>
+        </div>
+        <div class="tl-edit-row">
+          <label style="min-width:60px">Status</label>
+          <select id="tlNovoStatus">
+            <option value="parado">Parado (vermelho)</option>
+            <option value="andamento">Em andamento (amarelo)</option>
+            <option value="concluido">Concluído (verde)</option>
+          </select>
+        </div>
+        <div class="tl-save-row">
+          <button class="btn primary" id="tlNovoSalvar">Adicionar na timeline</button>
+        </div>
+      </div>
+
+      <!-- Lista da timeline -->
+      <div style="font-weight:700">Histórico</div>
+      <div id="tlList" class="timeline-list"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" id="tlFechar">Fechar</button>
+    </div>
+  </dialog>
+
   <script>
   const DEFAULT_SB_URL = 'https://oakntljdkkoqwttkgzpk.supabase.co';
   const DEFAULT_SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ha250bGpka2tvcXd0dGtnenBrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYwMzQzMDgsImV4cCI6MjA3MTYxMDMwOH0.jjxUzxyUoutDAVzZg9nrSi9kg5fYfs6F7PCd4xkT48c';
@@ -345,7 +410,9 @@
     supabaseUrl: DEFAULT_SB_URL, supabaseKey: DEFAULT_SB_KEY, client: null,
     tasks: [], notes: [], meetings: [],
     editingTaskId: null, editingNoteId: null, online:false,
-    filterDate:null, calMonth:null
+    filterDate:null, calMonth:null,
+    viewingTaskTimelineId:null,
+    editingTimelineEntryId:null
   };
 
   function applyTheme(){ if(state.theme==='light') document.body.classList.add('light'); else document.body.classList.remove('light'); } applyTheme();
@@ -429,8 +496,12 @@
       const {tasks,notes,meetings} = loadLocal(); state.tasks=tasks; state.notes=notes; state.meetings=meetings;
     }
     render(); updateFilters(); renderNoteAuthors();
+    renderMeetingList(); // mantém lista de reuniões sincronizada
 
-    renderMeetingList(); // CHANGED: mantém a lista do modal sincronizada
+    // se timeline estiver aberta, re-renderiza modal
+    if(state.viewingTaskTimelineId){
+      renderTimelineModal();
+    }
   }
 
   async function upsertTask(obj){
@@ -446,7 +517,11 @@
     }else{
       if(!obj.id){ obj.id=crypto.randomUUID(); obj.created_at=new Date().toISOString(); }
       const idx=state.tasks.findIndex(x=>x.id===obj.id);
-      if(idx>=0) state.tasks[idx]={...state.tasks[idx],...obj}; else state.tasks.push(obj);
+      if(idx>=0){
+        state.tasks[idx]={...state.tasks[idx],...obj};
+      }else{
+        state.tasks.push(obj);
+      }
       saveLocal();
     }
     await fetchAll();
@@ -471,13 +546,11 @@
           .eq('id', obj.id);
         if(error) return showErr('Erro ao atualizar reunião', error);
       }else{
-        // CHANGED: inclusão otimista (aparece na hora)
         const tempId = crypto.randomUUID();
         const optimistic = { id: tempId, board_slug: state.board, created_at: new Date().toISOString(), ...obj };
         state.meetings = [optimistic, ...(state.meetings||[])];
         renderMeetingList();
 
-        // grava no Supabase e substitui pelo registro real
         const { data, error } = await state.client
           .from('meetings')
           .insert({ ...obj, board_slug: state.board })
@@ -485,7 +558,6 @@
           .single();
 
         if(error){
-          // desfaz se der erro
           state.meetings = state.meetings.filter(m => m.id !== tempId);
           renderMeetingList();
           return showErr('Erro ao criar reunião', error);
@@ -498,14 +570,14 @@
     }else{
       if(!obj.id){ obj.id=crypto.randomUUID(); obj.created_at=new Date().toISOString(); }
       const idx=state.meetings.findIndex(x=>x.id===obj.id);
-      if(idx>=0) state.meetings[idx]={...state.meetings[idx],...obj}; else state.meetings.unshift(obj);
+      if(idx>=0){ state.meetings[idx]={...state.meetings[idx],...obj}; }
+      else{ state.meetings.unshift(obj); }
       saveLocal();
     }
     await fetchAll();
   }
 
   async function deleteMeeting(idv){
-    // CHANGED: remoção otimista (some na hora)
     const backup = [...(state.meetings||[])];
     state.meetings = state.meetings.filter(m => m.id !== idv);
     renderMeetingList();
@@ -513,7 +585,7 @@
     if(state.online){
       const { error } = await state.client.from('meetings').delete().eq('id', idv);
       if(error){
-        state.meetings = backup; // volta se falhar
+        state.meetings = backup;
         renderMeetingList();
         return showErr('Erro ao excluir reunião', error);
       }
@@ -633,6 +705,231 @@
     return null;
   }
 
+  /* ===== Timeline helpers ===== */
+  function getTaskById(taskId){
+    return state.tasks.find(x=>x.id===taskId);
+  }
+  function getTimelineStatusLabel(st){
+    if(st==='concluido') return 'Concluído';
+    if(st==='andamento') return 'Em andamento';
+    if(st==='parado') return 'Parado';
+    return st || '';
+  }
+  function getTimelineDotClass(st){
+    if(st==='concluido') return 'dot-concluido';
+    if(st==='andamento') return 'dot-andamento';
+    if(st==='parado') return 'dot-parado';
+    return '';
+  }
+
+  async function saveTaskTimeline(task){
+    // persiste somente timeline e updated_at
+    const newObj = { id: task.id, timeline: task.timeline||[], updated_at: new Date().toISOString() };
+    await upsertTask(newObj);
+  }
+
+  function openTimelineModal(taskId){
+    state.viewingTaskTimelineId = taskId;
+    state.editingTimelineEntryId = null;
+    renderTimelineModal();
+    id('dlgTimeline').showModal();
+  }
+
+  function renderTimelineModal(){
+    const task = getTaskById(state.viewingTaskTimelineId);
+    if(!task) return;
+    const isAutor = task.autor === state.author || !task.autor; // autor pode ser vazio em dados antigos
+    const tlTaskTitle = id('tlTaskTitle');
+    const tlFormWrap = id('tlFormWrap');
+    const tlList = id('tlList');
+
+    tlTaskTitle.textContent = `Timeline / Histórico — ${task.titulo||'(sem título)'}`;
+
+    // mostra ou oculta formulário de novo registro
+    if(isAutor){
+      tlFormWrap.style.display = '';
+    }else{
+      tlFormWrap.style.display = 'none';
+    }
+
+    // limpa campos do formulário novo
+    // (não limpa se já estiver digitando; simples assim)
+    // opcional: deixamos como está
+
+    // Renderizar lista
+    tlList.innerHTML = '';
+    const timelineArr = Array.isArray(task.timeline) ? [...task.timeline] : [];
+    // ordenar do mais recente pro mais antigo
+    timelineArr.sort((a,b)=> new Date(b.created_at||0) - new Date(a.created_at||0));
+
+    if(!timelineArr.length){
+      tlList.innerHTML = `<div class="muted">Sem registros na timeline.</div>`;
+      return;
+    }
+
+    timelineArr.forEach(entry=>{
+      const isEditing = state.editingTimelineEntryId === entry.id;
+      const item = document.createElement('div');
+      item.className = 'tl-item';
+
+      if(isEditing){
+        // bloco de edição
+        const editBlock = document.createElement('div');
+        editBlock.className='tl-edit-block';
+
+        // título
+        const rowTitulo = document.createElement('div');
+        rowTitulo.className='tl-edit-row';
+        const lblT = document.createElement('label'); lblT.textContent='Título';
+        const inpT = document.createElement('input'); inpT.type='text'; inpT.id=`tlEditTitulo_${entry.id}`; inpT.value=entry.titulo||'';
+        rowTitulo.append(lblT, inpT);
+
+        // descrição
+        const rowDesc = document.createElement('div');
+        rowDesc.className='tl-edit-row';
+        const lblD = document.createElement('label'); lblD.textContent='Descrição';
+        const inpD = document.createElement('textarea'); inpD.id=`tlEditDesc_${entry.id}`; inpD.value=entry.descricao||'';
+        rowDesc.append(lblD, inpD);
+
+        // status
+        const rowSt = document.createElement('div');
+        rowSt.className='tl-edit-row';
+        const lblS = document.createElement('label'); lblS.textContent='Status';
+        const selS = document.createElement('select'); selS.id=`tlEditStatus_${entry.id}`;
+        selS.innerHTML = `
+          <option value="parado">Parado (vermelho)</option>
+          <option value="andamento">Em andamento (amarelo)</option>
+          <option value="concluido">Concluído (verde)</option>
+        `;
+        selS.value = entry.status || 'parado';
+        rowSt.append(lblS, selS);
+
+        // linha salvar/cancelar
+        const rowBtns = document.createElement('div');
+        rowBtns.className='tl-save-row';
+        const bCancel = document.createElement('button');
+        bCancel.className='btn';
+        bCancel.textContent='Cancelar';
+        bCancel.onclick=()=>{ state.editingTimelineEntryId=null; renderTimelineModal(); };
+
+        const bSave = document.createElement('button');
+        bSave.className='btn primary';
+        bSave.textContent='Salvar';
+        bSave.onclick=async ()=>{
+          const newTitulo = id(`tlEditTitulo_${entry.id}`).value.trim() || '(sem título)';
+          const newDesc   = id(`tlEditDesc_${entry.id}`).value.trim() || '';
+          const newStatus = id(`tlEditStatus_${entry.id}`).value;
+          const tTask = getTaskById(state.viewingTaskTimelineId);
+          if(!tTask) return;
+          const arr = Array.isArray(tTask.timeline)?tTask.timeline:[];
+          const idx = arr.findIndex(e=>e.id===entry.id);
+          if(idx>=0){
+            arr[idx] = { ...arr[idx],
+              titulo:newTitulo,
+              descricao:newDesc,
+              status:newStatus,
+              updated_at:new Date().toISOString()
+            };
+          }
+          tTask.timeline = arr;
+          await saveTaskTimeline(tTask);
+          state.editingTimelineEntryId=null;
+          renderTimelineModal();
+        };
+
+        rowBtns.append(bCancel,bSave);
+
+        editBlock.append(rowTitulo,rowDesc,rowSt,rowBtns);
+        item.append(editBlock);
+
+      }else{
+        // visualização normal
+        const top = document.createElement('div');
+        top.className='tl-top';
+
+        const left = document.createElement('div');
+        left.className='tl-left';
+        const dot = document.createElement('span');
+        dot.className=`tl-dot ${getTimelineDotClass(entry.status)}`;
+        const tt = document.createElement('span');
+        tt.className='tl-titulo';
+        tt.textContent=entry.titulo||'(sem título)';
+        left.append(dot,tt);
+
+        const act = document.createElement('div');
+        act.className='tl-actions';
+
+        if(isAutor){
+          const bEdit = document.createElement('button');
+          bEdit.className='btn small';
+          bEdit.textContent='Editar';
+          bEdit.onclick=()=>{ state.editingTimelineEntryId = entry.id; renderTimelineModal(); };
+          const bDel = document.createElement('button');
+          bDel.className='btn small';
+          bDel.textContent='Excluir';
+          bDel.onclick=async ()=>{
+            const tTask=getTaskById(state.viewingTaskTimelineId);
+            if(!tTask) return;
+            const arr=Array.isArray(tTask.timeline)?tTask.timeline:[];
+            tTask.timeline = arr.filter(e=>e.id!==entry.id);
+            await saveTaskTimeline(tTask);
+            renderTimelineModal();
+          };
+          act.append(bEdit,bDel);
+        }
+
+        top.append(left, act);
+
+        const meta=document.createElement('div');
+        meta.className='tl-meta';
+        const tsLabel = entry.created_at ? fmtDateTime(entry.created_at) : '(sem data)';
+        const stLabel = getTimelineStatusLabel(entry.status);
+        meta.innerHTML = `<span>${stLabel}</span><span>•</span><span>${tsLabel}</span>`;
+
+        const desc=document.createElement('div');
+        desc.className='tl-desc';
+        desc.textContent=entry.descricao||'';
+
+        item.append(top, meta, desc);
+      }
+
+      tlList.append(item);
+    });
+  }
+
+  async function addTimelineEntry(){
+    const task = getTaskById(state.viewingTaskTimelineId);
+    if(!task) return;
+    // só autor pode adicionar
+    if(task.autor && task.autor !== state.author){
+      return showErr('Sem permissão','Somente o autor da tarefa pode registrar na timeline.');
+    }
+    const titulo = (id('tlNovoTitulo').value||'').trim() || '(sem título)';
+    const descricao = (id('tlNovoDesc').value||'').trim() || '';
+    const status = id('tlNovoStatus').value || 'parado';
+
+    const entry = {
+      id: crypto.randomUUID(),
+      titulo,
+      descricao,
+      status,
+      created_at: new Date().toISOString()
+    };
+
+    const arr = Array.isArray(task.timeline)?task.timeline:[];
+    arr.push(entry);
+    task.timeline = arr;
+
+    // limpa campos
+    id('tlNovoTitulo').value='';
+    id('tlNovoDesc').value='';
+    id('tlNovoStatus').value='parado';
+
+    await saveTaskTimeline(task);
+    renderTimelineModal();
+  }
+
+  /* ===== Render das tarefas ===== */
   function makeTaskCard(t){
     const card=document.createElement('div');
     card.className='card';
@@ -640,6 +937,9 @@
     card.draggable=true;
     card.dataset.id=t.id;
     card.addEventListener('dragstart', e=>{ e.dataTransfer.setData('text/plain', t.id); });
+
+    // clique geral abre timeline
+    card.addEventListener('click', ()=> openTimelineModal(t.id) );
 
     const title=document.createElement('div'); title.className='title'; title.textContent=t.titulo||'(sem título)';
 
@@ -656,7 +956,12 @@
     const stSel=document.createElement('select'); stSel.className='status-inline';
     stSel.innerHTML=`<option value="a_fazer">a fazer</option><option value="em_andamento">em andamento</option><option value="concluida">concluída</option>`;
     stSel.value=t.status;
-    stSel.onchange=async e=>{ await upsertTask({ id:t.id, status:e.target.value }); };
+    // impedir que o clique no select abra timeline
+    stSel.addEventListener('click', ev=>ev.stopPropagation());
+    stSel.onchange=async e=>{
+      e.stopPropagation();
+      await upsertTask({ id:t.id, status:e.target.value });
+    };
     stRow.append(stLabel, stSel);
 
     const meta=document.createElement('div'); meta.className='muted'; meta.style.fontSize='12px';
@@ -666,8 +971,12 @@
     (t.responsaveis||[]).forEach(p=>{ const el=document.createElement('span'); el.className='tag'; el.textContent=p; tags.append(el); });
 
     const actions=document.createElement('div'); actions.className='actions';
-    const bEdit=document.createElement('button'); bEdit.className='btn small'; bEdit.textContent='Editar'; bEdit.onclick=()=>openTaskModal(t);
-    const bDel=document.createElement('button'); bDel.className='btn small'; bDel.textContent='Excluir'; bDel.onclick=()=>deleteTask(t.id);
+    const bEdit=document.createElement('button'); bEdit.className='btn small'; bEdit.textContent='Editar';
+    bEdit.onclick=(ev)=>{ ev.stopPropagation(); openTaskModal(t); };
+
+    const bDel=document.createElement('button'); bDel.className='btn small'; bDel.textContent='Excluir';
+    bDel.onclick=(ev)=>{ ev.stopPropagation(); deleteTask(t.id); };
+
     actions.append(bEdit,bDel);
 
     card.append(title);
@@ -848,7 +1157,7 @@
     else{ chip.style.display='none'; }
   }
 
-  /* Interações gerais */
+  /* ===== Interações gerais ===== */
   function openTaskModal(t){
     state.editingTaskId = t?.id || null;
     id('taskModalTitle').textContent = t ? 'Editar tarefa' : 'Nova tarefa';
@@ -881,7 +1190,18 @@
   function toggleTheme(){ state.theme=(state.theme==='dark')?'light':'dark'; localStorage.setItem('theme',state.theme); applyTheme(); updateShareLink(); }
 
   function exportCSV(){
-    const rows=state.tasks.map(t=>({ id:t.id, board:state.board, titulo:t.titulo, descricao:t.descricao||'', status:t.status, prazo:t.prazo||'', responsaveis:(t.responsaveis||[]).join('; '), autor:t.autor||'', criado_em:t.created_at||'', atualizado_em:t.updated_at||'' }));
+    const rows=state.tasks.map(t=>({
+      id:t.id,
+      board:state.board,
+      titulo:t.titulo,
+      descricao:t.descricao||'',
+      status:t.status,
+      prazo:t.prazo||'',
+      responsaveis:(t.responsaveis||[]).join('; '),
+      autor:t.autor||'',
+      criado_em:t.created_at||'',
+      atualizado_em:t.updated_at||''
+    }));
     const csv=toCSV(rows); const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`tarefas_${state.board}.csv`; a.click();
   }
 
@@ -904,10 +1224,22 @@
   document.getElementById('mCancelar').onclick = ()=>{ id('mTitulo').value=''; id('mDesc').value=''; id('mData').value=''; id('mHora').value=''; };
   document.getElementById('mFechar').onclick = ()=>id('dlgMeetings').close();
 
+  // Timeline
+  document.getElementById('tlNovoSalvar').onclick = addTimelineEntry;
+  document.getElementById('tlFechar').onclick = ()=>{
+    state.viewingTaskTimelineId=null;
+    state.editingTimelineEntryId=null;
+    id('dlgTimeline').close();
+  };
+
   // mini-calendário
   document.getElementById('btnCal').onclick = toggleCalendar;
   document.getElementById('btnClearDia').onclick = ()=>{ state.filterDate=null; render(); };
-  document.addEventListener('click', (ev)=>{ const pop=id('calPopover'); if(pop.classList.contains('hidden')) return; if(!pop.contains(ev.target) && ev.target!==id('btnCal')) closeCalendar(); });
+  document.addEventListener('click', (ev)=>{
+    const pop=id('calPopover');
+    if(pop.classList.contains('hidden')) return;
+    if(!pop.contains(ev.target) && ev.target!==id('btnCal')) closeCalendar();
+  });
   document.addEventListener('keydown', (ev)=>{ if(ev.key==='Escape') closeCalendar(); });
   window.addEventListener('resize', ()=>{ const pop=id('calPopover'); if(!pop.classList.contains('hidden')) placeCalendarPopover(); });
   window.addEventListener('scroll', ()=>{ const pop=id('calPopover'); if(!pop.classList.contains('hidden')) placeCalendarPopover(); }, true);

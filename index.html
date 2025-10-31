@@ -196,40 +196,19 @@
       .toolbar{position:static;top:auto}
     }
 
-    dialog{
-      width:min(780px, calc(100% - 32px));
-    }
+    dialog{ width:min(780px, calc(100% - 32px)); }
     dialog.modal-light{
-      background:#ffffff;
-      color:#111827;
-      border:1px solid #e6ebf2;
-      border-radius:14px;
-      box-shadow:var(--shadow);
+      background:#ffffff; color:#111827; border:1px solid #e6ebf2;
+      border-radius:14px; box-shadow:var(--shadow);
     }
     dialog.modal-light::backdrop{ background:rgba(0,0,0,.45); }
     dialog.modal-light .modal-head{
-      padding:14px 16px;
-      border-bottom:1px solid #e6ebf2;
-      font-weight:700;
-      color:#0f172a;
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-start;
-      gap:8px;
-      flex-wrap:wrap;
+      padding:14px 16px; border-bottom:1px solid #e6ebf2; font-weight:700; color:#0f172a;
+      display:flex; justify-content:space-between; align-items:flex-start; gap:8px; flex-wrap:wrap;
     }
-    dialog.modal-light .modal-body{
-      padding:14px 16px;
-      display:grid;
-      gap:16px;
-    }
+    dialog.modal-light .modal-body{ padding:14px 16px; display:grid; gap:16px; }
     dialog.modal-light .modal-foot{
-      padding:14px 16px;
-      border-top:1px solid #e6ebf2;
-      display:flex;
-      gap:10px;
-      justify-content:flex-end;
-      flex-wrap:wrap;
+      padding:14px 16px; border-top:1px solid #e6ebf2; display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap;
     }
     dialog.modal-light label{ color:#4b5563; font-size:13px; }
     dialog.modal-light input[type="text"],
@@ -237,347 +216,132 @@
     dialog.modal-light input[type="time"],
     dialog.modal-light select,
     dialog.modal-light textarea{
-      background:#f8fafc;
-      color:#0f172a;
-      border:1px solid #e5e7eb;
-      border-radius:10px;
-      padding:8px 10px;
-      width:100%;
-      box-sizing:border-box;
-      font-size:13px;
+      background:#f8fafc; color:#0f172a; border:1px solid #e5e7eb; border-radius:10px; padding:8px 10px;
+      width:100%; box-sizing:border-box; font-size:13px;
     }
-    dialog.modal-light .btn{
-      background:#f8fafc;
-      color:#0f172a;
-      border:1px solid #e5e7eb;
-    }
-    dialog.modal-light .btn.primary{
-      background:linear-gradient(180deg,var(--brand),var(--brand-2));
-      color:#fff;
-      border:none;
-    }
+    dialog.modal-light .btn{ background:#f8fafc; color:#0f172a; border:1px solid #e5e7eb; }
+    dialog.modal-light .btn.primary{ background:linear-gradient(180deg,var(--brand),var(--brand-2)); color:#fff; border:none; }
 
     /* ===== Mini-calendário (popover) ===== */
-    .cal-pop{
-      position:fixed; z-index:20; width:280px; max-width:96vw;
-      background:var(--panel); border:1px solid var(--border);
-      border-radius:12px; box-shadow:var(--shadow); padding:8px;
-    }
+    .cal-pop{ position:fixed; z-index:20; width:280px; max-width:96vw; background:var(--panel); border:1px solid var(--border); border-radius:12px; box-shadow:var(--shadow); padding:8px; }
     .cal-pop.hidden{ display:none; }
     .cal{ display:grid; gap:8px; }
-    .cal-head{
-      display:flex; justify-content:space-between; align-items:center; padding:4px 6px;
-    }
+    .cal-head{ display:flex; justify-content:space-between; align-items:center; padding:4px 6px; }
     .cal-head .title{ font-weight:700; }
     .cal-head button{ padding:4px 8px; }
-    .cal-grid{
-      display:grid; grid-template-columns:repeat(7,1fr); gap:6px; padding:0 4px 6px;
-    }
-    .cal-dow{
-      text-align:center; font-size:12px; color:var(--muted);
-    }
-    .cal-day{
-      position:relative; text-align:center; padding:8px 0;
-      border:1px solid var(--border); border-radius:8px;
-      cursor:pointer; user-select:none; background:var(--panel);
-      font-size:13px;
-    }
+    .cal-grid{ display:grid; grid-template-columns:repeat(7,1fr); gap:6px; padding:0 4px 6px; }
+    .cal-dow{ text-align:center; font-size:12px; color:var(--muted); }
+    .cal-day{ position:relative; text-align:center; padding:8px 0; border:1px solid var(--border); border-radius:8px; cursor:pointer; user-select:none; background:var(--panel); font-size:13px; }
     .cal-day:hover{ box-shadow:0 4px 14px rgba(0,0,0,.18); }
     .cal-day.is-today{ outline:2px solid var(--brand); outline-offset:-2px; }
-    .cal-day.is-selected{
-      background:linear-gradient(180deg,var(--brand),var(--brand-2));
-      color:#fff; border-color:transparent;
-    }
-    .cal-day.has-task::after{
-      content:""; position:absolute; left:50%;
-      transform:translateX(-50%); bottom:6px;
-      width:6px; height:6px; border-radius:50%;
-      background:var(--warn);
-    }
+    .cal-day.is-selected{ background:linear-gradient(180deg,var(--brand),var(--brand-2)); color:#fff; border-color:transparent; }
+    .cal-day.has-task::after{ content:""; position:absolute; left:50%; transform:translateX(-50%); bottom:6px; width:6px; height:6px; border-radius:50%; background:var(--warn); }
     #selDiaTag .btn.small{ padding:2px 6px; }
 
-    /* Modo bottom-sheet em telas estreitas */
     @media (max-width:420px){
       .cal-pop{
-        left:50% !important;
-        transform:translateX(-50%) !important;
-        top:auto !important;
-        bottom:calc(env(safe-area-inset-bottom, 0px) + 8px) !important;
-        width:calc(100vw - 16px);
+        left:50% !important; transform:translateX(-50%) !important; top:auto !important;
+        bottom:calc(env(safe-area-inset-bottom, 0px) + 8px) !important; width:calc(100vw - 16px);
       }
     }
 
-    /* ===== Avisos de vencimento nos cards ===== */
+    /* ===== Avisos de vencimento ===== */
     .badge.due{ font-weight:700 }
-    .badge.due-today{
-      background:var(--st-todo-bg); color:var(--st-todo-tx); border-color:var(--st-todo-bd)
-    }
-    .badge.due-soon{
-      background:var(--st-prog-bg); color:var(--st-prog-tx); border-color:var(--st-prog-bd)
-    }
-    .badge.due-overdue{
-      background:var(--st-late-bg); color:var(--st-late-tx); border-color:var(--st-late-bd)
-    }
+    .badge.due-today{ background:var(--st-todo-bg); color:var(--st-todo-tx); border-color:var(--st-todo-bd) }
+    .badge.due-soon{ background:var(--st-prog-bg); color:var(--st-prog-tx); border-color:var(--st-prog-bd) }
+    .badge.due-overdue{ background:var(--st-late-bg); color:var(--st-late-tx); border-color:var(--st-late-bd) }
 
     /* ===== Reuniões ===== */
-    .meeting-list{
-      display:grid; gap:10px;
-      max-height:50vh; overflow:auto; padding-right:2px;
-    }
-    .meeting-item{
-      border:1px solid var(--border); background:var(--panel);
-      border-radius:10px; padding:10px;
-      display:grid; gap:6px;
-    }
-    .meeting-top{
-      display:flex; gap:8px; align-items:center; justify-content:space-between;
-    }
-    .meeting-meta{
-      color:var(--muted); font-size:12px;
-      display:flex; gap:8px; flex-wrap:wrap;
-    }
+    .meeting-list{ display:grid; gap:10px; max-height:50vh; overflow:auto; padding-right:2px; }
+    .meeting-item{ border:1px solid var(--border); background:var(--panel); border-radius:10px; padding:10px; display:grid; gap:6px; }
+    .meeting-top{ display:flex; gap:8px; align-items:center; justify-content:space-between; }
+    .meeting-meta{ color:var(--muted); font-size:12px; display:flex; gap:8px; flex-wrap:wrap; }
     .meeting-actions{ display:flex; gap:8px; }
-    .pill-inline{
-      background:rgba(255,255,255,.06); border:1px solid var(--border);
-      border-radius:999px; padding:2px 8px; font-size:12px;
-    }
+    .pill-inline{ background:rgba(255,255,255,.06); border:1px solid var(--border); border-radius:999px; padding:2px 8px; font-size:12px; }
 
-    /* ===== TIMELINE E HISTÓRICO DA TAREFA ===== */
+    /* ===== TIMELINE (estilos já existentes) ===== */
+    .tl-body-grid{ display:grid; grid-template-columns: minmax(0,1fr); gap:16px; }
+    .tl-brief-card{ background:#f8fafc; border:1px solid #e5e7eb; border-radius:12px; padding:12px 14px; display:grid; gap:8px; }
+    .tl-brief-title{ font-weight:600; color:#0f172a; font-size:15px; line-height:1.3; word-break:break-word; }
+    .tl-brief-meta{ font-size:12px; color:#4b5563; display:flex; flex-wrap:wrap; gap:10px; line-height:1.4; }
+    .tl-brief-badges{ display:flex; flex-wrap:wrap; gap:6px; font-size:12px; }
+    .tl-brief-chip{ background:#fff; border:1px solid #d1d5db; border-radius:999px; padding:2px 8px; line-height:1.2; color:#1f2937; font-size:12px; }
+    .timeline-form{ display:grid; gap:10px; background:#ffffff; border:1px solid #d1d5db; border-radius:12px; padding:12px 14px; }
+    .timeline-form-head{ font-weight:600; color:#0f172a; font-size:14px; display:flex; justify-content:space-between; align-items:center; }
+    .tl-edit-row{ display:grid; gap:4px; }
+    .tl-edit-row label{ font-size:12px; color:#4b5563; font-weight:500; }
+    .tl-edit-row input[type="text"], .tl-edit-row textarea, .tl-edit-row select{
+      background:#f9fafb; border:1px solid #d1d5db; border-radius:8px; padding:8px 10px; font-size:13px; color:#111827; width:100%; box-sizing:border-box;
+    }
+    .tl-save-row{ display:flex; justify-content:flex-end; gap:8px; flex-wrap:wrap; }
+    .tl-history-head{ font-weight:600; color:#0f172a; font-size:14px; }
+    .timeline-entries{ position:relative; max-height:45vh; overflow:auto; padding-left:20px; padding-right:4px; }
+    .timeline-entries::before{ content:""; position:absolute; left:6px; top:0; bottom:0; width:2px; background:#e5e7eb; }
+    .tl-item{ position:relative; background:#ffffff; border:1px solid #e5e7eb; border-radius:10px; padding:10px 12px; margin-bottom:12px;
+      box-shadow:0 6px 16px rgba(0,0,0,.04); display:grid; gap:6px; }
+    .tl-item-dot{ position:absolute; left:-14px; top:12px; width:12px; height:12px; border-radius:50%; border:2px solid #fff; box-shadow:0 0 0 2px #e5e7eb; }
+    .dot-concluido{ background:var(--ok); } .dot-andamento{ background:var(--warn); } .dot-parado{ background:var(--danger); }
+    .tl-top-line{ display:flex; flex-wrap:wrap; justify-content:space-between; gap:8px; align-items:flex-start; }
+    .tl-left-block{ display:grid; gap:4px; min-width:0; }
+    .tl-titulo{ font-weight:600; color:#0f172a; font-size:14px; line-height:1.3; word-break:break-word; }
+    .tl-line2{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; font-size:12px; line-height:1.4; color:#6b7280; }
+    .tl-pill{ font-size:11px; font-weight:600; padding:2px 6px; border-radius:999px; line-height:1.2; border:1px solid transparent; }
+    .tl-pill-concluido{ background:rgba(56,193,114,.14); color:#065f46; border-color:rgba(56,193,114,.4); }
+    .tl-pill-andamento{ background:rgba(255,204,0,.14); color:#7a6400; border-color:rgba(255,204,0,.4); }
+    .tl-pill-parado{ background:rgba(239,107,107,.16); color:#7a1b1b; border-color:rgba(239,107,107,.45); }
+    .tl-desc{ font-size:13px; color:#4b5563; white-space:pre-wrap; word-break:break-word; }
+    .tl-actions{ display:flex; flex-wrap:wrap; gap:8px; }
+    .tl-actions .btn.small{ padding:4px 8px; font-size:12px; line-height:1.2; background:#f9fafb; border:1px solid #d1d5db; color:#1f2937; box-shadow:none; }
+    .tl-edit-block{ display:grid; gap:10px; }
+    .tl-edit-buttons{ display:flex; justify-content:flex-end; flex-wrap:wrap; gap:8px; }
 
-    /* grid geral do corpo do modal de timeline */
-    .tl-body-grid{
-      display:grid;
-      grid-template-columns: minmax(0,1fr);
-      gap:16px;
+    /* ===== Overlay de senha ===== */
+    .locked #app{ filter: blur(8px) saturate(80%); pointer-events:none; user-select:none; }
+    #loginOverlay{ position:fixed; inset:0; display:none; align-items:center; justify-content:center;
+      background:rgba(0,0,0,.45); z-index:50; backdrop-filter: blur(3px); }
+    #loginCard{
+      width:min(420px, calc(100% - 32px));
+      background:#ffffff; color:#0f172a;
+      border:1px solid #e6ebf2; border-radius:14px; box-shadow:0 20px 48px rgba(0,0,0,.28);
+      padding:18px; display:grid; gap:12px;
     }
-
-    /* cartão resumo da tarefa */
-    .tl-brief-card{
-      background:#f8fafc;
-      border:1px solid #e5e7eb;
-      border-radius:12px;
-      padding:12px 14px;
-      display:grid;
-      gap:8px;
+    #loginCard .brand{ font-weight:800; font-size:18px; }
+    .login-meta{ color:#6b7280; font-size:12px; }
+    .login-row{ display:grid; gap:6px; }
+    .login-row label{ color:#4b5563; font-size:12px; }
+    .login-row input{
+      width:100%; background:#f8fafc; color:#0f172a; border:1px solid #e5e7eb;
+      border-radius:10px; padding:10px 12px; font-size:14px;
     }
-    .tl-brief-title{
-      font-weight:600;
-      color:#0f172a;
-      font-size:15px;
-      line-height:1.3;
-      word-break:break-word;
-    }
-    .tl-brief-meta{
-      font-size:12px;
-      color:#4b5563;
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      line-height:1.4;
-    }
-    .tl-brief-badges{
-      display:flex;
-      flex-wrap:wrap;
-      gap:6px;
-      font-size:12px;
-    }
-    .tl-brief-chip{
-      background:#fff;
-      border:1px solid #d1d5db;
-      border-radius:999px;
-      padding:2px 8px;
-      line-height:1.2;
-      color:#1f2937;
-      font-size:12px;
-    }
-
-    /* formulário de novo registro na timeline */
-    .timeline-form{
-      display:grid; gap:10px;
-      background:#ffffff;
-      border:1px solid #d1d5db;
-      border-radius:12px;
-      padding:12px 14px;
-    }
-    .timeline-form-head{
-      font-weight:600;
-      color:#0f172a;
-      font-size:14px;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-    }
-    .tl-edit-row{
-      display:grid;
-      gap:4px;
-    }
-    .tl-edit-row label{
-      font-size:12px;
-      color:#4b5563;
-      font-weight:500;
-    }
-    .tl-edit-row input[type="text"],
-    .tl-edit-row textarea,
-    .tl-edit-row select{
-      background:#f9fafb;
-      border:1px solid #d1d5db;
-      border-radius:8px;
-      padding:8px 10px;
-      font-size:13px;
-      color:#111827;
-      width:100%;
-      box-sizing:border-box;
-    }
-    .tl-save-row{
-      display:flex;
-      justify-content:flex-end;
-      gap:8px;
-      flex-wrap:wrap;
-    }
-
-    /* lista visual da timeline */
-    .tl-history-head{
-      font-weight:600;
-      color:#0f172a;
-      font-size:14px;
-    }
-
-    .timeline-entries{
-      position:relative;
-      max-height:45vh;
-      overflow:auto;
-      padding-left:20px;
-      padding-right:4px;
-    }
-    /* linha vertical */
-    .timeline-entries::before{
-      content:"";
-      position:absolute;
-      left:6px;
-      top:0;
-      bottom:0;
-      width:2px;
-      background:#e5e7eb;
-    }
-
-    .tl-item{
-      position:relative;
-      background:#ffffff;
-      border:1px solid #e5e7eb;
-      border-radius:10px;
-      padding:10px 12px;
-      margin-bottom:12px;
-      box-shadow:0 6px 16px rgba(0,0,0,.04);
-      display:grid;
-      gap:6px;
-    }
-
-    /* bolinha colorida conectada à linha */
-    .tl-item-dot{
-      position:absolute;
-      left:-14px;
-      top:12px;
-      width:12px;
-      height:12px;
-      border-radius:50%;
-      border:2px solid #fff;
-      box-shadow:0 0 0 2px #e5e7eb;
-    }
-    .dot-concluido{ background:var(--ok); }
-    .dot-andamento{ background:var(--warn); }
-    .dot-parado{ background:var(--danger); }
-
-    .tl-top-line{
-      display:flex;
-      flex-wrap:wrap;
-      justify-content:space-between;
-      gap:8px;
-      align-items:flex-start;
-    }
-    .tl-left-block{
-      display:grid;
-      gap:4px;
-      min-width:0;
-    }
-    .tl-titulo{
-      font-weight:600;
-      color:#0f172a;
-      font-size:14px;
-      line-height:1.3;
-      word-break:break-word;
-    }
-
-    .tl-line2{
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-      align-items:center;
-      font-size:12px;
-      line-height:1.4;
-      color:#6b7280;
-    }
-
-    /* selo de status */
-    .tl-pill{
-      font-size:11px;
-      font-weight:600;
-      padding:2px 6px;
-      border-radius:999px;
-      line-height:1.2;
-      border:1px solid transparent;
-    }
-    .tl-pill-concluido{
-      background:rgba(56,193,114,.14);
-      color:#065f46;
-      border-color:rgba(56,193,114,.4);
-    }
-    .tl-pill-andamento{
-      background:rgba(255,204,0,.14);
-      color:#7a6400;
-      border-color:rgba(255,204,0,.4);
-    }
-    .tl-pill-parado{
-      background:rgba(239,107,107,.16);
-      color:#7a1b1b;
-      border-color:rgba(239,107,107,.45);
-    }
-
-    .tl-desc{
-      font-size:13px;
-      color:#4b5563;
-      white-space:pre-wrap;
-      word-break:break-word;
-    }
-
-    .tl-actions{
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-    }
-    .tl-actions .btn.small{
-      padding:4px 8px;
-      font-size:12px;
-      line-height:1.2;
-      background:#f9fafb;
-      border:1px solid #d1d5db;
-      color:#1f2937;
-      box-shadow:none;
-    }
-
-    /* bloco de edição inline de um item existente */
-    .tl-edit-block{
-      display:grid;
-      gap:10px;
-    }
-    .tl-edit-buttons{
-      display:flex;
-      justify-content:flex-end;
-      flex-wrap:wrap;
-      gap:8px;
-    }
+    .login-actions{ display:flex; gap:8px; justify-content:flex-end; align-items:center; }
+    .login-btn{ cursor:pointer; padding:10px 14px; border-radius:10px; border:1px solid #e5e7eb; background:#f8fafc; }
+    .login-btn.primary{ border:none; background:linear-gradient(180deg,var(--brand),var(--brand-2)); color:#fff; }
+    .login-err{ color:#b91c1c; font-size:12px; display:none; }
+    .shake{ animation:shake .18s linear 2; }
+    @keyframes shake{ 0%{transform:translateX(0)} 25%{transform:translateX(-4px)} 50%{transform:translateX(4px)} 75%{transform:translateX(-2px)} 100%{transform:translateX(0)} }
   </style>
 </head>
 <body>
+  <!-- OVERLAY DE LOGIN -->
+  <div id="loginOverlay">
+    <div id="loginCard">
+      <div class="brand">Eco Smart Group — Gestor de Tarefas</div>
+      <div class="login-meta">Usuário padrão: <strong>EcoSmart Grouping</strong></div>
+
+      <div class="login-row">
+        <label>Senha</label>
+        <input id="pwdInput" type="password" placeholder="Digite a senha" autocomplete="current-password" />
+        <div id="loginErr" class="login-err">Senha incorreta. Tente novamente.</div>
+      </div>
+
+      <div class="login-actions">
+        <button id="pwdShow" class="login-btn" type="button">👁 Mostrar</button>
+        <span style="flex:1"></span>
+        <button id="pwdEnter" class="login-btn primary" type="button">Entrar</button>
+      </div>
+    </div>
+  </div>
+
   <div class="wrap" id="app">
     <header>
       <div>
@@ -822,6 +586,58 @@
     editingTimelineEntryId:null
   };
 
+  /* ====== Cadeado simples (senha no front) ====== */
+  const APP_USER = 'EcoSmart Grouping';
+  const APP_PASSWORD = 'esg2025*';   // <<< senha fornecida
+  const AUTH_FLAG = 'gst_auth_ok';
+  let appStarted = false;
+
+  function bootWithPassword(){
+    const ok = sessionStorage.getItem(AUTH_FLAG) === '1';
+    const overlay = document.getElementById('loginOverlay');
+    const pwdInput = document.getElementById('pwdInput');
+    const btnEnter = document.getElementById('pwdEnter');
+    const btnShow  = document.getElementById('pwdShow');
+    const err = document.getElementById('loginErr');
+
+    function startAppOnce(){
+      if(appStarted) return;
+      appStarted = true;
+      startApp(); // inicializa o app real
+    }
+
+    function showLocked(){
+      document.body.classList.add('locked');
+      overlay.style.display = 'flex';
+      pwdInput.value = '';
+      err.style.display = 'none';
+      setTimeout(()=>pwdInput.focus(), 80);
+    }
+    function unlock(){
+      document.body.classList.remove('locked');
+      overlay.style.display = 'none';
+      sessionStorage.setItem(AUTH_FLAG, '1');
+      startAppOnce();
+    }
+    function wrong(){
+      err.style.display = 'block';
+      const card = document.getElementById('loginCard');
+      card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
+    }
+
+    btnEnter.onclick = ()=>{
+      if(pwdInput.value === APP_PASSWORD) unlock(); else wrong();
+    };
+    btnShow.onclick = ()=>{
+      if(pwdInput.type === 'password'){ pwdInput.type = 'text'; btnShow.textContent = '🙈 Ocultar'; }
+      else{ pwdInput.type = 'password'; btnShow.textContent = '👁 Mostrar'; }
+    };
+    pwdInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter') btnEnter.click(); });
+
+    if(ok){ startAppOnce(); } else { showLocked(); }
+  }
+  document.addEventListener('DOMContentLoaded', bootWithPassword);
+
   function applyTheme(){
     if(state.theme==='light') document.body.classList.add('light');
     else document.body.classList.remove('light');
@@ -981,7 +797,6 @@
     renderNoteAuthors();
     renderMeetingList();
 
-    // se a timeline estiver aberta, re-renderiza
     if(state.viewingTaskTimelineId){
       renderTimelineModal();
     }
@@ -1245,7 +1060,6 @@
     updateSelectedDayChip();
   }
 
-  // ===== Aviso de vencimento =====
   function getDueBadge(prazo, status){
     if(!prazo || status==='concluida') return null;
     const today=new Date(); today.setHours(0,0,0,0);
@@ -1253,65 +1067,32 @@
     const diff=Math.round((d - today)/(1000*60*60*24));
     if(diff<0) return { cls:'due due-overdue', text:`atrasada há ${Math.abs(diff)}d` };
     if(diff===0) return { cls:'due due-today', text:'vence hoje' };
-    if(diff===1) return { cls:'due due-soon', text:'vence amanhã' };
+    if(diff===1) return { cls:'due due-soon', text:'em 1 dia' };
     if(diff<=7) return { cls:'due due-soon', text:`em ${diff} dias` };
     return null;
   }
 
-  // ===== Helpers da timeline =====
-  function getTaskById(taskId){
-    return state.tasks.find(x=>x.id===taskId);
-  }
-
-  function getTimelineStatusLabel(st){
-    if(st==='concluido') return 'Concluído';
-    if(st==='andamento') return 'Em andamento';
-    if(st==='parado') return 'Parado';
-    return st || '';
-  }
-  function getTimelineDotClass(st){
-    if(st==='concluido') return 'dot-concluido';
-    if(st==='andamento') return 'dot-andamento';
-    if(st==='parado') return 'dot-parado';
-    return '';
-  }
-  function getTimelinePillClass(st){
-    if(st==='concluido') return 'tl-pill tl-pill-concluido';
-    if(st==='andamento') return 'tl-pill tl-pill-andamento';
-    if(st==='parado') return 'tl-pill tl-pill-parado';
-    return 'tl-pill';
-  }
+  function getTaskById(taskId){ return state.tasks.find(x=>x.id===taskId); }
+  function getTimelineStatusLabel(st){ if(st==='concluido') return 'Concluído'; if(st==='andamento') return 'Em andamento'; if(st==='parado') return 'Parado'; return st||''; }
+  function getTimelineDotClass(st){ if(st==='concluido') return 'dot-concluido'; if(st==='andamento') return 'dot-andamento'; if(st==='parado') return 'dot-parado'; return ''; }
+  function getTimelinePillClass(st){ if(st==='concluido') return 'tl-pill tl-pill-concluido'; if(st==='andamento') return 'tl-pill tl-pill-andamento'; if(st==='parado') return 'tl-pill tl-pill-parado'; return 'tl-pill'; }
 
   async function saveTaskTimeline(task){
-    // atualiza objeto em memória
     const idx=state.tasks.findIndex(t=>t.id===task.id);
     if(idx>=0){
       state.tasks[idx].timeline = task.timeline || [];
       state.tasks[idx].updated_at = new Date().toISOString();
     }
-
-    // salva local sempre
     saveLocal();
-
-    // tenta salvar online (se possível)
     if(state.online){
-      const payloadUpdate = {
-        timeline: task.timeline || [],
-        updated_at: new Date().toISOString()
-      };
-      const { error } = await state.client
-        .from('tasks')
-        .update(payloadUpdate)
-        .eq('id', task.id);
+      const payloadUpdate = { timeline: task.timeline || [], updated_at: new Date().toISOString() };
+      const { error } = await state.client.from('tasks').update(payloadUpdate).eq('id', task.id);
       if(error){
         console.warn('Falha ao salvar timeline online:', error);
         showErr('Erro ao atualizar timeline', error);
       }
     }
-
-    // re-render
-    renderTimelineModal();
-    renderTasks();
+    renderTimelineModal(); renderTasks();
   }
 
   function openTimelineModal(taskId){
@@ -1327,12 +1108,9 @@
 
     const isAutor = task.autor === state.author || !task.autor;
 
-    // Preenche cabeçalho/resumo
     id('tlTaskTitle').textContent = 'Timeline / Histórico';
-
     id('tlBriefTitulo').textContent = task.titulo || '(sem título)';
 
-    // badges: status atual, prazo etc.
     const badgesWrap = id('tlBriefBadges');
     badgesWrap.innerHTML = '';
     const stSpan = document.createElement('span');
@@ -1356,31 +1134,20 @@
       });
     }
 
-    // meta: criado, autor
     const metaWrap = id('tlBriefMeta');
     metaWrap.innerHTML = '';
     const partesMeta = [];
-    if(task.autor){
-      partesMeta.push('Autor: '+task.autor);
-    }
-    if(task.created_at){
-      partesMeta.push('Criada: '+fmtDateTime(task.created_at));
-    }
-    if(task.updated_at){
-      partesMeta.push('Atualizada: '+fmtDateTime(task.updated_at));
-    }
-    if(!partesMeta.length){
-      partesMeta.push('Sem metadados');
-    }
+    if(task.autor){ partesMeta.push('Autor: '+task.autor); }
+    if(task.created_at){ partesMeta.push('Criada: '+fmtDateTime(task.created_at)); }
+    if(task.updated_at){ partesMeta.push('Atualizada: '+fmtDateTime(task.updated_at)); }
+    if(!partesMeta.length){ partesMeta.push('Sem metadados'); }
     metaWrap.textContent = partesMeta.join(' • ');
 
-    // mostra ou não o formulário
     const tlFormWrap = id('tlFormWrap');
     tlFormWrap.style.display = isAutor ? '' : 'none';
 
     const tlList = id('tlList');
     tlList.innerHTML='';
-
     const timelineArr = Array.isArray(task.timeline) ? [...task.timeline] : [];
     timelineArr.sort((a,b)=> new Date(b.created_at||0) - new Date(a.created_at||0));
 
@@ -1395,64 +1162,39 @@
       const item = document.createElement('div');
       item.className='tl-item';
 
-      // bolinha colorida conectada à linha
       const dot = document.createElement('div');
       dot.className = 'tl-item-dot ' + getTimelineDotClass(entry.status);
       item.appendChild(dot);
 
       if(isEditing){
-        // edição inline
         const editBlock = document.createElement('div');
         editBlock.className='tl-edit-block';
 
-        // título
         const rowTitulo = document.createElement('div');
         rowTitulo.className='tl-edit-row';
-        const lblT=document.createElement('label');
-        lblT.textContent='Título';
-        const inpT=document.createElement('input');
-        inpT.type='text';
-        inpT.id=`tlEditTitulo_${entry.id}`;
-        inpT.value=entry.titulo||'';
+        const lblT=document.createElement('label'); lblT.textContent='Título';
+        const inpT=document.createElement('input'); inpT.type='text'; inpT.id=`tlEditTitulo_${entry.id}`; inpT.value=entry.titulo||'';
         rowTitulo.append(lblT,inpT);
 
-        // descrição
         const rowDesc=document.createElement('div');
         rowDesc.className='tl-edit-row';
-        const lblD=document.createElement('label');
-        lblD.textContent='Descrição';
-        const inpD=document.createElement('textarea');
-        inpD.id=`tlEditDesc_${entry.id}`;
-        inpD.value=entry.descricao||'';
+        const lblD=document.createElement('label'); lblD.textContent='Descrição';
+        const inpD=document.createElement('textarea'); inpD.id=`tlEditDesc_${entry.id}`; inpD.value=entry.descricao||'';
         rowDesc.append(lblD,inpD);
 
-        // status
         const rowSt=document.createElement('div');
         rowSt.className='tl-edit-row';
-        const lblS=document.createElement('label');
-        lblS.textContent='Status';
-        const selS=document.createElement('select');
-        selS.id=`tlEditStatus_${entry.id}`;
-        selS.innerHTML=`
-          <option value="parado">Parado (vermelho)</option>
-          <option value="andamento">Em andamento (amarelo)</option>
-          <option value="concluido">Concluído (verde)</option>
-        `;
+        const lblS=document.createElement('label'); lblS.textContent='Status';
+        const selS=document.createElement('select'); selS.id=`tlEditStatus_${entry.id}`;
+        selS.innerHTML=`<option value="parado">Parado (vermelho)</option><option value="andamento">Em andamento (amarelo)</option><option value="concluido">Concluído (verde)</option>`;
         selS.value=entry.status||'parado';
         rowSt.append(lblS,selS);
 
         const rowBtns=document.createElement('div');
         rowBtns.className='tl-edit-buttons';
-        const bCancel=document.createElement('button');
-        bCancel.className='btn';
-        bCancel.textContent='Cancelar';
-        bCancel.onclick=()=>{
-          state.editingTimelineEntryId=null;
-          renderTimelineModal();
-        };
-        const bSave=document.createElement('button');
-        bSave.className='btn primary';
-        bSave.textContent='Salvar';
+        const bCancel=document.createElement('button'); bCancel.className='btn'; bCancel.textContent='Cancelar';
+        bCancel.onclick=()=>{ state.editingTimelineEntryId=null; renderTimelineModal(); };
+        const bSave=document.createElement('button'); bSave.className='btn primary'; bSave.textContent='Salvar';
         bSave.onclick=async ()=>{
           const newTitulo = id(`tlEditTitulo_${entry.id}`).value.trim() || '(sem título)';
           const newDesc   = id(`tlEditDesc_${entry.id}`).value.trim() || '';
@@ -1462,13 +1204,7 @@
           const arr = Array.isArray(tTask.timeline)?tTask.timeline:[];
           const ix = arr.findIndex(e=>e.id===entry.id);
           if(ix>=0){
-            arr[ix] = {
-              ...arr[ix],
-              titulo:newTitulo,
-              descricao:newDesc,
-              status:newStatus,
-              updated_at:new Date().toISOString()
-            };
+            arr[ix] = { ...arr[ix], titulo:newTitulo, descricao:newDesc, status:newStatus, updated_at:new Date().toISOString() };
           }
           tTask.timeline = arr;
           state.editingTimelineEntryId=null;
@@ -1480,46 +1216,23 @@
         item.append(editBlock);
 
       }else{
-        // visualização normal
-        const topLine=document.createElement('div');
-        topLine.className='tl-top-line';
+        const topLine=document.createElement('div'); topLine.className='tl-top-line';
+        const leftBlock=document.createElement('div'); leftBlock.className='tl-left-block';
 
-        const leftBlock=document.createElement('div');
-        leftBlock.className='tl-left-block';
+        const titleEl=document.createElement('div'); titleEl.className='tl-titulo'; titleEl.textContent=entry.titulo||'(sem título)';
 
-        const titleEl=document.createElement('div');
-        titleEl.className='tl-titulo';
-        titleEl.textContent=entry.titulo||'(sem título)';
-
-        const line2=document.createElement('div');
-        line2.className='tl-line2';
-
-        const pill=document.createElement('span');
-        pill.className=getTimelinePillClass(entry.status);
-        pill.textContent=getTimelineStatusLabel(entry.status);
-
-        const tsLabel = document.createElement('span');
-        tsLabel.textContent = entry.created_at
-          ? fmtDateTime(entry.created_at)
-          : '(sem data)';
-
+        const line2=document.createElement('div'); line2.className='tl-line2';
+        const pill=document.createElement('span'); pill.className=getTimelinePillClass(entry.status); pill.textContent=getTimelineStatusLabel(entry.status);
+        const tsLabel = document.createElement('span'); tsLabel.textContent = entry.created_at ? fmtDateTime(entry.created_at) : '(sem data)';
         line2.append(pill,tsLabel);
 
         leftBlock.append(titleEl,line2);
 
-        const actions=document.createElement('div');
-        actions.className='tl-actions';
+        const actions=document.createElement('div'); actions.className='tl-actions';
         if(isAutor){
-          const bEdit = document.createElement('button');
-          bEdit.className='btn small';
-          bEdit.textContent='Editar';
-          bEdit.onclick=()=>{
-            state.editingTimelineEntryId=entry.id;
-            renderTimelineModal();
-          };
-          const bDel = document.createElement('button');
-          bDel.className='btn small';
-          bDel.textContent='Excluir';
+          const bEdit = document.createElement('button'); bEdit.className='btn small'; bEdit.textContent='Editar';
+          bEdit.onclick=()=>{ state.editingTimelineEntryId=entry.id; renderTimelineModal(); };
+          const bDel = document.createElement('button'); bDel.className='btn small'; bDel.textContent='Excluir';
           bDel.onclick=async ()=>{
             const tTask=getTaskById(state.viewingTaskTimelineId);
             if(!tTask) return;
@@ -1531,23 +1244,17 @@
         }
 
         topLine.append(leftBlock, actions);
-
-        const desc=document.createElement('div');
-        desc.className='tl-desc';
-        desc.textContent=entry.descricao||'';
-
+        const desc=document.createElement('div'); desc.className='tl-desc'; desc.textContent=entry.descricao||'';
         item.append(topLine, desc);
       }
 
-      tlList.append(item);
+      id('tlList').append(item);
     });
   }
 
   async function addTimelineEntry(){
     const task = getTaskById(state.viewingTaskTimelineId);
     if(!task) return;
-
-    // só o autor pode adicionar
     if(task.autor && task.autor !== state.author){
       return showErr('Sem permissão','Somente o autor da tarefa pode registrar na timeline.');
     }
@@ -1556,152 +1263,68 @@
     const descricao = (id('tlNovoDesc').value||'').trim() || '';
     const status = id('tlNovoStatus').value || 'parado';
 
-    const entry = {
-      id: crypto.randomUUID(),
-      titulo,
-      descricao,
-      status,
-      created_at: new Date().toISOString()
-    };
-
+    const entry = { id: crypto.randomUUID(), titulo, descricao, status, created_at: new Date().toISOString() };
     const arr = Array.isArray(task.timeline)?task.timeline:[];
     arr.push(entry);
     task.timeline = arr;
 
-    // limpa campos do formulário
-    id('tlNovoTitulo').value='';
-    id('tlNovoDesc').value='';
-    id('tlNovoStatus').value='parado';
-
+    id('tlNovoTitulo').value=''; id('tlNovoDesc').value=''; id('tlNovoStatus').value='parado';
     await saveTaskTimeline(task);
   }
 
   // ===== Render tarefas =====
   function makeTaskCard(t){
     const card=document.createElement('div');
-    card.className='card';
-    card.classList.add('is-'+t.status);
-    card.draggable=true;
-    card.dataset.id=t.id;
-    card.addEventListener('dragstart', e=>{
-      e.dataTransfer.setData('text/plain', t.id);
-    });
+    card.className='card'; card.classList.add('is-'+t.status); card.draggable=true; card.dataset.id=t.id;
+    card.addEventListener('dragstart', e=>{ e.dataTransfer.setData('text/plain', t.id); });
+    card.addEventListener('click', ()=>{ openTimelineModal(t.id); });
 
-    // abrir timeline ao clicar no card
-    card.addEventListener('click', ()=>{
-      openTimelineModal(t.id);
-    });
+    const title=document.createElement('div'); title.className='title'; title.textContent=t.titulo||'(sem título)';
 
-    const title=document.createElement('div');
-    title.className='title';
-    title.textContent=t.titulo||'(sem título)';
-
-    const badges=document.createElement('div');
-    badges.className='badges';
-    const stBadge=document.createElement('span');
-    stBadge.className='badge status-'+t.status;
-    stBadge.textContent=t.status.replace('_',' ');
-    const prazo=document.createElement('span');
-    prazo.className='badge';
-    prazo.textContent=t.prazo ? 'Prazo: '+fmtDate(t.prazo) : 'Sem prazo';
+    const badges=document.createElement('div'); badges.className='badges';
+    const stBadge=document.createElement('span'); stBadge.className='badge status-'+t.status; stBadge.textContent=t.status.replace('_',' ');
+    const prazo=document.createElement('span'); prazo.className='badge'; prazo.textContent=t.prazo ? 'Prazo: '+fmtDate(t.prazo) : 'Sem prazo';
     badges.append(stBadge,prazo);
 
     const due=getDueBadge(t.prazo, t.status);
-    if(due){
-      const b=document.createElement('span');
-      b.className='badge '+due.cls;
-      b.textContent=due.text.toUpperCase();
-      badges.append(b);
-    }
+    if(due){ const b=document.createElement('span'); b.className='badge '+due.cls; b.textContent=due.text.toUpperCase(); badges.append(b); }
 
-    const stRow=document.createElement('div');
-    stRow.className='row';
-    const stLabel=document.createElement('span');
-    stLabel.className='muted';
-    stLabel.style.fontSize='12px';
-    stLabel.textContent='Status:';
-    const stSel=document.createElement('select');
-    stSel.className='status-inline';
-    stSel.innerHTML=`
-      <option value="a_fazer">a fazer</option>
-      <option value="em_andamento">em andamento</option>
-      <option value="concluida">concluída</option>`;
+    const stRow=document.createElement('div'); stRow.className='row';
+    const stLabel=document.createElement('span'); stLabel.className='muted'; stLabel.style.fontSize='12px'; stLabel.textContent='Status:';
+    const stSel=document.createElement('select'); stSel.className='status-inline';
+    stSel.innerHTML=`<option value="a_fazer">a fazer</option><option value="em_andamento">em andamento</option><option value="concluida">concluída</option>`;
     stSel.value=t.status;
-
-    // parar propagação pra não abrir timeline
     stSel.addEventListener('click', ev=>ev.stopPropagation());
-    stSel.onchange=async e=>{
-      e.stopPropagation();
-      await upsertTask({ id:t.id, status:e.target.value });
-    };
+    stSel.onchange=async e=>{ e.stopPropagation(); await upsertTask({ id:t.id, status:e.target.value }); };
 
     stRow.append(stLabel, stSel);
 
-    const meta=document.createElement('div');
-    meta.className='muted';
-    meta.style.fontSize='12px';
+    const meta=document.createElement('div'); meta.className='muted'; meta.style.fontSize='12px';
     meta.textContent='Criada em: ' + (t.created_at ? fmtDateTime(t.created_at) : '—');
 
-    const tags=document.createElement('div');
-    tags.className='tags';
-    (t.responsaveis||[]).forEach(p=>{
-      const el=document.createElement('span');
-      el.className='tag';
-      el.textContent=p;
-      tags.append(el);
-    });
+    const tags=document.createElement('div'); tags.className='tags';
+    (t.responsaveis||[]).forEach(p=>{ const el=document.createElement('span'); el.className='tag'; el.textContent=p; tags.append(el); });
 
-    const actions=document.createElement('div');
-    actions.className='actions';
-
-    const bEdit=document.createElement('button');
-    bEdit.className='btn small';
-    bEdit.textContent='Editar';
-    bEdit.onclick=(ev)=>{
-      ev.stopPropagation();
-      openTaskModal(t);
-    };
-
-    const bDel=document.createElement('button');
-    bDel.className='btn small';
-    bDel.textContent='Excluir';
-    bDel.onclick=(ev)=>{
-      ev.stopPropagation();
-      deleteTask(t.id);
-    };
-
+    const actions=document.createElement('div'); actions.className='actions';
+    const bEdit=document.createElement('button'); bEdit.className='btn small'; bEdit.textContent='Editar';
+    bEdit.onclick=(ev)=>{ ev.stopPropagation(); openTaskModal(t); };
+    const bDel=document.createElement('button'); bDel.className='btn small'; bDel.textContent='Excluir';
+    bDel.onclick=(ev)=>{ ev.stopPropagation(); deleteTask(t.id); };
     actions.append(bEdit,bDel);
 
     card.append(title);
-    if(t.descricao){
-      const d=document.createElement('div');
-      d.className='muted';
-      d.textContent=t.descricao;
-      card.append(d);
-    }
+    if(t.descricao){ const d=document.createElement('div'); d.className='muted'; d.textContent=t.descricao; card.append(d); }
     card.append(badges, stRow, meta, tags, actions);
-
     return card;
   }
 
   function renderTasks(){
-    const cols={
-      atrasadas:id('col-atrasadas'),
-      a_fazer:id('col-a_fazer'),
-      em_andamento:id('col-em_andamento'),
-      concluida:id('col-concluida')
-    };
+    const cols={ atrasadas:id('col-atrasadas'), a_fazer:id('col-a_fazer'), em_andamento:id('col-em_andamento'), concluida:id('col-concluida') };
     Object.values(cols).forEach(el=>el.innerHTML='');
 
-    const fSt=id('fStatus').value,
-          fResp=id('fResp').value,
-          fPrazo=id('fPrazo').value;
-
+    const fSt=id('fStatus').value, fResp=id('fResp').value, fPrazo=id('fPrazo').value;
     const today=new Date(); today.setHours(0,0,0,0);
-    const endWeek=new Date(today);
-    endWeek.setDate(today.getDate() + (7 - today.getDay()));
-    endWeek.setHours(23,59,59,999);
-
+    const endWeek=new Date(today); endWeek.setDate(today.getDate() + (7 - today.getDay())); endWeek.setHours(23,59,59,999);
     let list=[...state.tasks];
 
     if(fSt!=='todos') list=list.filter(t=>t.status===fSt);
@@ -1709,34 +1332,14 @@
 
     const prazoToLocal=t=> t.prazo ? ymdToLocalDate(t.prazo) : null;
 
-    if(state.filterDate){
-      list=list.filter(t=>t.prazo===state.filterDate);
-    }else{
-      if(fPrazo==='hoje'){
-        list=list.filter(t=>{
-          const p=prazoToLocal(t);
-          return p && p.getTime()===today.getTime();
-        });
-      }
-      if(fPrazo==='semana'){
-        list=list.filter(t=>{
-          const p=prazoToLocal(t);
-          return p && p>=today && p<=endWeek;
-        });
-      }
-      if(fPrazo==='atrasadas'){
-        list=list.filter(t=>{
-          const p=prazoToLocal(t);
-          return p && p<today && t.status!=='concluida';
-        });
-      }
+    if(state.filterDate){ list=list.filter(t=>t.prazo===state.filterDate); }
+    else{
+      if(fPrazo==='hoje'){ list=list.filter(t=>{ const p=prazoToLocal(t); return p && p.getTime()===today.getTime(); }); }
+      if(fPrazo==='semana'){ list=list.filter(t=>{ const p=prazoToLocal(t); return p && p>=today && p<=endWeek; }); }
+      if(fPrazo==='atrasadas'){ list=list.filter(t=>{ const p=prazoToLocal(t); return p && p<today && t.status!=='concluida'; }); }
     }
 
-    const isOverdue=t=>{
-      const p=prazoToLocal(t);
-      return p && p<today && t.status!=='concluida';
-    };
-
+    const isOverdue=t=>{ const p=prazoToLocal(t); return p && p<today && t.status!=='concluida'; };
     const overdue=list.filter(isOverdue);
     const notOverdue=list.filter(t=>!isOverdue(t));
 
@@ -1747,8 +1350,7 @@
     notOverdue.forEach(t=> cols[t.status].append(makeTaskCard(t)));
 
     qsa('.col').forEach(col=>{
-      const st=col.dataset.status,
-            badge=col.querySelector('header .badge');
+      const st=col.dataset.status, badge=col.querySelector('header .badge');
       if(!badge) return;
       badge.textContent = (st==='atrasadas') ? overdue.length : (counts[st]||0);
     });
@@ -1768,76 +1370,38 @@
   }
 
   function renderNotes(){
-    const wrap=id('notes');
-    wrap.innerHTML='';
-    const ordered=[...state.notes]
-      .sort((a,b)=> new Date(b.created_at||0) - new Date(a.created_at||0));
+    const wrap=id('notes'); wrap.innerHTML='';
+    const ordered=[...state.notes].sort((a,b)=> new Date(b.created_at||0) - new Date(a.created_at||0));
 
     ordered.forEach(n=>{
-      const dv=document.createElement('div');
-      dv.className='note';
+      const dv=document.createElement('div'); dv.className='note';
 
       if(state.editingNoteId===n.id){
-        const edit=document.createElement('div');
-        edit.className='note-edit';
+        const edit=document.createElement('div'); edit.className='note-edit';
 
-        const sel=document.createElement('select');
-        sel.id=`edit_author_${n.id}`;
-        sel.innerHTML=FIXED_RESPONSAVEIS
-          .map(a=>`<option ${a===n.autor?'selected':''} value="${a}">${a}</option>`)
-          .join('');
+        const sel=document.createElement('select'); sel.id=`edit_author_${n.id}`;
+        sel.innerHTML=FIXED_RESPONSAVEIS.map(a=>`<option ${a===n.autor?'selected':''} value="${a}">${a}</option>`).join('');
 
-        const ta=document.createElement('textarea');
-        ta.id=`edit_area_${n.id}`;
-        ta.value=n.conteudo||'';
+        const ta=document.createElement('textarea'); ta.id=`edit_area_${n.id}`; ta.value=n.conteudo||'';
 
-        const row=document.createElement('div');
-        row.className='actions';
+        const row=document.createElement('div'); row.className='actions';
+        const bCancel=document.createElement('button'); bCancel.className='btn'; bCancel.textContent='Cancelar'; bCancel.onclick=()=>cancelEditNote();
+        const bSave=document.createElement('button'); bSave.className='btn primary'; bSave.textContent='Salvar'; bSave.onclick=()=>saveEditNote(n.id);
 
-        const bCancel=document.createElement('button');
-        bCancel.className='btn';
-        bCancel.textContent='Cancelar';
-        bCancel.onclick=()=>cancelEditNote();
-
-        const bSave=document.createElement('button');
-        bSave.className='btn primary';
-        bSave.textContent='Salvar';
-        bSave.onclick=()=>saveEditNote(n.id);
-
-        row.append(bCancel,bSave);
-        edit.append(sel,ta,row);
-        dv.append(edit);
+        row.append(bCancel,bSave); edit.append(sel,ta,row); dv.append(edit);
 
       }else{
-        const p=document.createElement('div');
-        p.textContent=n.conteudo;
-        dv.append(p);
+        const p=document.createElement('div'); p.textContent=n.conteudo; dv.append(p);
 
-        const meta=document.createElement('div');
-        meta.className='note-meta';
-        const created=fmtDateTime(n.created_at);
-        const updated=n.updated_at?fmtDateTime(n.updated_at):null;
-        meta.innerHTML=
-          `<span>por <strong>${n.autor||'—'}</strong></span>`+
-          `<span>•</span><span>${created}</span>`+
-          (updated?` <span>•</span><span>(editado em ${updated})</span>`:'');
+        const meta=document.createElement('div'); meta.className='note-meta';
+        const created=fmtDateTime(n.created_at); const updated=n.updated_at?fmtDateTime(n.updated_at):null;
+        meta.innerHTML=`<span>por <strong>${n.autor||'—'}</strong></span><span>•</span><span>${created}</span>`+(updated?` <span>•</span><span>(editado em ${updated})</span>`:'');
         dv.append(meta);
 
-        const row=document.createElement('div');
-        row.className='actions';
-
-        const bEdit=document.createElement('button');
-        bEdit.className='btn small';
-        bEdit.textContent='Editar';
-        bEdit.onclick=()=>startEditNote(n);
-
-        const bDel=document.createElement('button');
-        bDel.className='btn small';
-        bDel.textContent='Excluir';
-        bDel.onclick=()=>deleteNote(n.id);
-
-        row.append(bEdit,bDel);
-        dv.append(row);
+        const row=document.createElement('div'); row.className='actions';
+        const bEdit=document.createElement('button'); bEdit.className='btn small'; bEdit.textContent='Editar'; bEdit.onclick=()=>startEditNote(n);
+        const bDel=document.createElement('button'); bDel.className='btn small'; bDel.textContent='Excluir'; bDel.onclick=()=>deleteNote(n.id);
+        row.append(bEdit,bDel); dv.append(row);
       }
       wrap.append(dv);
     });
@@ -1845,19 +1409,13 @@
 
   function updateFilters(){
     const base=[...FIXED_RESPONSAVEIS];
-    const extras=unique(
-      state.tasks.flatMap(t=>t.responsaveis||[])
-    ).filter(n=>!base.includes(n)).sort();
+    const extras=unique(state.tasks.flatMap(t=>t.responsaveis||[])).filter(n=>!base.includes(n)).sort();
     const opts=[...base,...extras];
-    const sel=id('fResp');
-    const val=sel.value;
-    sel.innerHTML='<option value="todos">todos</option>'+
-      opts.map(o=>`<option value="${o}">${o}</option>`).join('');
-    if(opts.includes(val)) sel.value=val;
-    else sel.value='todos';
+    const sel=id('fResp'); const val=sel.value;
+    sel.innerHTML='<option value="todos">todos</option>'+opts.map(o=>`<option value="${o}">${o}</option>`).join('');
+    if(opts.includes(val)) sel.value=val; else sel.value='todos';
   }
 
-  // ===== Calendário =====
   function toggleCalendar(){
     const pop=id('calPopover');
     if(pop.classList.contains('hidden')) openCalendar();
@@ -1865,56 +1423,30 @@
   }
   function openCalendar(){
     if(!state.calMonth){
-      const base = state.filterDate
-        ? ymdToLocalDate(state.filterDate)
-        : new Date();
-      state.calMonth = new Date(
-        base.getFullYear(),
-        base.getMonth(),
-        1
-      );
+      const base = state.filterDate ? ymdToLocalDate(state.filterDate) : new Date();
+      state.calMonth = new Date(base.getFullYear(), base.getMonth(), 1);
     }
     renderCalendar();
     id('calPopover').classList.remove('hidden');
     requestAnimationFrame(placeCalendarPopover);
   }
   function placeCalendarPopover(){
-    const pop=id('calPopover');
-    const btn=id('btnCal');
-    const vw=window.innerWidth, vh=window.innerHeight;
-    const r=btn.getBoundingClientRect();
-    const popW=pop.offsetWidth||280, popH=pop.offsetHeight||280;
+    const pop=id('calPopover'); const btn=id('btnCal'); const vw=window.innerWidth, vh=window.innerHeight;
+    const r=btn.getBoundingClientRect(); const popW=pop.offsetWidth||280, popH=pop.offsetHeight||280;
 
     if(vw<=420){
-      pop.style.left='50%';
-      pop.style.transform='translateX(-50%)';
-      pop.style.top='';
-      pop.style.bottom='calc(env(safe-area-inset-bottom, 0px) + 8px)';
-      pop.style.width='calc(100vw - 16px)';
-      return;
-    }else{
-      pop.style.bottom='';
-      pop.style.transform='';
-      pop.style.width='280px';
-    }
+      pop.style.left='50%'; pop.style.transform='translateX(-50%)'; pop.style.top=''; pop.style.bottom='calc(env(safe-area-inset-bottom, 0px) + 8px)'; pop.style.width='calc(100vw - 16px)'; return;
+    }else{ pop.style.bottom=''; pop.style.transform=''; pop.style.width='280px'; }
 
-    let left = r.left + (r.width/2) - (popW/2);
-    left = Math.max(8, Math.min(left, vw - popW - 8));
-    let top = r.bottom + 8;
-    if(top + popH > vh - 8) top = r.top - popH - 8;
-    top = Math.max(8, Math.min(top, vh - popH - 8));
-    pop.style.left = left + 'px';
-    pop.style.top  = top  + 'px';
+    let left = r.left + (r.width/2) - (popW/2); left = Math.max(8, Math.min(left, vw - popW - 8));
+    let top = r.bottom + 8; if(top + popH > vh - 8) top = r.top - popH - 8; top = Math.max(8, Math.min(top, vh - popH - 8));
+    pop.style.left = left + 'px'; pop.style.top  = top  + 'px';
   }
-  function closeCalendar(){
-    id('calPopover').classList.add('hidden');
-  }
+  function closeCalendar(){ id('calPopover').classList.add('hidden'); }
 
   function getTaskDatesSet(){
     const set=new Set();
-    (state.tasks||[]).forEach(t=>{
-      if(t.prazo) set.add(t.prazo);
-    });
+    (state.tasks||[]).forEach(t=>{ if(t.prazo) set.add(t.prazo); });
     return set;
   }
 
@@ -1957,46 +1489,22 @@
       </div>
     `;
 
-    id('calPrev').onclick=()=>{
-      state.calMonth=new Date(y,m-1,1);
-      renderCalendar();
-      placeCalendarPopover();
-    };
-    id('calNext').onclick=()=>{
-      state.calMonth=new Date(y,m+1,1);
-      renderCalendar();
-      placeCalendarPopover();
-    };
-    id('calHoje').onclick=()=>{
-      const now=new Date();
-      state.calMonth=new Date(now.getFullYear(), now.getMonth(), 1);
-      renderCalendar();
-      placeCalendarPopover();
-    };
+    id('calPrev').onclick=()=>{ state.calMonth=new Date(y,m-1,1); renderCalendar(); placeCalendarPopover(); };
+    id('calNext').onclick=()=>{ state.calMonth=new Date(y,m+1,1); renderCalendar(); placeCalendarPopover(); };
+    id('calHoje').onclick=()=>{ const now=new Date(); state.calMonth=new Date(now.getFullYear(), now.getMonth(), 1); renderCalendar(); placeCalendarPopover(); };
     id('calFechar').onclick=closeCalendar;
 
     qsa('#calPopover .cal-day').forEach(el=>{
-      el.onclick=()=>{
-        state.filterDate=el.dataset.ymd;
-        id('fPrazo').value='todos';
-        closeCalendar();
-        render();
-      };
+      el.onclick=()=>{ state.filterDate=el.dataset.ymd; id('fPrazo').value='todos'; closeCalendar(); render(); };
     });
   }
 
   function updateSelectedDayChip(){
-    const chip=id('selDiaTag');
-    const txt=id('selDiaText');
-    if(state.filterDate){
-      chip.style.display='';
-      txt.textContent=fmtDate(state.filterDate);
-    }else{
-      chip.style.display='none';
-    }
+    const chip=id('selDiaTag'); const txt=id('selDiaText');
+    if(state.filterDate){ chip.style.display=''; txt.textContent=fmtDate(state.filterDate); }
+    else{ chip.style.display='none'; }
   }
 
-  // ===== Modais principais =====
   function openTaskModal(t){
     state.editingTaskId = t?.id || null;
     id('taskModalTitle').textContent = t ? 'Editar tarefa' : 'Nova tarefa';
@@ -2009,10 +1517,7 @@
   }
 
   async function saveTaskFromModal(){
-    const selected=Array.from(
-      document.querySelectorAll('#tRespGroup input:checked')
-    ).map(i=>i.value);
-
+    const selected=Array.from(document.querySelectorAll('#tRespGroup input:checked')).map(i=>i.value);
     const obj={
       id: state.editingTaskId || undefined,
       titulo: id('tTitulo').value.trim() || 'Sem título',
@@ -2023,9 +1528,7 @@
       autor: state.author
     };
     if(!state.online) obj.board_slug=state.board;
-
     await upsertTask(obj);
-
     id('dlgTask').close();
     if(id('chkUpdateLink').checked) updateShareLink();
   }
@@ -2052,31 +1555,19 @@
 
   function exportCSV(){
     const rows=state.tasks.map(t=>({
-      id:t.id,
-      board:state.board,
-      titulo:t.titulo,
-      descricao:t.descricao||'',
-      status:t.status,
-      prazo:t.prazo||'',
-      responsaveis:(t.responsaveis||[]).join('; '),
-      autor:t.autor||'',
-      criado_em:t.created_at||'',
-      atualizado_em:t.updated_at||''
+      id:t.id, board:state.board, titulo:t.titulo, descricao:t.descricao||'', status:t.status,
+      prazo:t.prazo||'', responsaveis:(t.responsaveis||[]).join('; '), autor:t.autor||'',
+      criado_em:t.created_at||'', atualizado_em:t.updated_at||''
     }));
     const csv=toCSV(rows);
     const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
-    const a=document.createElement('a');
-    a.href=URL.createObjectURL(blob);
-    a.download=`tarefas_${state.board}.csv`;
-    a.click();
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`tarefas_${state.board}.csv`; a.click();
   }
 
   // Eventos gerais
   document.getElementById('btnTheme').onclick = toggleTheme;
   document.getElementById('btnNova').onclick = ()=>openTaskModal();
-  qsa('[data-add]').forEach(b=>{
-    b.onclick=()=>openTaskModal({status:b.getAttribute('data-add')});
-  });
+  qsa('[data-add]').forEach(b=>{ b.onclick=()=>openTaskModal({status:b.getAttribute('data-add')}); });
   document.getElementById('btnExport').onclick = exportCSV;
   document.getElementById('btnLink').onclick = generateShareLink;
   document.getElementById('tSalvar').onclick = saveTaskFromModal;
@@ -2084,67 +1575,40 @@
   document.getElementById('btnAnotar').onclick = ()=>addNote(id('noteInput').value);
   document.getElementById('fStatus').onchange = render;
   document.getElementById('fResp').onchange = render;
-  document.getElementById('fPrazo').onchange = ()=>{
-    state.filterDate=null;
-    render();
-  };
+  document.getElementById('fPrazo').onchange = ()=>{ state.filterDate=null; render(); };
 
   // Reuniões
   document.getElementById('btnMeetings').onclick = openMeetings;
   document.getElementById('mSalvar').onclick = saveMeetingFromModal;
-  document.getElementById('mCancelar').onclick = ()=>{
-    id('mTitulo').value='';
-    id('mDesc').value='';
-    id('mData').value='';
-    id('mHora').value='';
-  };
+  document.getElementById('mCancelar').onclick = ()=>{ id('mTitulo').value=''; id('mDesc').value=''; id('mData').value=''; id('mHora').value=''; };
   document.getElementById('mFechar').onclick = ()=>id('dlgMeetings').close();
 
   // Timeline
   document.getElementById('tlNovoSalvar').onclick = addTimelineEntry;
-  document.getElementById('tlFechar').onclick = ()=>{
-    state.viewingTaskTimelineId=null;
-    state.editingTimelineEntryId=null;
-    id('dlgTimeline').close();
-  };
+  document.getElementById('tlFechar').onclick = ()=>{ state.viewingTaskTimelineId=null; state.editingTimelineEntryId=null; id('dlgTimeline').close(); };
 
   // mini-calendário
   document.getElementById('btnCal').onclick = toggleCalendar;
-  document.getElementById('btnClearDia').onclick = ()=>{
-    state.filterDate=null;
-    render();
-  };
+  document.getElementById('btnClearDia').onclick = ()=>{ state.filterDate=null; render(); };
   document.addEventListener('click', (ev)=>{
-    const pop=id('calPopover');
-    if(pop.classList.contains('hidden')) return;
+    const pop=id('calPopover'); if(pop.classList.contains('hidden')) return;
     if(!pop.contains(ev.target) && ev.target!==id('btnCal')) closeCalendar();
   });
-  document.addEventListener('keydown', (ev)=>{
-    if(ev.key==='Escape') closeCalendar();
-  });
-  window.addEventListener('resize', ()=>{
-    const pop=id('calPopover');
-    if(!pop.classList.contains('hidden')) placeCalendarPopover();
-  });
-  window.addEventListener('scroll', ()=>{
-    const pop=id('calPopover');
-    if(!pop.classList.contains('hidden')) placeCalendarPopover();
-  }, true);
+  document.addEventListener('keydown', (ev)=>{ if(ev.key==='Escape') closeCalendar(); });
+  window.addEventListener('resize', ()=>{ const pop=id('calPopover'); if(!pop.classList.contains('hidden')) placeCalendarPopover(); });
+  window.addEventListener('scroll', ()=>{ const pop=id('calPopover'); if(!pop.classList.contains('hidden')) placeCalendarPopover(); }, true);
 
-  (async function init(){
+  /* ====== Agora o app só inicia após a senha ====== */
+  async function startApp(){
     const params=new URL(location.href).searchParams;
     const themeFromUrl=params.get('theme');
-    if(themeFromUrl){
-      state.theme=themeFromUrl;
-      localStorage.setItem('theme',state.theme);
-      applyTheme();
-    }
+    if(themeFromUrl){ state.theme=themeFromUrl; localStorage.setItem('theme',state.theme); applyTheme(); }
 
     renderNoteAuthors();
     await maybeInitSupabase();
     updateFilters();
     await fetchAll();
-  })();
+  }
   </script>
 </body>
 </html>

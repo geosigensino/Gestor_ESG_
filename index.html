@@ -1,7 +1,3 @@
-Gestor ESG
-
-
-
 <!doctype html>
 <html lang="pt-br">
 <head>
@@ -42,27 +38,43 @@ Gestor ESG
       background:var(--bg);
       color:var(--txt)
     }
-    .wrap{max-width:1400px;margin:0 auto;padding:22px 18px 36px}
 
-    header{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-    .brand{font-weight:800;font-size:22px;letter-spacing:.2px}
+    /* ===== Layout com sidebar ===== */
+    .app-shell{
+      display:grid;
+      grid-template-columns: 280px 1fr;
+      min-height:100vh;
+    }
+    .sidebar{
+      background:var(--panel); border-right:1px solid var(--border); padding:14px; position:sticky; top:0; height:100vh; box-sizing:border-box;
+      display:flex; flex-direction:column; gap:12px;
+    }
+    .brand{font-weight:800;font-size:18px;letter-spacing:.2px}
     .muted{color:var(--muted)}
+    .sidebar .btn{ width:100%; }
+    .proj-search{ display:flex; gap:8px; }
+    .proj-search input{ flex:1; }
 
-    .toolbar{
-      display:flex;gap:12px;align-items:center;flex-wrap:wrap;
-      margin-top:16px;padding:12px;
-      border:1px solid var(--border);border-radius:14px;
-      background:linear-gradient(180deg,rgba(255,255,255,.02),transparent);
-      backdrop-filter:saturate(160%) blur(6px);
-      position:sticky; top:0; z-index:10
+    .proj-list{ display:grid; gap:6px; overflow:auto; padding-right:4px; }
+    .proj-item{
+      display:flex; align-items:center; justify-content:space-between; gap:8px;
+      background:var(--card); border:1px solid var(--border); border-radius:10px; padding:10px; cursor:pointer;
     }
-    @media (max-width:980px){ .toolbar{position:static;top:auto} }
+    .proj-item:hover{ box-shadow:var(--shadow); }
+    .proj-item .title{ font-weight:600; }
+    .proj-actions{ display:flex; gap:6px; }
+    .proj-actions .btn.small{ padding:6px 8px; }
 
-    .pill{
-      background:rgba(255,255,255,.05);color:var(--txt);
-      padding:6px 10px;border:1px solid var(--border);border-radius:10px
+    .main{
+      display:flex; flex-direction:column; gap:0;
     }
 
+    header.main-head{
+      display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+      padding:16px 18px; border-bottom:1px solid var(--border); background:var(--panel); position:sticky; top:0; z-index:10;
+    }
+    .crumbs{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+    .crumbs .sep{ opacity:.5; }
     .btn,button{
       cursor:pointer;
       border:1px solid var(--border);background:var(--panel);color:var(--txt);
@@ -75,10 +87,45 @@ Gestor ESG
     }
     .btn.primary:hover{filter:saturate(1.1);box-shadow:0 10px 22px rgba(24,91,36,.35)}
     .btn.small{padding:6px 9px}
+    .spacer{ flex:1; }
+
+    /* Toolbar dentro do projeto */
+    .toolbar{
+      display:flex;gap:12px;align-items:center;flex-wrap:wrap;
+      padding:12px 18px;
+      border-bottom:1px solid var(--border);
+      background:linear-gradient(180deg,rgba(255,255,255,.02),transparent);
+      backdrop-filter:saturate(160%) blur(6px);
+      position:sticky; top:60px; z-index:9;
+    }
+    @media (max-width:980px){
+      .app-shell{ grid-template-columns: 1fr; }
+      .sidebar{ position:fixed; z-index:30; left:0; top:0; bottom:0; width:min(86vw, 360px); transform:translateX(-100%); transition:transform .2s; }
+      .sidebar.open{ transform:none; }
+      header.main-head{ position:sticky; top:0; }
+    }
+
+    .pill{
+      background:rgba(255,255,255,.05);color:var(--txt);
+      padding:6px 10px;border:1px solid var(--border);border-radius:10px
+    }
+    select,input[type="date"],input[type="text"],input[type="time"]{
+      background:var(--panel);color:var(--txt);
+      border:1px solid var(--border);border-radius:10px;padding:8px 10px
+    }
+
+    /* Sub-linhas (abas rápidas) de status */
+    .subtabs{ display:flex; gap:8px; flex-wrap:wrap; padding:10px 18px; border-bottom:1px solid var(--border); background:var(--panel); position:sticky; top:114px; z-index:8; }
+    .subtab{
+      border:1px solid var(--border); background:var(--card); color:var(--txt); padding:6px 10px; border-radius:999px; font-size:13px; cursor:pointer;
+    }
+    .subtab.active{ background:linear-gradient(180deg,var(--brand),var(--brand-2)); color:#fff; border:none; }
+
+    .wrap{max-width:1400px;margin:0 auto;padding:0 18px 36px}
 
     .grid{
       display:grid;grid-template-columns:minmax(0,1.8fr) minmax(320px,1fr);
-      gap:28px;margin-top:26px;align-items:start
+      gap:28px;margin-top:18px;align-items:start
     }
     .panel{
       background:var(--panel);border:1px solid var(--border);
@@ -117,12 +164,6 @@ Gestor ESG
     .row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
     .actions{display:flex;gap:8px;margin-top:10px}
     .actions .btn.small{cursor:pointer}
-
-    .filters{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-    select,input[type="date"],input[type="text"],input[type="time"]{
-      background:var(--panel);color:var(--txt);
-      border:1px solid var(--border);border-radius:10px;padding:8px 10px
-    }
 
     .status-inline{font-size:12px;padding:4px 6px;border-radius:8px}
 
@@ -194,12 +235,6 @@ Gestor ESG
       background:var(--brand);color:#fff;border-color:transparent;box-shadow:var(--ring)
     }
 
-    @media (max-width:980px){
-      .grid{grid-template-columns:1fr}
-      .kanban{grid-template-columns:1fr}
-      .toolbar{position:static;top:auto}
-    }
-
     dialog{ width:min(780px, calc(100% - 32px)); }
     dialog.modal-light{
       background:#ffffff; color:#111827; border:1px solid #e6ebf2;
@@ -263,7 +298,7 @@ Gestor ESG
     .meeting-actions{ display:flex; gap:8px; }
     .pill-inline{ background:rgba(255,255,255,.06); border:1px solid var(--border); border-radius:999px; padding:2px 8px; font-size:12px; }
 
-    /* ===== TIMELINE (estilos já existentes) ===== */
+    /* ===== TIMELINE ===== */
     .tl-body-grid{ display:grid; grid-template-columns: minmax(0,1fr); gap:16px; }
     .tl-brief-card{ background:#f8fafc; border:1px solid #e5e7eb; border-radius:12px; padding:12px 14px; display:grid; gap:8px; }
     .tl-brief-title{ font-weight:600; color:#0f172a; font-size:15px; line-height:1.3; word-break:break-word; }
@@ -300,13 +335,13 @@ Gestor ESG
     .tl-edit-buttons{ display:flex; justify-content:flex-end; flex-wrap:wrap; gap:8px; }
 
     /* ===== Overlay de senha ===== */
-    .locked #app{ filter: blur(8px) saturate(80%); pointer-events:none; user-select:none; }
+    .locked #app-root{ filter: blur(8px) saturate(80%); pointer-events:none; user-select:none; }
     #loginOverlay{ position:fixed; inset:0; display:none; align-items:center; justify-content:center;
       background:rgba(0,0,0,.45); z-index:50; backdrop-filter: blur(3px); }
     #loginCard{
       width:min(420px, calc(100% - 32px));
       background:#ffffff; color:#0f172a;
-      border:1px solid #e6ebf2; border-radius:14px; box-shadow:0 20px 48px rgba(0,0,0,.28);
+      border:1px solid #e6ebf2; border-radius:14px; box-shadow:var(--shadow);
       padding:18px; display:grid; gap:12px;
     }
     #loginCard .brand{ font-weight:800; font-size:18px; }
@@ -346,113 +381,155 @@ Gestor ESG
     </div>
   </div>
 
-  <div class="wrap" id="app">
-    <header>
+  <div id="app-root" class="app-shell">
+    <!-- ===== SIDEBAR (PROJETOS) ===== -->
+    <aside id="sidebar" class="sidebar">
       <div>
-        <div class="brand">Eco Smart Group — Gestor de Tarefas</div>
-        <div class="muted" id="modeLabel">Modo local • Snapshots por link — board: <span id="boardLabel">default</span></div>
+        <div class="brand">Eco Smart Group</div>
+        <div class="muted" id="modeLabel">Modo local • Projetos</div>
       </div>
-    </header>
 
-    <div class="toolbar">
-      <button class="btn primary" id="btnNova">+ Nova tarefa</button>
+      <div class="proj-search">
+        <input id="projSearch" type="text" placeholder="Buscar projeto…" />
+        <button id="btnSidebarToggle" class="btn" type="button" style="display:none">☰</button>
+      </div>
 
-      <div class="filters">
-        <span class="pill">Status:
+      <button class="btn primary" id="btnNovoProjeto">+ Novo projeto</button>
+
+      <div class="muted" style="font-size:12px">Projetos</div>
+      <div id="projList" class="proj-list"></div>
+
+      <div style="margin-top:auto">
+        <div class="muted" id="onlineState">Offline (LocalStorage)</div>
+        <button class="btn" id="btnTheme">Alternar tema</button>
+      </div>
+    </aside>
+
+    <!-- ===== MAIN ===== -->
+    <main class="main">
+      <header class="main-head">
+        <button class="btn" id="btnOpenSidebar" title="Projetos">☰</button>
+        <div class="crumbs">
+          <span class="muted">Projetos</span>
+          <span class="sep">/</span>
+          <span id="crumbProject" class="muted">—</span>
+        </div>
+        <span class="spacer"></span>
+        <button class="btn" id="btnVoltarProjetos" title="Voltar aos projetos">← Projetos</button>
+      </header>
+
+      <!-- Barra do projeto selecionado -->
+      <div class="toolbar" id="projectToolbar" style="display:none">
+        <button class="btn primary" id="btnNova">+ Nova tarefa</button>
+
+        <div class="pill">Status:
           <select id="fStatus">
             <option value="todos">todos</option>
             <option value="a_fazer">a fazer</option>
             <option value="em_andamento">em andamento</option>
             <option value="concluida">concluída</option>
           </select>
-        </span>
-        <span class="pill">Responsável:
+        </div>
+        <div class="pill">Responsável:
           <select id="fResp"><option value="todos">todos</option></select>
-        </span>
-        <span class="pill">Prazo:
+        </div>
+        <div class="pill">Prazo:
           <select id="fPrazo">
             <option value="todos">todos</option>
             <option value="hoje">hoje</option>
             <option value="semana">esta semana</option>
             <option value="atrasadas">atrasadas</option>
           </select>
-        </span>
+        </div>
 
         <!-- Calendário + chip de dia -->
         <button class="btn small" id="btnCal" title="Abrir calendário">📅</button>
         <span id="selDiaTag" class="pill" style="display:none">dia: <strong id="selDiaText"></strong> <button class="btn small" id="btnClearDia" title="Limpar">×</button></span>
 
         <div id="calPopover" class="cal-pop hidden" role="dialog" aria-label="Calendário"></div>
+
+        <span class="spacer"></span>
+        <button class="btn" id="btnMeetings" title="Reuniões">🗓 Reuniões</button>
+        <button class="btn" id="btnExport">Exportar CSV</button>
+        <button class="btn" id="btnLink">Gerar link com dados</button>
+        <label class="pill"><input type="checkbox" id="chkUpdateLink" checked> atualizar link ao editar</label>
       </div>
 
-      <!-- Botão das reuniões -->
-      <button class="btn" id="btnMeetings" title="Reuniões">🗓 Reuniões</button>
+      <!-- Abas rápidas (sub-linhas) de status -->
+      <div id="subtabs" class="subtabs" style="display:none">
+        <button class="subtab active" data-scope="todas">Todas</button>
+        <button class="subtab" data-scope="atrasadas">Atrasadas</button>
+        <button class="subtab" data-scope="a_fazer">A fazer</button>
+        <button class="subtab" data-scope="em_andamento">Em andamento</button>
+        <button class="subtab" data-scope="concluida">Concluídas</button>
+      </div>
 
-      <button class="btn" id="btnExport">Exportar CSV</button>
-      <button class="btn" id="btnLink">Gerar link com dados</button>
-      <label class="switch"><input type="checkbox" id="chkUpdateLink" checked> atualizar link ao editar</label>
+      <!-- Conteúdos -->
+      <div class="wrap">
+        <!-- Tela de Projetos -->
+        <section id="viewProjects" class="panel" style="display:none">
+          <h3>Projetos</h3>
+          <div id="projectsGrid" class="kanban" style="grid-template-columns:repeat(auto-fit, minmax(240px,1fr));"></div>
+        </section>
 
-      <span style="flex:1"></span>
-      <button class="btn" id="btnTheme">Alternar tema</button>
-    </div>
+        <!-- Tela do Projeto (Kanban + Notas) -->
+        <section id="viewProjectBoard" style="display:none">
+          <section class="panel">
+            <h3 id="projBoardTitle">Tarefas</h3>
+            <div class="kanban">
+              <div class="col" data-status="atrasadas">
+                <header><div class="row"><strong>Atrasadas</strong><span class="badge">0</span></div></header>
+                <div class="dropzone readonly" id="col-atrasadas"></div>
+              </div>
 
-    <div class="grid">
-      <section class="panel">
-        <h3>Tarefas</h3>
-        <div class="kanban">
-          <div class="col" data-status="atrasadas">
-            <header><div class="row"><strong>Atrasadas</strong><span class="badge">0</span></div></header>
-            <div class="dropzone readonly" id="col-atrasadas"></div>
-          </div>
+              <div class="col" data-status="a_fazer">
+                <header>
+                  <div class="row"><strong>A fazer</strong><span class="badge">0</span></div>
+                  <button class="btn small" data-add="a_fazer">+ adicionar</button>
+                </header>
+                <div class="dropzone" id="col-a_fazer" ondragover="event.preventDefault()"></div>
+              </div>
+              <div class="col" data-status="em_andamento">
+                <header>
+                  <div class="row"><strong>Em andamento</strong><span class="badge">0</span></div>
+                  <button class="btn small" data-add="em_andamento">+ adicionar</button>
+                </header>
+                <div class="dropzone" id="col-em_andamento" ondragover="event.preventDefault()"></div>
+              </div>
+              <div class="col" data-status="concluida">
+                <header>
+                  <div class="row"><strong>Concluídas</strong><span class="badge">0</span></div>
+                  <button class="btn small" data-add="concluida">+ adicionar</button>
+                </header>
+                <div class="dropzone" id="col-concluida" ondragover="event.preventDefault()"></div>
+              </div>
+            </div>
+          </section>
 
-          <div class="col" data-status="a_fazer">
-            <header>
-              <div class="row"><strong>A fazer</strong><span class="badge">0</span></div>
-              <button class="btn small" data-add="a_fazer">+ adicionar</button>
-            </header>
-            <div class="dropzone" id="col-a_fazer" ondragover="event.preventDefault()"></div>
-          </div>
-          <div class="col" data-status="em_andamento">
-            <header>
-              <div class="row"><strong>Em andamento</strong><span class="badge">0</span></div>
-              <button class="btn small" data-add="em_andamento">+ adicionar</button>
-            </header>
-            <div class="dropzone" id="col-em_andamento" ondragover="event.preventDefault()"></div>
-          </div>
-          <div class="col" data-status="concluida">
-            <header>
-              <div class="row"><strong>Concluídas</strong><span class="badge">0</span></div>
-              <button class="btn small" data-add="concluida">+ adicionar</button>
-            </header>
-            <div class="dropzone" id="col-concluida" ondragover="event.preventDefault()"></div>
-          </div>
+          <section class="panel">
+            <h3>Anotações gerais</h3>
+            <div class="note">
+              <div class="row" style="gap:10px;margin-bottom:8px">
+                <label class="pill">Autor:
+                  <select id="noteAuthor"></select>
+                </label>
+                <span class="muted" id="noteNow"></span>
+              </div>
+              <textarea id="noteInput" placeholder="Escreva uma anotação…"></textarea>
+              <div class="actions">
+                <button class="btn" id="btnAnotar">Anotar</button>
+              </div>
+            </div>
+            <div id="notes"></div>
+          </section>
+        </section>
+
+        <div class="foot">
+          <div>Feito com ❤ para equipes que precisam de algo simples, online e colaborativo.</div>
+          <div class="muted" id="boardInfo">—</div>
         </div>
-      </section>
-
-      <section class="panel">
-        <h3>Anotações gerais</h3>
-
-        <div class="note">
-          <div class="row" style="gap:10px;margin-bottom:8px">
-            <label class="pill">Autor:
-              <select id="noteAuthor"></select>
-            </label>
-            <span class="muted" id="noteNow"></span>
-          </div>
-          <textarea id="noteInput" placeholder="Escreva uma anotação…"></textarea>
-          <div class="actions">
-            <button class="btn" id="btnAnotar">Anotar</button>
-          </div>
-        </div>
-
-        <div id="notes"></div>
-      </section>
-    </div>
-
-    <div class="foot">
-      <div>Feito com ❤ para equipes que precisam de algo simples, online e colaborativo.</div>
-      <div class="muted" id="onlineState">Offline (LocalStorage)</div>
-    </div>
+      </div>
+    </main>
   </div>
 
   <!-- MODAL: TAREFA -->
@@ -481,7 +558,6 @@ Gestor ESG
   <dialog id="dlgMeetings" class="modal-light">
     <div class="modal-head">Reuniões</div>
     <div class="modal-body">
-      <!-- Formulário de nova reunião -->
       <div class="field"><label>Responsável</label>
         <select id="mResp"></select>
       </div>
@@ -500,7 +576,6 @@ Gestor ESG
         <button class="btn primary" id="mSalvar">Salvar reunião</button>
       </div>
 
-      <!-- Lista de reuniões -->
       <div style="margin-top:8px;font-weight:700">Registros</div>
       <div id="meetingList" class="meeting-list"></div>
     </div>
@@ -514,16 +589,13 @@ Gestor ESG
     <div class="modal-head" id="tlTaskTitle">Timeline / Histórico</div>
     <div class="modal-body">
       <div class="tl-body-grid">
-        <!-- Resumo da tarefa -->
         <section class="tl-brief-card">
           <div class="tl-brief-title" id="tlBriefTitulo">(título)</div>
           <div class="tl-brief-badges" id="tlBriefBadges"></div>
           <div class="tl-brief-meta" id="tlBriefMeta"></div>
         </section>
 
-        <!-- Coluna principal: formulário + histórico -->
         <section class="tl-col-main">
-          <!-- Formulário de novo registro (só autor vê) -->
           <div id="tlFormWrap" class="timeline-form" style="display:none">
             <div class="timeline-form-head">
               <span>Novo registro</span>
@@ -549,7 +621,6 @@ Gestor ESG
             </div>
           </div>
 
-          <!-- Histórico -->
           <div class="tl-history-head">Histórico</div>
           <div id="tlList" class="timeline-entries"></div>
         </section>
@@ -560,7 +631,21 @@ Gestor ESG
     </div>
   </dialog>
 
+  <!-- MODAL: NOVO PROJETO -->
+  <dialog id="dlgProject" class="modal-light">
+    <div class="modal-head">Novo projeto</div>
+    <div class="modal-body">
+      <div class="field"><label>Nome do projeto</label><input id="pTitulo" type="text" placeholder="Ex.: Projeto Rondônia" /></div>
+      <div class="muted" style="font-size:12px">Exemplos: “Projeto Rondônia”, “Projeto Pará”.</div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" id="pCancelar">Cancelar</button>
+      <button class="btn primary" id="pSalvar">Criar</button>
+    </div>
+  </dialog>
+
   <script>
+  /* =================== CONFIG GERAL =================== */
   const DEFAULT_SB_URL = 'https://oakntljdkkoqwttkgzpk.supabase.co';
   const DEFAULT_SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ha250bGpka2tvcXd0dGtnenBrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYwMzQzMDgsImV4cCI6MjA3MTYxMDMwOH0.jjxUzxyUoutDAVzZg9nrSi9kg5fYfs6F7PCd4xkT48c';
 
@@ -568,31 +653,39 @@ Gestor ESG
 
   const state = {
     theme: localStorage.getItem('theme') || 'dark',
-    board: new URL(location.href).searchParams.get('board') || 'default',
     author: 'Anônimo',
 
+    // projetos (usando 'boards' como tabela de projetos)
+    projects: [],           // {slug, title}
+    currentProject: null,   // {slug, title}
+
+    // supabase
     supabaseUrl: DEFAULT_SB_URL,
     supabaseKey: DEFAULT_SB_KEY,
     client: null,
+    online:false,
 
+    // dados do projeto atual
     tasks: [],
     notes: [],
     meetings: [],
 
+    // UI
     editingTaskId: null,
     editingNoteId: null,
-    online:false,
+    viewingTaskTimelineId:null,
+    editingTimelineEntryId:null,
 
+    // filtros
     filterDate:null,
     calMonth:null,
 
-    viewingTaskTimelineId:null,
-    editingTimelineEntryId:null
+    // subtabs
+    subScope:'todas', // todas | atrasadas | a_fazer | em_andamento | concluida
   };
 
-  /* ====== Cadeado simples (senha no front) ====== */
-  const APP_USER = 'EcoSmart Grouping';
-  const APP_PASSWORD = 'esg2025*';   // <<< senha fornecida
+  /* ========== Cadeado simples (senha no front) ========== */
+  const APP_PASSWORD = 'esg2025*';
   const AUTH_FLAG = 'gst_auth_ok';
   let appStarted = false;
 
@@ -607,9 +700,8 @@ Gestor ESG
     function startAppOnce(){
       if(appStarted) return;
       appStarted = true;
-      startApp(); // inicializa o app real
+      startApp();
     }
-
     function showLocked(){
       document.body.classList.add('locked');
       overlay.style.display = 'flex';
@@ -628,20 +720,15 @@ Gestor ESG
       const card = document.getElementById('loginCard');
       card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
     }
-
-    btnEnter.onclick = ()=>{
-      if(pwdInput.value === APP_PASSWORD) unlock(); else wrong();
-    };
-    btnShow.onclick = ()=>{
-      if(pwdInput.type === 'password'){ pwdInput.type = 'text'; btnShow.textContent = '🙈 Ocultar'; }
-      else{ pwdInput.type = 'password'; btnShow.textContent = '👁 Mostrar'; }
-    };
+    btnEnter.onclick = ()=>{ if(pwdInput.value === APP_PASSWORD) unlock(); else wrong(); };
+    btnShow.onclick = ()=>{ if(pwdInput.type === 'password'){ pwdInput.type = 'text'; btnShow.textContent = '🙈 Ocultar'; } else { pwdInput.type = 'password'; btnShow.textContent = '👁 Mostrar'; } };
     pwdInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter') btnEnter.click(); });
 
     if(ok){ startAppOnce(); } else { showLocked(); }
   }
   document.addEventListener('DOMContentLoaded', bootWithPassword);
 
+  /* =================== Helpers =================== */
   function applyTheme(){
     if(state.theme==='light') document.body.classList.add('light');
     else document.body.classList.remove('light');
@@ -684,29 +771,293 @@ Gestor ESG
     alert(`${ctx}:\n${(err && err.message) || err}`);
   }
 
-  function lsKey(){ return `gst_${state.board}`; }
-  function loadLocal(){
-    const raw=localStorage.getItem(lsKey());
+  function sanitizeSlug(text){
+    return (text||'').toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+      .replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'')
+      || ('proj-'+Math.random().toString(36).slice(2,7));
+  }
+
+  /* =================== Storage Local =================== */
+  function lsKeyProj(){ return `gst_projects`; }
+  function lsKeyData(slug){ return `gst_${slug}`; }
+
+  function loadProjectsLocal(){
+    try{ return JSON.parse(localStorage.getItem(lsKeyProj()))||[]; }catch{return [];}
+  }
+  function saveProjectsLocal(arr){ localStorage.setItem(lsKeyProj(), JSON.stringify(arr||[])); }
+
+  function loadProjectDataLocal(slug){
+    const raw=localStorage.getItem(lsKeyData(slug));
     if(!raw) return {tasks:[],notes:[],meetings:[]};
     try{
       const obj = JSON.parse(raw);
-      return {
-        tasks:obj.tasks||[],
-        notes:obj.notes||[],
-        meetings:obj.meetings||[]
-      };
-    }catch{
-      return {tasks:[],notes:[],meetings:[]};
-    }
+      return { tasks:obj.tasks||[], notes:obj.notes||[], meetings:obj.meetings||[] };
+    }catch{ return {tasks:[],notes:[],meetings:[]}; }
   }
-  function saveLocal(){
-    localStorage.setItem(lsKey(), JSON.stringify({
-      tasks:state.tasks,
-      notes:state.notes,
-      meetings:state.meetings
+  function saveProjectDataLocal(slug, data){
+    localStorage.setItem(lsKeyData(slug), JSON.stringify({
+      tasks:data.tasks||[], notes:data.notes||[], meetings:data.meetings||[]
     }));
   }
 
+  /* =================== Supabase =================== */
+  async function maybeInitSupabase(){
+    try{
+      state.client = window.supabase.createClient(
+        state.supabaseUrl,
+        state.supabaseKey,
+        { auth: { persistSession:false }}
+      );
+
+      // Sala para mudanças em boards/projects e nas entidades do projeto atual
+      state.online = true;
+      id('onlineState').textContent='Online (Supabase)';
+      id('modeLabel').textContent='Online • Projetos';
+
+      // Realtime — boards
+      state.client.channel('ch-boards')
+        .on('postgres_changes', { event:'*', schema:'public', table:'boards' }, async ()=>{ await fetchProjects(); })
+        .subscribe();
+
+      // Realtime — tasks/notes/meetings do projeto atual
+      state.client.channel('ch-app')
+        .on('postgres_changes', { event:'*', schema:'public', table:'tasks' }, handleRealtimeIfCurrent)
+        .on('postgres_changes', { event:'*', schema:'public', table:'notes' }, handleRealtimeIfCurrent)
+        .on('postgres_changes', { event:'*', schema:'public', table:'meetings' }, handleRealtimeIfCurrent)
+        .subscribe();
+    }catch(e){
+      state.online=false;
+      id('onlineState').textContent='Offline (LocalStorage)';
+      id('modeLabel').textContent='Modo local • Projetos';
+      console.warn('Sem Supabase, operando local:', e);
+    }
+  }
+
+  async function handleRealtimeIfCurrent(payload){
+    // Atualiza somente se for o projeto atual
+    await fetchProjectData();
+  }
+
+  async function fetchProjects(){
+    if(state.online){
+      const { data, error } = await state.client
+        .from('boards')
+        .select('*')
+        .order('created_at',{ascending:true});
+      if(error){ console.warn('Boards offline fallback', error); state.projects = loadProjectsLocal(); }
+      else{ state.projects = (data||[]).map(b=>({slug:b.slug, title:b.title||b.slug})); saveProjectsLocal(state.projects); }
+    }else{
+      state.projects = loadProjectsLocal();
+    }
+    renderProjectsView();
+    renderSidebarProjects();
+  }
+
+  async function upsertProject(title){
+    const slug = sanitizeSlug(title);
+    if(state.online){
+      // upsert board como projeto
+      const { error } = await state.client
+        .from('boards')
+        .upsert({ slug, title }, { onConflict: 'slug' });
+      if(error) return showErr('Erro ao criar projeto', error);
+    }else{
+      const arr = loadProjectsLocal();
+      if(!arr.find(p=>p.slug===slug)) arr.push({slug, title});
+      saveProjectsLocal(arr);
+      // cria storage do projeto
+      saveProjectDataLocal(slug, {tasks:[],notes:[],meetings:[]});
+    }
+    await fetchProjects();
+    selectProject(slug);
+  }
+
+  async function deleteProject(slug){
+    if(!confirm('Excluir projeto e todos os dados locais/online?')) return;
+    if(state.online){
+      try{
+        // remove tasks/notes/meetings do board
+        await state.client.from('tasks').delete().eq('board_slug', slug);
+        await state.client.from('notes').delete().eq('board_slug', slug);
+        await state.client.from('meetings').delete().eq('board_slug', slug);
+        // remove board
+        await state.client.from('boards').delete().eq('slug', slug);
+      }catch(e){ return showErr('Erro ao excluir projeto', e); }
+    }else{
+      // apaga dados locais
+      localStorage.removeItem(lsKeyData(slug));
+      const arr = loadProjectsLocal().filter(p=>p.slug!==slug);
+      saveProjectsLocal(arr);
+    }
+    if(state.currentProject?.slug === slug) state.currentProject=null;
+    await fetchProjects();
+    showProjectsHome();
+  }
+
+  async function fetchProjectData(){
+    if(!state.currentProject) return;
+    const slug = state.currentProject.slug;
+
+    if(state.online){
+      const { data: t, error: e1 } = await state.client
+        .from('tasks')
+        .select('*')
+        .eq('board_slug', slug)
+        .order('created_at',{ascending:true});
+      state.tasks = e1 ? [] : (t||[]);
+      if(e1) showErr('Erro ao carregar tarefas', e1);
+
+      const { data: n, error: e2 } = await state.client
+        .from('notes')
+        .select('*')
+        .eq('board_slug', slug)
+        .order('created_at',{ascending:false});
+      state.notes = e2 ? [] : (n||[]);
+      if(e2) showErr('Erro ao carregar anotações', e2);
+
+      const { data: m, error: e3 } = await state.client
+        .from('meetings')
+        .select('*')
+        .eq('board_slug', slug)
+        .order('created_at',{ascending:false});
+      state.meetings = e3 ? [] : (m||[]);
+      if(e3) showErr('Erro ao carregar reuniões', e3);
+
+      // cache local
+      saveProjectDataLocal(slug, {tasks:state.tasks, notes:state.notes, meetings:state.meetings});
+    }else{
+      const {tasks,notes,meetings} = loadProjectDataLocal(slug);
+      state.tasks=tasks; state.notes=notes; state.meetings=meetings;
+    }
+
+    renderProjectBoard();
+    renderMeetingList();
+    renderNoteAuthors();
+
+    if(state.viewingTaskTimelineId) renderTimelineModal();
+  }
+
+  /* =================== UI de Projetos =================== */
+  function renderSidebarProjects(){
+    const list = id('projList');
+    const q = (id('projSearch').value||'').toLowerCase().trim();
+    list.innerHTML='';
+    const arr = state.projects.filter(p => !q || p.title.toLowerCase().includes(q) || p.slug.includes(q));
+    if(!arr.length){
+      list.innerHTML = `<div class="muted">Nenhum projeto encontrado.</div>`;
+      return;
+    }
+    arr.forEach(p=>{
+      const item = document.createElement('div');
+      item.className='proj-item';
+      item.onclick=()=> selectProject(p.slug);
+
+      const t = document.createElement('div');
+      t.className='title';
+      t.textContent = p.title;
+
+      const actions = document.createElement('div');
+      actions.className='proj-actions';
+      const del = document.createElement('button');
+      del.className='btn small';
+      del.textContent='Excluir';
+      del.onclick=(ev)=>{ ev.stopPropagation(); deleteProject(p.slug); };
+      actions.append(del);
+
+      item.append(t, actions);
+      list.append(item);
+    });
+  }
+
+  function renderProjectsView(){
+    const grid = id('projectsGrid');
+    grid.innerHTML = '';
+
+    if(!state.projects.length){
+      grid.innerHTML = `
+        <div class="card">
+          <div class="title">Sem projetos ainda</div>
+          <div class="muted" style="margin-top:6px">Crie seu primeiro projeto para começar (ex.: Projeto Rondônia).</div>
+          <div class="actions" style="margin-top:10px">
+            <button class="btn primary" id="gridNovoProjeto">+ Criar projeto</button>
+          </div>
+        </div>`;
+      const b = id('gridNovoProjeto'); if(b) b.onclick=()=>openProjectModal();
+      return;
+    }
+
+    state.projects.forEach(p=>{
+      const card=document.createElement('div');
+      card.className='card';
+      card.style.cursor='pointer';
+      card.onclick=()=>selectProject(p.slug);
+
+      const title=document.createElement('div');
+      title.className='title';
+      title.textContent=p.title;
+
+      const meta=document.createElement('div');
+      meta.className='muted';
+      meta.style.fontSize='12px';
+      meta.textContent=`slug: ${p.slug}`;
+
+      const actions=document.createElement('div');
+      actions.className='actions';
+      const del=document.createElement('button'); del.className='btn small'; del.textContent='Excluir';
+      del.onclick=(ev)=>{ev.stopPropagation(); deleteProject(p.slug);};
+      actions.append(del);
+
+      card.append(title, meta, actions);
+      grid.append(card);
+    });
+  }
+
+  function showProjectsHome(){
+    id('viewProjects').style.display='';
+    id('viewProjectBoard').style.display='none';
+    id('projectToolbar').style.display='none';
+    id('subtabs').style.display='none';
+    id('crumbProject').textContent='—';
+    id('boardInfo').textContent='Selecione um projeto na sidebar ou na grade.';
+  }
+
+  async function selectProject(slug){
+    const p = (state.projects||[]).find(x=>x.slug===slug);
+    if(!p) return;
+    state.currentProject = p;
+
+    id('crumbProject').textContent = p.title;
+    id('projBoardTitle').textContent = `Tarefas — ${p.title}`;
+    id('boardInfo').textContent = `Projeto: ${p.title} (slug: ${p.slug})`;
+
+    id('viewProjects').style.display='none';
+    id('viewProjectBoard').style.display='';
+    id('projectToolbar').style.display='';
+    id('subtabs').style.display='';
+
+    // Atualiza URL
+    const url=new URL(location.href);
+    url.searchParams.set('board', p.slug);
+    url.searchParams.set('theme', state.theme);
+    history.replaceState({},'',url.toString());
+
+    await fetchProjectData();
+    closeSidebar(); // mobile
+  }
+
+  function openProjectModal(){
+    id('pTitulo').value='';
+    id('dlgProject').showModal();
+  }
+  async function saveProjectFromModal(){
+    const title = (id('pTitulo').value||'').trim();
+    if(!title) return showErr('Projeto inválido','Informe um nome.');
+    await upsertProject(title);
+    id('dlgProject').close();
+  }
+
+  /* =================== Tasks / Notes / Meetings (por projeto) =================== */
   function renderRespChoices(selected=[]){
     const wrap=id('tRespGroup'); wrap.innerHTML='';
     FIXED_RESPONSAVEIS.forEach((name, idx)=>{
@@ -723,9 +1074,7 @@ Gestor ESG
   }
   function renderMeetingResponsaveis(){
     const sel=id('mResp');
-    sel.innerHTML = ['','...'].includes(sel.value)
-      ? FIXED_RESPONSAVEIS.map(n=>`<option value="${n}">${n}</option>`).join('')
-      : FIXED_RESPONSAVEIS.map(n=>`<option ${n===sel.value?'selected':''} value="${n}">${n}</option>`).join('');
+    sel.innerHTML = FIXED_RESPONSAVEIS.map(n=>`<option value="${n}">${n}</option>`).join('');
   }
   function renderNoteAuthors(){
     const sel=id('noteAuthor');
@@ -733,80 +1082,10 @@ Gestor ESG
     id('noteNow').textContent=`agora: ${fmtDateTime(new Date())}`;
   }
 
-  async function maybeInitSupabase(){
-    try{
-      state.client = window.supabase.createClient(
-        state.supabaseUrl,
-        state.supabaseKey,
-        { auth: { persistSession:false }}
-      );
-
-      await state.client
-        .from('boards')
-        .upsert({ slug: state.board, title: state.board }, { onConflict: 'slug' })
-        .select();
-
-      state.online=true;
-      id('onlineState').textContent='Online (Supabase)';
-      id('modeLabel').innerHTML=`Online • Snapshots por link — board: <span id="boardLabel">${state.board}</span>`;
-
-      state.client.channel('ch-app')
-        .on('postgres_changes', { event:'*', schema:'public', table:'tasks',    filter:`board_slug=eq.${state.board}` }, handleRealtime)
-        .on('postgres_changes', { event:'*', schema:'public', table:'notes',    filter:`board_slug=eq.${state.board}` }, handleRealtime)
-        .on('postgres_changes', { event:'*', schema:'public', table:'meetings', filter:`board_slug=eq.${state.board}` }, handleRealtime)
-        .subscribe();
-    }catch(e){
-      state.online=false;
-      id('onlineState').textContent='Offline (LocalStorage)';
-      id('modeLabel').innerHTML=`Modo local • Snapshots por link — board: <span id="boardLabel">${state.board}</span>`;
-      console.warn('Sem Supabase, operando local:', e);
-    }
-  }
-  async function handleRealtime(){ await fetchAll(); }
-
-  async function fetchAll(){
-    if(state.online){
-      const { data: t, error: e1 } = await state.client
-        .from('tasks')
-        .select('*')
-        .eq('board_slug', state.board)
-        .order('created_at',{ascending:true});
-      state.tasks = e1 ? [] : (t||[]);
-      if(e1) showErr('Erro ao carregar tarefas', e1);
-
-      const { data: n, error: e2 } = await state.client
-        .from('notes')
-        .select('*')
-        .eq('board_slug', state.board)
-        .order('created_at',{ascending:false});
-      state.notes = e2 ? [] : (n||[]);
-      if(e2) showErr('Erro ao carregar anotações', e2);
-
-      const { data: m, error: e3 } = await state.client
-        .from('meetings')
-        .select('*')
-        .eq('board_slug', state.board)
-        .order('created_at',{ascending:false});
-      state.meetings = e3 ? [] : (m||[]);
-      if(e3) showErr('Erro ao carregar reuniões', e3);
-    }else{
-      const {tasks,notes,meetings} = loadLocal();
-      state.tasks=tasks;
-      state.notes=notes;
-      state.meetings=meetings;
-    }
-
-    render();
-    updateFilters();
-    renderNoteAuthors();
-    renderMeetingList();
-
-    if(state.viewingTaskTimelineId){
-      renderTimelineModal();
-    }
-  }
-
   async function upsertTask(obj){
+    if(!state.currentProject) return showErr('Projeto não selecionado','Selecione um projeto.');
+    const slug = state.currentProject.slug;
+
     if(state.online){
       if(obj.id){
         const { error } = await state.client
@@ -815,44 +1094,44 @@ Gestor ESG
           .eq('id', obj.id);
         if(error) return showErr('Erro ao atualizar tarefa', error);
       }else{
-        const payload = { ...obj, board_slug: state.board };
+        const payload = { ...obj, board_slug: slug };
         const { error } = await state.client
           .from('tasks')
           .insert(payload);
         if(error) return showErr('Erro ao criar tarefa', error);
       }
     }else{
+      // offline
       if(!obj.id){
         obj.id=crypto.randomUUID();
         obj.created_at=new Date().toISOString();
       }
-      const idx=state.tasks.findIndex(x=>x.id===obj.id);
-      if(idx>=0){
-        state.tasks[idx]={...state.tasks[idx],...obj};
-      }else{
-        state.tasks.push(obj);
-      }
-      saveLocal();
+      const data = loadProjectDataLocal(slug);
+      const idx=data.tasks.findIndex(x=>x.id===obj.id);
+      if(idx>=0){ data.tasks[idx]={...data.tasks[idx],...obj}; }
+      else{ data.tasks.push(obj); }
+      saveProjectDataLocal(slug, data);
     }
-    await fetchAll();
+    await fetchProjectData();
   }
 
   async function deleteTask(idv){
+    const slug = state.currentProject?.slug;
+    if(!slug) return;
     if(state.online){
-      const { error } = await state.client
-        .from('tasks')
-        .delete()
-        .eq('id', idv);
+      const { error } = await state.client.from('tasks').delete().eq('id', idv);
       if(error) return showErr('Erro ao excluir tarefa', error);
     }else{
-      state.tasks = state.tasks.filter(t=>t.id!==idv);
-      saveLocal();
+      const data = loadProjectDataLocal(slug);
+      data.tasks = (data.tasks||[]).filter(t=>t.id!==idv);
+      saveProjectDataLocal(slug, data);
     }
-    await fetchAll();
+    await fetchProjectData();
   }
 
-  // ===== REUNIÕES =====
   async function upsertMeeting(obj){
+    const slug = state.currentProject?.slug;
+    if(!slug) return showErr('Projeto não selecionado','Selecione um projeto.');
     if(state.online){
       if(obj.id){
         const { error } = await state.client
@@ -862,18 +1141,13 @@ Gestor ESG
         if(error) return showErr('Erro ao atualizar reunião', error);
       }else{
         const tempId = crypto.randomUUID();
-        const optimistic = {
-          id: tempId,
-          board_slug: state.board,
-          created_at: new Date().toISOString(),
-          ...obj
-        };
+        const optimistic = { id: tempId, board_slug: slug, created_at: new Date().toISOString(), ...obj };
         state.meetings = [optimistic, ...(state.meetings||[])];
         renderMeetingList();
 
         const { data, error } = await state.client
           .from('meetings')
-          .insert({ ...obj, board_slug: state.board })
+          .insert({ ...obj, board_slug: slug })
           .select()
           .single();
 
@@ -888,38 +1162,37 @@ Gestor ESG
         return;
       }
     }else{
+      const data = loadProjectDataLocal(slug);
       if(!obj.id){
         obj.id=crypto.randomUUID();
         obj.created_at=new Date().toISOString();
       }
-      const idx=state.meetings.findIndex(x=>x.id===obj.id);
-      if(idx>=0){
-        state.meetings[idx]={...state.meetings[idx],...obj};
-      }else{
-        state.meetings.unshift(obj);
-      }
-      saveLocal();
+      const idx=data.meetings.findIndex(x=>x.id===obj.id);
+      if(idx>=0){ data.meetings[idx]={...data.meetings[idx],...obj}; }
+      else{ data.meetings.unshift(obj); }
+      saveProjectDataLocal(slug, data);
     }
-    await fetchAll();
+    await fetchProjectData();
   }
 
   async function deleteMeeting(idv){
+    const slug = state.currentProject?.slug;
+    if(!slug) return;
     const backup = [...(state.meetings||[])];
     state.meetings = state.meetings.filter(m => m.id !== idv);
     renderMeetingList();
 
     if(state.online){
-      const { error } = await state.client
-        .from('meetings')
-        .delete()
-        .eq('id', idv);
+      const { error } = await state.client.from('meetings').delete().eq('id', idv);
       if(error){
         state.meetings = backup;
         renderMeetingList();
         return showErr('Erro ao excluir reunião', error);
       }
     }else{
-      saveLocal();
+      const data = loadProjectDataLocal(slug);
+      data.meetings = (data.meetings||[]).filter(m=>m.id!==idv);
+      saveProjectDataLocal(slug, data);
     }
   }
 
@@ -936,21 +1209,14 @@ Gestor ESG
   function renderMeetingList(){
     const wrap=id('meetingList'); if(!wrap) return;
     wrap.innerHTML='';
-    const list = [...(state.meetings||[])]
-      .sort((a,b) => new Date(b.created_at||0) - new Date(a.created_at||0));
-    if(!list.length){
-      wrap.innerHTML = `<div class="muted">Sem reuniões registradas.</div>`;
-      return;
-    }
+    const list = [...(state.meetings||[])].sort((a,b)=> new Date(b.created_at||0) - new Date(a.created_at||0));
+    if(!list.length){ wrap.innerHTML = `<div class="muted">Sem reuniões registradas.</div>`; return; }
     list.forEach(m=>{
       const dv=document.createElement('div'); dv.className='meeting-item';
       const top=document.createElement('div'); top.className='meeting-top';
-      const ttl=document.createElement('div'); ttl.className='title';
-      ttl.textContent=m.titulo||'(sem título)';
+      const ttl=document.createElement('div'); ttl.className='title'; ttl.textContent=m.titulo||'(sem título)';
       const actions=document.createElement('div'); actions.className='meeting-actions';
-      const bDel=document.createElement('button'); bDel.className='btn small';
-      bDel.textContent='Excluir';
-      bDel.onclick=()=>deleteMeeting(m.id);
+      const bDel=document.createElement('button'); bDel.className='btn small'; bDel.textContent='Excluir'; bDel.onclick=()=>deleteMeeting(m.id);
       actions.append(bDel); top.append(ttl, actions);
 
       const meta=document.createElement('div'); meta.className='meeting-meta';
@@ -959,8 +1225,7 @@ Gestor ESG
       const hora= m.hora ? fmtTime(m.hora) : '';
       meta.innerHTML = `${resp}<span>•</span><span>${dia}${hora? ' — '+hora:''}</span><span>•</span><span>criada: ${fmtDateTime(m.created_at)}</span>`;
 
-      const desc=document.createElement('div'); desc.className='muted';
-      desc.textContent=m.descricao||'';
+      const desc=document.createElement('div'); desc.className='muted'; desc.textContent=m.descricao||'';
 
       dv.append(top, meta, desc);
       wrap.append(dv);
@@ -972,98 +1237,59 @@ Gestor ESG
     const descricao=(id('mDesc').value||'').trim() || null;
     const data=id('mData').value || null;
     const hora=id('mHora').value || null;
-
-    if(!titulo || !responsavel || !data || !hora){
-      return showErr('Formulário incompleto','Preencha responsável, título, dia e hora.');
-    }
-    const obj = {
-      titulo, descricao, responsavel, data, hora,
-      autor: state.author
-    };
-    if(!state.online) obj.board_slug=state.board;
+    if(!titulo || !responsavel || !data || !hora){ return showErr('Formulário incompleto','Preencha responsável, título, dia e hora.'); }
+    const obj = { titulo, descricao, responsavel, data, hora, autor: state.author };
     await upsertMeeting(obj);
-
-    id('mTitulo').value='';
-    id('mDesc').value='';
-    id('mData').value='';
-    id('mHora').value='';
+    id('mTitulo').value=''; id('mDesc').value=''; id('mData').value=''; id('mHora').value='';
   }
 
   // ===== NOTAS =====
   async function addNote(content){
+    const slug = state.currentProject?.slug; if(!slug) return showErr('Projeto não selecionado','Selecione um projeto.');
     const autor=id('noteAuthor').value;
     if(!content.trim()) return;
     if(state.online){
-      const { error } = await state.client
-        .from('notes')
-        .insert({ board_slug: state.board, conteudo: content, autor });
+      const { error } = await state.client.from('notes').insert({ board_slug: slug, conteudo: content, autor });
       if(error) return showErr('Erro ao criar anotação', error);
     }else{
-      state.notes.push({
-        id: crypto.randomUUID(),
-        conteudo: content,
-        autor,
-        created_at: new Date().toISOString(),
-        updated_at: null
-      });
-      saveLocal();
+      const data = loadProjectDataLocal(slug);
+      data.notes.push({ id: crypto.randomUUID(), conteudo: content, autor, created_at: new Date().toISOString(), updated_at: null });
+      saveProjectDataLocal(slug, data);
     }
     id('noteInput').value='';
-    await fetchAll();
+    await fetchProjectData();
   }
-  async function startEditNote(note){
-    state.editingNoteId=note.id;
-    renderNotes();
-  }
+  async function startEditNote(note){ state.editingNoteId=note.id; renderNotes(); }
   async function saveEditNote(idv){
-    const area=id(`edit_area_${idv}`);
-    const sel=id(`edit_author_${idv}`);
-    const newText=area.value.trim();
-    const newAuthor=sel.value;
+    const area=id(`edit_area_${idv}`); const sel=id(`edit_author_${idv}`);
+    const newText=area.value.trim(); const newAuthor=sel.value;
+    const slug = state.currentProject?.slug; if(!slug) return;
     if(!newText) return;
     if(state.online){
-      const { error } = await state.client
-        .from('notes')
-        .update({ conteudo:newText, autor:newAuthor })
-        .eq('id', idv);
+      const { error } = await state.client.from('notes').update({ conteudo:newText, autor:newAuthor }).eq('id', idv);
       if(error) return showErr('Erro ao salvar edição', error);
     }else{
-      const idx=state.notes.findIndex(n=>n.id===idv);
-      if(idx>=0){
-        state.notes[idx].conteudo=newText;
-        state.notes[idx].autor=newAuthor;
-        state.notes[idx].updated_at=new Date().toISOString();
-        saveLocal();
-      }
+      const data = loadProjectDataLocal(slug);
+      const idx=data.notes.findIndex(n=>n.id===idv);
+      if(idx>=0){ data.notes[idx].conteudo=newText; data.notes[idx].autor=newAuthor; data.notes[idx].updated_at=new Date().toISOString(); saveProjectDataLocal(slug, data); }
     }
-    state.editingNoteId=null;
-    await fetchAll();
+    state.editingNoteId=null; await fetchProjectData();
   }
-  function cancelEditNote(){
-    state.editingNoteId=null;
-    renderNotes();
-  }
+  function cancelEditNote(){ state.editingNoteId=null; renderNotes(); }
   async function deleteNote(idv){
+    const slug = state.currentProject?.slug; if(!slug) return;
     if(state.online){
-      const { error } = await state.client
-        .from('notes')
-        .delete()
-        .eq('id', idv);
+      const { error } = await state.client.from('notes').delete().eq('id', idv);
       if(error) return showErr('Erro ao excluir anotação', error);
     }else{
-      state.notes = state.notes.filter(n=>n.id!==idv);
-      saveLocal();
+      const data = loadProjectDataLocal(slug);
+      data.notes = (data.notes||[]).filter(n=>n.id!==idv);
+      saveProjectDataLocal(slug, data);
     }
-    await fetchAll();
+    await fetchProjectData();
   }
 
-  function render(){
-    id('boardLabel').textContent=state.board;
-    renderTasks();
-    renderNotes();
-    updateSelectedDayChip();
-  }
-
+  /* =================== Render Board =================== */
   function getDueBadge(prazo, status){
     if(!prazo || status==='concluida') return null;
     const today=new Date(); today.setHours(0,0,0,0);
@@ -1082,19 +1308,17 @@ Gestor ESG
   function getTimelinePillClass(st){ if(st==='concluido') return 'tl-pill tl-pill-concluido'; if(st==='andamento') return 'tl-pill tl-pill-andamento'; if(st==='parado') return 'tl-pill tl-pill-parado'; return 'tl-pill'; }
 
   async function saveTaskTimeline(task){
-    const idx=state.tasks.findIndex(t=>t.id===task.id);
-    if(idx>=0){
-      state.tasks[idx].timeline = task.timeline || [];
-      state.tasks[idx].updated_at = new Date().toISOString();
+    const slug = state.currentProject?.slug; if(!slug) return;
+    // offline fallback
+    if(!state.online){
+      const data = loadProjectDataLocal(slug);
+      const idx=data.tasks.findIndex(t=>t.id===task.id);
+      if(idx>=0){ data.tasks[idx].timeline = task.timeline||[]; data.tasks[idx].updated_at=new Date().toISOString(); saveProjectDataLocal(slug, data); }
     }
-    saveLocal();
     if(state.online){
       const payloadUpdate = { timeline: task.timeline || [], updated_at: new Date().toISOString() };
       const { error } = await state.client.from('tasks').update(payloadUpdate).eq('id', task.id);
-      if(error){
-        console.warn('Falha ao salvar timeline online:', error);
-        showErr('Erro ao atualizar timeline', error);
-      }
+      if(error){ console.warn('Falha ao salvar timeline online:', error); showErr('Erro ao atualizar timeline', error); }
     }
     renderTimelineModal(); renderTasks();
   }
@@ -1115,31 +1339,12 @@ Gestor ESG
     id('tlTaskTitle').textContent = 'Timeline / Histórico';
     id('tlBriefTitulo').textContent = task.titulo || '(sem título)';
 
-    const badgesWrap = id('tlBriefBadges');
-    badgesWrap.innerHTML = '';
-    const stSpan = document.createElement('span');
-    stSpan.className = 'tl-brief-chip';
-    stSpan.textContent = 'Status: ' + (task.status||'');
-    badgesWrap.appendChild(stSpan);
+    const badgesWrap = id('tlBriefBadges'); badgesWrap.innerHTML = '';
+    const stSpan = document.createElement('span'); stSpan.className='tl-brief-chip'; stSpan.textContent = 'Status: ' + (task.status||''); badgesWrap.appendChild(stSpan);
+    if(task.prazo){ const prazoSpan=document.createElement('span'); prazoSpan.className='tl-brief-chip'; prazoSpan.textContent='Prazo: '+fmtDate(task.prazo); badgesWrap.appendChild(prazoSpan); }
+    if(Array.isArray(task.responsaveis)){ task.responsaveis.forEach(r=>{ const chip=document.createElement('span'); chip.className='tl-brief-chip'; chip.textContent=r; badgesWrap.appendChild(chip); }); }
 
-    if(task.prazo){
-      const prazoSpan = document.createElement('span');
-      prazoSpan.className = 'tl-brief-chip';
-      prazoSpan.textContent = 'Prazo: ' + fmtDate(task.prazo);
-      badgesWrap.appendChild(prazoSpan);
-    }
-
-    if(Array.isArray(task.responsaveis)){
-      task.responsaveis.forEach(r=>{
-        const chip = document.createElement('span');
-        chip.className='tl-brief-chip';
-        chip.textContent=r;
-        badgesWrap.appendChild(chip);
-      });
-    }
-
-    const metaWrap = id('tlBriefMeta');
-    metaWrap.innerHTML = '';
+    const metaWrap = id('tlBriefMeta'); metaWrap.innerHTML = '';
     const partesMeta = [];
     if(task.autor){ partesMeta.push('Autor: '+task.autor); }
     if(task.created_at){ partesMeta.push('Criada: '+fmtDateTime(task.created_at)); }
@@ -1162,40 +1367,28 @@ Gestor ESG
 
     timelineArr.forEach(entry=>{
       const isEditing = state.editingTimelineEntryId === entry.id;
-
-      const item = document.createElement('div');
-      item.className='tl-item';
-
-      const dot = document.createElement('div');
-      dot.className = 'tl-item-dot ' + getTimelineDotClass(entry.status);
-      item.appendChild(dot);
+      const item = document.createElement('div'); item.className='tl-item';
+      const dot = document.createElement('div'); dot.className = 'tl-item-dot ' + getTimelineDotClass(entry.status); item.appendChild(dot);
 
       if(isEditing){
-        const editBlock = document.createElement('div');
-        editBlock.className='tl-edit-block';
+        const editBlock = document.createElement('div'); editBlock.className='tl-edit-block';
 
-        const rowTitulo = document.createElement('div');
-        rowTitulo.className='tl-edit-row';
-        const lblT=document.createElement('label'); lblT.textContent='Título';
-        const inpT=document.createElement('input'); inpT.type='text'; inpT.id=`tlEditTitulo_${entry.id}`; inpT.value=entry.titulo||'';
-        rowTitulo.append(lblT,inpT);
+        const rowTitulo = document.createElement('div'); rowTitulo.className='tl-edit-row';
+        rowTitulo.innerHTML = `<label>Título</label><input id="tlEditTitulo_${entry.id}" type="text" value="${entry.titulo||''}">`;
 
-        const rowDesc=document.createElement('div');
-        rowDesc.className='tl-edit-row';
-        const lblD=document.createElement('label'); lblD.textContent='Descrição';
-        const inpD=document.createElement('textarea'); inpD.id=`tlEditDesc_${entry.id}`; inpD.value=entry.descricao||'';
-        rowDesc.append(lblD,inpD);
+        const rowDesc=document.createElement('div'); rowDesc.className='tl-edit-row';
+        rowDesc.innerHTML = `<label>Descrição</label><textarea id="tlEditDesc_${entry.id}">${entry.descricao||''}</textarea>`;
 
-        const rowSt=document.createElement('div');
-        rowSt.className='tl-edit-row';
-        const lblS=document.createElement('label'); lblS.textContent='Status';
-        const selS=document.createElement('select'); selS.id=`tlEditStatus_${entry.id}`;
-        selS.innerHTML=`<option value="parado">Parado (vermelho)</option><option value="andamento">Em andamento (amarelo)</option><option value="concluido">Concluído (verde)</option>`;
-        selS.value=entry.status||'parado';
-        rowSt.append(lblS,selS);
+        const rowSt=document.createElement('div'); rowSt.className='tl-edit-row';
+        rowSt.innerHTML = `<label>Status</label>
+          <select id="tlEditStatus_${entry.id}">
+            <option value="parado">Parado (vermelho)</option>
+            <option value="andamento">Em andamento (amarelo)</option>
+            <option value="concluido">Concluído (verde)</option>
+          </select>`;
+        setTimeout(()=>{ id(`tlEditStatus_${entry.id}`).value=entry.status||'parado'; }, 0);
 
-        const rowBtns=document.createElement('div');
-        rowBtns.className='tl-edit-buttons';
+        const rowBtns=document.createElement('div'); rowBtns.className='tl-edit-buttons';
         const bCancel=document.createElement('button'); bCancel.className='btn'; bCancel.textContent='Cancelar';
         bCancel.onclick=()=>{ state.editingTimelineEntryId=null; renderTimelineModal(); };
         const bSave=document.createElement('button'); bSave.className='btn primary'; bSave.textContent='Salvar';
@@ -1207,9 +1400,7 @@ Gestor ESG
           if(!tTask) return;
           const arr = Array.isArray(tTask.timeline)?tTask.timeline:[];
           const ix = arr.findIndex(e=>e.id===entry.id);
-          if(ix>=0){
-            arr[ix] = { ...arr[ix], titulo:newTitulo, descricao:newDesc, status:newStatus, updated_at:new Date().toISOString() };
-          }
+          if(ix>=0){ arr[ix] = { ...arr[ix], titulo:newTitulo, descricao:newDesc, status:newStatus, updated_at:new Date().toISOString() }; }
           tTask.timeline = arr;
           state.editingTimelineEntryId=null;
           await saveTaskTimeline(tTask);
@@ -1224,7 +1415,6 @@ Gestor ESG
         const leftBlock=document.createElement('div'); leftBlock.className='tl-left-block';
 
         const titleEl=document.createElement('div'); titleEl.className='tl-titulo'; titleEl.textContent=entry.titulo||'(sem título)';
-
         const line2=document.createElement('div'); line2.className='tl-line2';
         const pill=document.createElement('span'); pill.className=getTimelinePillClass(entry.status); pill.textContent=getTimelineStatusLabel(entry.status);
         const tsLabel = document.createElement('span'); tsLabel.textContent = entry.created_at ? fmtDateTime(entry.created_at) : '(sem data)';
@@ -1233,6 +1423,8 @@ Gestor ESG
         leftBlock.append(titleEl,line2);
 
         const actions=document.createElement('div'); actions.className='tl-actions';
+        const task = getTaskById(state.viewingTaskTimelineId);
+        const isAutor = task?.autor === state.author || !task?.autor;
         if(isAutor){
           const bEdit = document.createElement('button'); bEdit.className='btn small'; bEdit.textContent='Editar';
           bEdit.onclick=()=>{ state.editingTimelineEntryId=entry.id; renderTimelineModal(); };
@@ -1262,21 +1454,17 @@ Gestor ESG
     if(task.autor && task.autor !== state.author){
       return showErr('Sem permissão','Somente o autor da tarefa pode registrar na timeline.');
     }
-
     const titulo = (id('tlNovoTitulo').value||'').trim() || '(sem título)';
     const descricao = (id('tlNovoDesc').value||'').trim() || '';
     const status = id('tlNovoStatus').value || 'parado';
-
     const entry = { id: crypto.randomUUID(), titulo, descricao, status, created_at: new Date().toISOString() };
     const arr = Array.isArray(task.timeline)?task.timeline:[];
     arr.push(entry);
     task.timeline = arr;
-
     id('tlNovoTitulo').value=''; id('tlNovoDesc').value=''; id('tlNovoStatus').value='parado';
     await saveTaskTimeline(task);
   }
 
-  // ===== Render tarefas =====
   function makeTaskCard(t){
     const card=document.createElement('div');
     card.className='card'; card.classList.add('is-'+t.status); card.draggable=true; card.dataset.id=t.id;
@@ -1299,7 +1487,7 @@ Gestor ESG
     stSel.innerHTML=`<option value="a_fazer">a fazer</option><option value="em_andamento">em andamento</option><option value="concluida">concluída</option>`;
     stSel.value=t.status;
     stSel.addEventListener('click', ev=>ev.stopPropagation());
-    stSel.onchange=async e=>{ e.stopPropagation(); await upsertTask({ id:t.id, status:e.target.value }); };
+    stSel.onchange=async e=>{ e.stopPropagation(); await upsertTask({ id:t.id, status:e.target.value }); if(id('chkUpdateLink').checked) updateShareLink(); };
 
     stRow.append(stLabel, stSel);
 
@@ -1331,22 +1519,28 @@ Gestor ESG
     const endWeek=new Date(today); endWeek.setDate(today.getDate() + (7 - today.getDay())); endWeek.setHours(23,59,59,999);
     let list=[...state.tasks];
 
+    // Sub-aba rápida (escopo)
+    const scope = state.subScope;
+    const prazoToLocal=t=> t.prazo ? ymdToLocalDate(t.prazo) : null;
+    const isOverdue=t=>{ const p=prazoToLocal(t); return p && p<today && t.status!=='concluida'; };
+
+    if(scope==='atrasadas') list=list.filter(isOverdue);
+    if(scope==='a_fazer') list=list.filter(t=>t.status==='a_fazer' && !isOverdue(t));
+    if(scope==='em_andamento') list=list.filter(t=>t.status==='em_andamento' && !isOverdue(t));
+    if(scope==='concluida') list=list.filter(t=>t.status==='concluida');
+
     if(fSt!=='todos') list=list.filter(t=>t.status===fSt);
     if(fResp!=='todos') list=list.filter(t=>(t.responsaveis||[]).includes(fResp));
-
-    const prazoToLocal=t=> t.prazo ? ymdToLocalDate(t.prazo) : null;
 
     if(state.filterDate){ list=list.filter(t=>t.prazo===state.filterDate); }
     else{
       if(fPrazo==='hoje'){ list=list.filter(t=>{ const p=prazoToLocal(t); return p && p.getTime()===today.getTime(); }); }
       if(fPrazo==='semana'){ list=list.filter(t=>{ const p=prazoToLocal(t); return p && p>=today && p<=endWeek; }); }
-      if(fPrazo==='atrasadas'){ list=list.filter(t=>{ const p=prazoToLocal(t); return p && p<today && t.status!=='concluida'; }); }
+      if(fPrazo==='atrasadas'){ list=list.filter(t=> isOverdue(t)); }
     }
 
-    const isOverdue=t=>{ const p=prazoToLocal(t); return p && p<today && t.status!=='concluida'; };
     const overdue=list.filter(isOverdue);
     const notOverdue=list.filter(t=>!isOverdue(t));
-
     overdue.forEach(t=> cols.atrasadas.append(makeTaskCard(t)));
 
     const counts={a_fazer:0,em_andamento:0,concluida:0};
@@ -1371,37 +1565,32 @@ Gestor ESG
         if(id('chkUpdateLink').checked) updateShareLink();
       };
     });
+
+    updateFilters();
   }
 
   function renderNotes(){
-    const wrap=id('notes'); wrap.innerHTML='';
+    const wrap=id('notes'); if(!wrap) return;
+    wrap.innerHTML='';
     const ordered=[...state.notes].sort((a,b)=> new Date(b.created_at||0) - new Date(a.created_at||0));
-
     ordered.forEach(n=>{
       const dv=document.createElement('div'); dv.className='note';
 
       if(state.editingNoteId===n.id){
         const edit=document.createElement('div'); edit.className='note-edit';
-
         const sel=document.createElement('select'); sel.id=`edit_author_${n.id}`;
         sel.innerHTML=FIXED_RESPONSAVEIS.map(a=>`<option ${a===n.autor?'selected':''} value="${a}">${a}</option>`).join('');
-
         const ta=document.createElement('textarea'); ta.id=`edit_area_${n.id}`; ta.value=n.conteudo||'';
-
         const row=document.createElement('div'); row.className='actions';
         const bCancel=document.createElement('button'); bCancel.className='btn'; bCancel.textContent='Cancelar'; bCancel.onclick=()=>cancelEditNote();
         const bSave=document.createElement('button'); bSave.className='btn primary'; bSave.textContent='Salvar'; bSave.onclick=()=>saveEditNote(n.id);
-
         row.append(bCancel,bSave); edit.append(sel,ta,row); dv.append(edit);
-
       }else{
         const p=document.createElement('div'); p.textContent=n.conteudo; dv.append(p);
-
         const meta=document.createElement('div'); meta.className='note-meta';
         const created=fmtDateTime(n.created_at); const updated=n.updated_at?fmtDateTime(n.updated_at):null;
         meta.innerHTML=`<span>por <strong>${n.autor||'—'}</strong></span><span>•</span><span>${created}</span>`+(updated?` <span>•</span><span>(editado em ${updated})</span>`:'');
         dv.append(meta);
-
         const row=document.createElement('div'); row.className='actions';
         const bEdit=document.createElement('button'); bEdit.className='btn small'; bEdit.textContent='Editar'; bEdit.onclick=()=>startEditNote(n);
         const bDel=document.createElement('button'); bDel.className='btn small'; bDel.textContent='Excluir'; bDel.onclick=()=>deleteNote(n.id);
@@ -1409,6 +1598,19 @@ Gestor ESG
       }
       wrap.append(dv);
     });
+  }
+
+  function renderProjectBoard(){
+    if(!state.currentProject){ showProjectsHome(); return; }
+    id('viewProjects').style.display='none';
+    id('viewProjectBoard').style.display='';
+    id('projectToolbar').style.display='';
+    id('subtabs').style.display='';
+
+    id('noteNow').textContent=`agora: ${fmtDateTime(new Date())}`;
+    renderTasks();
+    renderNotes();
+    updateSelectedDayChip();
   }
 
   function updateFilters(){
@@ -1439,7 +1641,8 @@ Gestor ESG
     const r=btn.getBoundingClientRect(); const popW=pop.offsetWidth||280, popH=pop.offsetHeight||280;
 
     if(vw<=420){
-      pop.style.left='50%'; pop.style.transform='translateX(-50%)'; pop.style.top=''; pop.style.bottom='calc(env(safe-area-inset-bottom, 0px) + 8px)'; pop.style.width='calc(100vw - 16px)'; return;
+      pop.style.left='50%'; pop.style.transform='translateX(-50%)'; pop.style.top=''; pop.style.bottom='calc(env(safe-area-inset-bottom, 0px) + 8px)'; pop.style.width='calc(100vw - 16px)';
+      return;
     }else{ pop.style.bottom=''; pop.style.transform=''; pop.style.width='280px'; }
 
     let left = r.left + (r.width/2) - (popW/2); left = Math.max(8, Math.min(left, vw - popW - 8));
@@ -1499,7 +1702,7 @@ Gestor ESG
     id('calFechar').onclick=closeCalendar;
 
     qsa('#calPopover .cal-day').forEach(el=>{
-      el.onclick=()=>{ state.filterDate=el.dataset.ymd; id('fPrazo').value='todos'; closeCalendar(); render(); };
+      el.onclick=()=>{ state.filterDate=el.dataset.ymd; id('fPrazo').value='todos'; closeCalendar(); renderProjectBoard(); };
     });
   }
 
@@ -1510,6 +1713,7 @@ Gestor ESG
   }
 
   function openTaskModal(t){
+    if(!state.currentProject) return showErr('Projeto não selecionado','Selecione um projeto.');
     state.editingTaskId = t?.id || null;
     id('taskModalTitle').textContent = t ? 'Editar tarefa' : 'Nova tarefa';
     id('tTitulo').value = t?.titulo || '';
@@ -1521,6 +1725,7 @@ Gestor ESG
   }
 
   async function saveTaskFromModal(){
+    if(!state.currentProject) return showErr('Projeto não selecionado','Selecione um projeto.');
     const selected=Array.from(document.querySelectorAll('#tRespGroup input:checked')).map(i=>i.value);
     const obj={
       id: state.editingTaskId || undefined,
@@ -1531,7 +1736,6 @@ Gestor ESG
       status: id('tStatus').value,
       autor: state.author
     };
-    if(!state.online) obj.board_slug=state.board;
     await upsertTask(obj);
     id('dlgTask').close();
     if(id('chkUpdateLink').checked) updateShareLink();
@@ -1539,13 +1743,13 @@ Gestor ESG
 
   function updateShareLink(){
     const url=new URL(location.href);
-    url.searchParams.set('board',state.board);
+    if(state.currentProject?.slug) url.searchParams.set('board',state.currentProject.slug);
     url.searchParams.set('theme',state.theme);
     history.replaceState({},'',url.toString());
   }
   function generateShareLink(){
     const url=new URL(location.href);
-    url.searchParams.set('board',state.board);
+    if(state.currentProject?.slug) url.searchParams.set('board',state.currentProject.slug);
     url.searchParams.set('theme',state.theme);
     navigator.clipboard.writeText(url.toString());
     alert('Link copiado! Cole no WhatsApp para compartilhar.');
@@ -1558,18 +1762,40 @@ Gestor ESG
   }
 
   function exportCSV(){
+    if(!state.currentProject) return showErr('Projeto não selecionado','Selecione um projeto.');
     const rows=state.tasks.map(t=>({
-      id:t.id, board:state.board, titulo:t.titulo, descricao:t.descricao||'', status:t.status,
+      id:t.id, projeto:state.currentProject.slug, titulo:t.titulo, descricao:t.descricao||'', status:t.status,
       prazo:t.prazo||'', responsaveis:(t.responsaveis||[]).join('; '), autor:t.autor||'',
       criado_em:t.created_at||'', atualizado_em:t.updated_at||''
     }));
     const csv=toCSV(rows);
     const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
-    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`tarefas_${state.board}.csv`; a.click();
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`tarefas_${state.currentProject.slug}.csv`; a.click();
   }
 
-  // Eventos gerais
-  document.getElementById('btnTheme').onclick = toggleTheme;
+  /* =================== Sidebar Mobile =================== */
+  function openSidebar(){ id('sidebar').classList.add('open'); }
+  function closeSidebar(){ id('sidebar').classList.remove('open'); }
+  function toggleSidebar(){
+    const s=id('sidebar');
+    if(s.classList.contains('open')) closeSidebar(); else openSidebar();
+  }
+
+  /* =================== Eventos =================== */
+  // Tema
+  id('btnTheme').onclick = toggleTheme;
+
+  // Sidebar
+  id('btnOpenSidebar').onclick = toggleSidebar;
+
+  // Projetos
+  id('btnNovoProjeto').onclick = openProjectModal;
+  id('pSalvar').onclick = saveProjectFromModal;
+  id('pCancelar').onclick = ()=>id('dlgProject').close();
+  id('projSearch').oninput = renderSidebarProjects;
+  id('btnVoltarProjetos').onclick = showProjectsHome;
+
+  // Toolbar/Kanban
   document.getElementById('btnNova').onclick = ()=>openTaskModal();
   qsa('[data-add]').forEach(b=>{ b.onclick=()=>openTaskModal({status:b.getAttribute('data-add')}); });
   document.getElementById('btnExport').onclick = exportCSV;
@@ -1577,9 +1803,9 @@ Gestor ESG
   document.getElementById('tSalvar').onclick = saveTaskFromModal;
   document.getElementById('tCancelar').onclick = ()=>id('dlgTask').close();
   document.getElementById('btnAnotar').onclick = ()=>addNote(id('noteInput').value);
-  document.getElementById('fStatus').onchange = render;
-  document.getElementById('fResp').onchange = render;
-  document.getElementById('fPrazo').onchange = ()=>{ state.filterDate=null; render(); };
+  document.getElementById('fStatus').onchange = renderProjectBoard;
+  document.getElementById('fResp').onchange = renderProjectBoard;
+  document.getElementById('fPrazo').onchange = ()=>{ state.filterDate=null; renderProjectBoard(); };
 
   // Reuniões
   document.getElementById('btnMeetings').onclick = openMeetings;
@@ -1593,7 +1819,7 @@ Gestor ESG
 
   // mini-calendário
   document.getElementById('btnCal').onclick = toggleCalendar;
-  document.getElementById('btnClearDia').onclick = ()=>{ state.filterDate=null; render(); };
+  document.getElementById('btnClearDia').onclick = ()=>{ state.filterDate=null; renderProjectBoard(); };
   document.addEventListener('click', (ev)=>{
     const pop=id('calPopover'); if(pop.classList.contains('hidden')) return;
     if(!pop.contains(ev.target) && ev.target!==id('btnCal')) closeCalendar();
@@ -1602,16 +1828,34 @@ Gestor ESG
   window.addEventListener('resize', ()=>{ const pop=id('calPopover'); if(!pop.classList.contains('hidden')) placeCalendarPopover(); });
   window.addEventListener('scroll', ()=>{ const pop=id('calPopover'); if(!pop.classList.contains('hidden')) placeCalendarPopover(); }, true);
 
-  /* ====== Agora o app só inicia após a senha ====== */
+  // Subtabs (abas rápidas)
+  qsa('.subtab').forEach(tab=>{
+    tab.onclick = ()=>{
+      qsa('.subtab').forEach(t=>t.classList.remove('active'));
+      tab.classList.add('active');
+      state.subScope = tab.dataset.scope;
+      renderProjectBoard();
+    };
+  });
+
+  /* =================== Boot =================== */
   async function startApp(){
+    // aplica tema da URL se existir
     const params=new URL(location.href).searchParams;
     const themeFromUrl=params.get('theme');
     if(themeFromUrl){ state.theme=themeFromUrl; localStorage.setItem('theme',state.theme); applyTheme(); }
 
-    renderNoteAuthors();
     await maybeInitSupabase();
-    updateFilters();
-    await fetchAll();
+    await fetchProjects();
+
+    // se vem um board na URL, já seleciona
+    const fromUrl = params.get('board');
+    if(fromUrl && state.projects.find(p=>p.slug===fromUrl)){
+      await selectProject(fromUrl);
+    }else{
+      // tela de projetos como inicial
+      showProjectsHome();
+    }
   }
   </script>
 </body>

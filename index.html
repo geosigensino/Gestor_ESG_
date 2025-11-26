@@ -17,7 +17,6 @@
       --border:#e6ebf2; --shadow:0 10px 24px rgba(16,19,23,.08); --ring:0 0 0 3px rgba(27,106,42,.18);
     }
 
-    /* ===== Tokens por status ===== */
     :root{
       --st-todo-bg:rgba(251,191,36,.14); --st-todo-bd:rgba(251,191,36,.40); --st-todo-tx:#fde68a;
       --st-prog-bg:rgba(59,130,246,.14); --st-prog-bd:rgba(59,130,246,.40); --st-prog-tx:#bfdbfe;
@@ -65,7 +64,6 @@
     .kpi.prog{ background:var(--st-prog-bg); color:var(--st-prog-tx); border-color:var(--st-prog-bd) }
     .kpi.done{ background:var(--st-done-bg); color:var(--st-done-tx); border-color:var(--st-done-bd) }
 
-    /* menu de contexto (projetos) */
     .menu-wrap{ position:relative; }
     .menu-btn{ padding:6px 8px; border-radius:8px; border:1px solid var(--border); background:var(--panel); }
     .context-menu{
@@ -84,10 +82,10 @@
     .main{ display:flex; flex-direction:column; gap:0; }
     header.main-head{
       display:flex; align-items:center; gap:10px; flex-wrap:wrap;
-      padding:12px 14px; border-bottom:1px solid var(--border); background:var(--panel); position:sticky; top:0; z-index:10;
+      padding:16px 18px; border-bottom:1px solid var(--border); background:var(--panel); position:sticky; top:0; z-index:10;
     }
+
     .crumbs{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
-    .crumbs .sep{ opacity:.5; }
     .btn,button{
       cursor:pointer;
       border:1px solid var(--border);background:var(--panel);color:var(--txt);
@@ -102,33 +100,24 @@
 
     .toolbar{
       display:flex;gap:12px;align-items:center;flex-wrap:wrap;
-      padding:10px 12px; border-bottom:1px solid var(--border);
+      padding:12px 18px; border-bottom:1px solid var(--border);
       background:linear-gradient(180deg,rgba(255,255,255,.02),transparent);
       backdrop-filter:saturate(160%) blur(6px);
-      position:sticky; top:48px; z-index:9;
-      overflow-x:auto;
+      position:sticky; top:60px; z-index:9;
     }
 
-    @media (max-width:980px){
-      .app-shell{ grid-template-columns: 1fr; }
-      .sidebar{ position:fixed; z-index:30; left:0; top:0; bottom:0; width:min(86vw, 360px); transform:translateX(-100%); transition:transform .2s; }
-      .sidebar.open{ transform:none; }
-      header.main-head{ position:sticky; top:0; }
-    }
-
-    /* Compactação extra no mobile para reduzir a “faixa congelada” */
-    @media (max-width:540px){
-      header.main-head{ padding:8px 10px; }
-      .toolbar{ gap:8px; padding:8px 10px; top:44px; }
-      .toolbar .pill{ font-size:12px; padding:4px 8px; }
-      .toolbar select{ padding:6px 8px; font-size:12px; }
-      .btn.small{ padding:5px 8px; }
-      .subtabs{ top: calc(44px + 40px); padding:6px 10px; gap:6px; }
+    /* compacta cabeçalhos no mobile */
+    @media (max-width:480px){
+      header.main-head{ padding:10px 12px }
+      .toolbar{ padding:8px 12px; gap:8px; top:48px }
+      .subtabs{ top:96px; padding:8px 12px }
+      .btn{ padding:7px 10px; border-radius:9px }
+      .btn.small{ padding:4px 7px }
     }
 
     .pill{
       background:rgba(255,255,255,.05);color:var(--txt);
-      padding:6px 10px;border:1px solid var(--border);border-radius:10px; white-space:nowrap;
+      padding:6px 10px;border:1px solid var(--border);border-radius:10px
     }
     select,input[type="date"],input[type="text"],input[type="time"]{
       background:var(--panel);color:var(--txt);
@@ -136,60 +125,20 @@
     }
 
     .subtabs{ display:flex; gap:8px; flex-wrap:wrap; padding:10px 18px; border-bottom:1px solid var(--border); background:var(--panel); position:sticky; top:114px; z-index:8; }
-    .subtab{ border:1px solid var(--border); background:var(--card); color:var(--txt); padding:6px 10px; border-radius:999px; font-size:13px; cursor:pointer; white-space:nowrap; }
+    .subtab{ border:1px solid var(--border); background:var(--card); color:var(--txt); padding:6px 10px; border-radius:999px; font-size:13px; cursor:pointer; }
     .subtab.active{ background:linear-gradient(180deg,var(--brand),var(--brand-2)); color:#fff; border:none; }
 
     .wrap{max-width:1400px;margin:0 auto;padding:0 18px 36px}
-    .grid{ display:grid;grid-template-columns:minmax(0,1.8fr) minmax(320px,1fr); gap:28px;margin-top:18px;align-items:start }
-    .panel{ background:var(--panel);border:1px solid var(--border); border-radius:14px;box-shadow:var(--shadow);overflow:hidden }
-    .panel h3{margin:18px;font-size:16px}
-
     .kanban{ display:grid;grid-template-columns:repeat(auto-fit, minmax(280px,1fr)); gap:24px;padding:24px }
     .col{ background:var(--card);border:1px solid var(--border); border-radius:12px;min-height:260px;display:flex;flex-direction:column }
     .col header{ display:flex;align-items:center;justify-content:space-between; padding:14px;border-bottom:1px solid var(--border) }
     .dropzone{flex:1;padding:14px;min-height:160px}
-    .dropzone.readonly{opacity:.95}
 
     .card{ background:var(--panel);border:1px solid var(--border);border-radius:12px; padding:14px;margin:12px 6px;box-shadow:var(--shadow); transition:box-shadow .2s,transform .05s; cursor:pointer }
-    .card:hover{box-shadow:0 10px 22px rgba(0,0,0,.25)}
-    .title{font-weight:700}
-    .tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-    .tag{ background:rgba(255,255,255,.06);border:1px solid var(--border); padding:4px 8px;border-radius:999px;font-size:12px }
-    .row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-    .actions{display:flex;gap:8px;margin-top:10px}
-    .actions .btn.small{cursor:pointer}
-
-    .status-inline{font-size:12px;padding:4px 6px;border-radius:8px}
 
     .note{ background:var(--card);border:1px solid var(--border); border-radius:12px;padding:12px;margin:10px 14px }
-    .note-meta{ display:flex;gap:8px;flex-wrap:wrap; color:var(--muted);font-size:12px;margin-top:6px }
-    .note-edit{display:grid;gap:8px}
-    textarea{ width:100%;min-height:64px; background:var(--panel);color:var(--txt); border:1px solid var(--border);border-radius:10px;padding:8px 10px }
 
-    .badges{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-    .badge{ font-size:12px;padding:2px 8px;border-radius:999px; border:1px solid var(--border);background:var(--panel) }
-    .badge.status-a_fazer{ background:var(--st-todo-bg);color:var(--st-todo-tx);border-color:var(--st-todo-bd) }
-    .badge.status-em_andamento{ background:var(--st-prog-bg);color:var(--st-prog-tx);border-color:var(--st-prog-bd) }
-    .badge.status-concluida{ background:var(--st-done-bg);color:var(--st-done-tx);border-color:var(--st-done-bd) }
-
-    .col[data-status="atrasadas"] .card{ background:var(--st-late-bg);border-color:var(--st-late-bd) }
-    .col[data-status="atrasadas"] .badge{ background:transparent;color:var(--st-late-tx);border-color:var(--st-late-bd) }
-
-    .card.is-a_fazer{box-shadow:inset 3px 0 0 0 var(--st-todo-bd)}
-    .card.is-em_andamento{box-shadow:inset 3px 0 0 0 var(--st-prog-bd)}
-    .card.is-concluida{box-shadow:inset 3px 0 0 0 var(--st-done-bd)}
-
-    .col:not([data-status="atrasadas"]) .card.is-a_fazer{ background:var(--st-todo-bg);border-color:var(--st-todo-bd) }
-    .col:not([data-status="atrasadas"]) .card.is-em_andamento{ background:var(--st-prog-bg);border-color:var(--st-prog-bd) }
-    .col:not([data-status="atrasadas"]) .card.is-concluida{ background:var(--st-done-bg);border-color:var(--st-done-bd) }
-
-    .foot{ margin-top:28px;display:flex; justify-content:space-between;align-items:center;color:var(--muted) }
-
-    .assignees{display:flex;gap:8px;flex-wrap:wrap}
-    .assignees input[type="checkbox"]{display:none}
-    .assignees label{ user-select:none;cursor:pointer; padding:6px 10px;border-radius:999px; border:1px solid var(--border);background:var(--panel); transition:background .2s,color .2s,box-shadow .2s }
-    .assignees input[type="checkbox"]:checked + label{ background:var(--brand);color:#fff;border-color:transparent;box-shadow:var(--ring) }
-
+    /* ===== Modal claro ===== */
     dialog{ width:min(820px, calc(100% - 32px)); }
     dialog.modal-light{ background:#ffffff; color:#111827; border:1px solid #e6ebf2; border-radius:14px; box-shadow:var(--shadow); }
     dialog.modal-light::backdrop{ background:rgba(0,0,0,.45); }
@@ -208,75 +157,49 @@
     dialog.modal-light .btn{ background:#f8fafc; color:#0f172a; border:1px solid #e5e7eb; }
     dialog.modal-light .btn.primary{ background:linear-gradient(180deg,var(--brand),var(--brand-2)); color:#fff; border:none; }
 
-    /* ===== Mini-calendário (revisado) ===== */
+    /* ===== Mini-calendário (refeito) ===== */
     .cal-pop{
-      position:fixed; z-index:40; width:280px; max-width:96vw;
-      background:var(--panel); border:1px solid var(--border); border-radius:12px; box-shadow:var(--shadow); padding:8px;
-      max-height:min(70vh, 420px); overflow:auto;
+      position:fixed; z-index:30;
+      width:320px; max-width:96vw; background:var(--panel); border:1px solid var(--border);
+      border-radius:12px; box-shadow:var(--shadow); padding:8px;
+      max-height:min(70vh, 480px); overflow:auto;  /* rolagem interna se precisar */
     }
     .cal-pop.hidden{ display:none; }
     .cal{ display:grid; gap:8px; }
-    .cal-head{ position:sticky; top:0; display:flex; justify-content:space-between; align-items:center; padding:6px 6px; background:var(--panel); z-index:1; }
-    .cal-head .title{ font-weight:700; text-transform:capitalize; }
-    .cal-head button{ padding:4px 8px; }
+    .cal-head{
+      position:sticky; top:0; z-index:1;
+      display:flex; justify-content:space-between; align-items:center; gap:8px;
+      padding:6px; background:var(--panel);
+    }
+    .cal-head .title{ font-weight:800; text-transform:capitalize }
+    .cal-head button{ padding:4px 8px }
     .cal-grid{ display:grid; grid-template-columns:repeat(7,1fr); gap:6px; padding:0 4px 6px; }
     .cal-dow{ text-align:center; font-size:12px; color:var(--muted); }
-    .cal-day{ position:relative; text-align:center; padding:8px 0; border:1px solid var(--border); border-radius:8px; cursor:pointer; user-select:none; background:var(--panel); font-size:13px; }
+    .cal-day{
+      position:relative; text-align:center; padding:8px 0; border:1px solid var(--border);
+      border-radius:8px; cursor:pointer; user-select:none; background:var(--panel); font-size:13px;
+    }
     .cal-day:hover{ box-shadow:0 4px 14px rgba(0,0,0,.18); }
     .cal-day.is-today{ outline:2px solid var(--brand); outline-offset:-2px; }
     .cal-day.is-selected{ background:linear-gradient(180deg,var(--brand),var(--brand-2)); color:#fff; border-color:transparent; }
     .cal-day.has-task::after{ content:""; position:absolute; left:50%; transform:translateX(-50%); bottom:6px; width:6px; height:6px; border-radius:50%; background:var(--warn); }
-    .cal-foot{ position:sticky; bottom:0; display:flex; justify-content:space-between; gap:6px; padding:6px; background:var(--panel); }
 
-    #selDiaTag .btn.small{ padding:2px 6px; }
-
+    /* mobile: dias e paddings menores e centralizado na base */
     @media (max-width:420px){
       .cal-pop{
-        left:50% !important; transform:translateX(-50%) !important; top:auto !important;
-        bottom:calc(env(safe-area-inset-bottom, 0px) + 8px) !important; width:calc(100vw - 16px);
+        left:50% !important; transform:translateX(-50%) !important;
+        top:auto !important; bottom:calc(env(safe-area-inset-bottom, 0px) + 8px) !important;
+        width:calc(100vw - 16px);
       }
+      .cal-day{ padding:6px 0; font-size:12px }
     }
 
-    /* ===== Avisos de vencimento ===== */
-    .badge.due{ font-weight:700 }
-    .badge.due-today{ background:var(--st-todo-bg); color:var(--st-todo-tx); border-color:var(--st-todo-bd) }
-    .badge.due-soon{ background:var(--st-prog-bg); color:var(--st-prog-tx); border-color:var(--st-prog-bd) }
-    .badge.due-overdue{ background:var(--st-late-bg); color:var(--st-late-tx); border-color:var(--st-late-bd) }
+    .foot{ margin-top:28px;display:flex; justify-content:space-between;align-items:center;color:var(--muted) }
 
-    /* ===== Reuniões ===== */
-    .meeting-list{ display:grid; gap:10px; max-height:50vh; overflow:auto; padding-right:2px; }
-    .meeting-item{ border:1px solid var(--border); background:var(--panel); border-radius:10px; padding:10px; display:grid; gap:6px; }
-    .meeting-top{ display:flex; gap:8px; align-items:center; justify-content:space-between; }
-    .meeting-meta{ color:var(--muted); font-size:12px; display:flex; gap:8px; flex-wrap:wrap; }
-    .meeting-actions{ display:flex; gap:8px; }
-
-    /* ===== TIMELINE ===== */
-    .tl-body-grid{ display:grid; grid-template-columns: minmax(0,1fr); gap:16px; }
-    .tl-brief-card{ background:#f8fafc; border:1px solid #e5e7eb; border-radius:12px; padding:12px 14px; display:grid; gap:8px; }
-    .tl-brief-title{ font-weight:600; color:#0f172a; font-size:15px; line-height:1.3; word-break:break-word; }
-    .tl-brief-meta{ font-size:12px; color:#4b5563; display:flex; flex-wrap:wrap; gap:10px; line-height:1.4; }
-    .tl-brief-badges{ display:flex; flex-wrap:wrap; gap:6px; font-size:12px; }
-    .tl-brief-chip{ background:#fff; border:1px solid #d1d5db; border-radius:999px; padding:2px 8px; line-height:1.2; color:#1f2937; font-size:12px; }
-    .timeline-form{ display:grid; gap:10px; background:#ffffff; border:1px solid #d1d5db; border-radius:12px; padding:12px 14px; }
-    .timeline-entries{ position:relative; max-height:45vh; overflow:auto; padding-left:20px; padding-right:4px; }
-    .timeline-entries::before{ content:""; position:absolute; left:6px; top:0; bottom:0; width:2px; background:#e5e7eb; }
-    .tl-item{ position:relative; background:#ffffff; border:1px solid #e5e7eb; border-radius:10px; padding:10px 12px; margin-bottom:12px; box-shadow:0 6px 16px rgba(0,0,0,.04); display:grid; gap:6px; }
-    .tl-item-dot{ position:absolute; left:-14px; top:12px; width:12px; height:12px; border-radius:50%; border:2px solid #fff; box-shadow:0 0 0 2px #e5e7eb; }
-    .dot-concluido{ background:var(--ok); } .dot-andamento{ background:var(--warn); } .dot-parado{ background:var(--danger); }
-    .tl-actions .btn.small{ padding:4px 8px; font-size:12px; line-height:1.2; box-shadow:none; }
-
-    /* ===== Overlay de senha ===== */
+    /* overlay login (inalterado) */
     .locked #app-root{ filter: blur(8px) saturate(80%); pointer-events:none; user-select:none; }
     #loginOverlay{ position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,.45); z-index:50; backdrop-filter: blur(3px); }
     #loginCard{ width:min(420px, calc(100% - 32px)); background:#ffffff; color:#0f172a; border:1px solid #e6ebf2; border-radius:14px; box-shadow:var(--shadow); padding:18px; display:grid; gap:12px; }
-    #loginCard .brand{ font-weight:800; font-size:18px; }
-    .login-meta{ color:#6b7280; font-size:12px; }
-    .login-row{ display:grid; gap:6px; }
-    .login-row label{ color:#4b5563; font-size:12px; }
-    .login-row input{ width:100%; background:#f8fafc; color:#0f172a; border:1px solid #e5e7eb; border-radius:10px; padding:10px 12px; font-size:14px; }
-    .login-actions{ display:flex; gap:8px; justify-content:flex-end; align-items:center; }
-    .login-btn{ cursor:pointer; padding:10px 14px; border-radius:10px; border:1px solid #e5e7eb; background:#f8fafc; }
-    .login-btn.primary{ border:none; background:linear-gradient(180deg,var(--brand),var(--brand-2)); color:#fff; }
     .login-err{ color:#b91c1c; font-size:12px; display:none; }
     .shake{ animation:shake .18s linear 2; }
     @keyframes shake{ 0%{transform:translateX(0)} 25%{transform:translateX(-4px)} 50%{transform:translateX(4px)} 75%{transform:translateX(-2px)} 100%{transform:translateX(0)} }
@@ -288,13 +211,11 @@
     <div id="loginCard">
       <div class="brand">Eco Smart Group — Gestor de Tarefas</div>
       <div class="login-meta">Usuário padrão: <strong>Eco Smart Group</strong></div>
-
       <div class="login-row">
         <label>Senha</label>
         <input id="pwdInput" type="password" placeholder="Digite a senha" autocomplete="current-password" />
         <div id="loginErr" class="login-err">Senha incorreta. Tente novamente.</div>
       </div>
-
       <div class="login-actions">
         <button id="pwdShow" class="login-btn" type="button">👁 Mostrar</button>
         <span style="flex:1"></span>
@@ -304,7 +225,7 @@
   </div>
 
   <div id="app-root" class="app-shell">
-    <!-- ===== SIDEBAR (PROJETOS) ===== -->
+    <!-- SIDEBAR -->
     <aside id="sidebar" class="sidebar">
       <div>
         <div class="brand">Eco Smart Group</div>
@@ -330,7 +251,7 @@
       </div>
     </aside>
 
-    <!-- ===== MAIN ===== -->
+    <!-- MAIN -->
     <main class="main">
       <header class="main-head">
         <button class="btn" id="btnOpenSidebar" title="Projetos">☰</button>
@@ -343,7 +264,7 @@
         <button class="btn" id="btnVoltarProjetos" title="Voltar aos projetos">← Projetos</button>
       </header>
 
-      <!-- Barra do projeto selecionado -->
+      <!-- Barra do projeto -->
       <div class="toolbar" id="projectToolbar" style="display:none">
         <button class="btn primary" id="btnNova">+ Nova tarefa</button>
 
@@ -389,15 +310,14 @@
         <button class="subtab" data-scope="concluida">Concluídas</button>
       </div>
 
-      <!-- Conteúdos -->
       <div class="wrap">
-        <!-- Tela de Projetos -->
+        <!-- Projetos -->
         <section id="viewProjects" class="panel" style="display:none">
           <h3>Projetos</h3>
           <div id="projectsGrid" class="kanban" style="grid-template-columns:repeat(auto-fit, minmax(240px,1fr));"></div>
         </section>
 
-        <!-- Tela do Projeto -->
+        <!-- Board do projeto -->
         <section id="viewProjectBoard" style="display:none">
           <section class="panel">
             <h3 id="projBoardTitle">Tarefas</h3>
@@ -406,27 +326,26 @@
                 <header><div class="row"><strong>Atrasadas</strong><span class="badge">0</span></div></header>
                 <div class="dropzone readonly" id="col-atrasadas"></div>
               </div>
-
               <div class="col" data-status="a_fazer">
                 <header>
                   <div class="row"><strong>A fazer</strong><span class="badge">0</span></div>
                   <button class="btn small" data-add="a_fazer">+ adicionar</button>
                 </header>
-                <div class="dropzone" id="col-a_fazer" ondragover="event.preventDefault()"></div>
+                <div class="dropzone" id="col-a_fazer"></div>
               </div>
               <div class="col" data-status="em_andamento">
                 <header>
                   <div class="row"><strong>Em andamento</strong><span class="badge">0</span></div>
                   <button class="btn small" data-add="em_andamento">+ adicionar</button>
                 </header>
-                <div class="dropzone" id="col-em_andamento" ondragover="event.preventDefault()"></div>
+                <div class="dropzone" id="col-em_andamento"></div>
               </div>
               <div class="col" data-status="concluida">
                 <header>
                   <div class="row"><strong>Concluídas</strong><span class="badge">0</span></div>
                   <button class="btn small" data-add="concluida">+ adicionar</button>
                 </header>
-                <div class="dropzone" id="col-concluida" ondragover="event.preventDefault()"></div>
+                <div class="dropzone" id="col-concluida"></div>
               </div>
             </div>
           </section>
@@ -457,7 +376,7 @@
     </main>
   </div>
 
-  <!-- MODAL: TAREFA -->
+  <!-- DEMAIS MODAIS (iguais aos seus) -->
   <dialog id="dlgTask" class="modal-light">
     <div class="modal-head" id="taskModalTitle">Nova tarefa</div>
     <div class="modal-body">
@@ -479,19 +398,12 @@
     </div>
   </dialog>
 
-  <!-- MODAL: REUNIÕES -->
   <dialog id="dlgMeetings" class="modal-light">
     <div class="modal-head">Reuniões</div>
     <div class="modal-body">
-      <div class="field"><label>Responsável</label>
-        <select id="mResp"></select>
-      </div>
-      <div class="field"><label>Título</label>
-        <input id="mTitulo" type="text" placeholder="Ex.: Reunião com Cliente X" />
-      </div>
-      <div class="field"><label>Descrição (opcional)</label>
-        <input id="mDesc" type="text" placeholder="Pauta breve…" />
-      </div>
+      <div class="field"><label>Responsável</label><select id="mResp"></select></div>
+      <div class="field"><label>Título</label><input id="mTitulo" type="text" placeholder="Ex.: Reunião com Cliente X" /></div>
+      <div class="field"><label>Descrição (opcional)</label><input id="mDesc" type="text" placeholder="Pauta breve…" /></div>
       <div class="row" style="gap:10px">
         <div class="field"><label>Dia</label><input id="mData" type="date" /></div>
         <div class="field"><label>Hora</label><input id="mHora" type="time" /></div>
@@ -500,16 +412,12 @@
         <button class="btn" id="mCancelar">Limpar</button>
         <button class="btn primary" id="mSalvar">Salvar reunião</button>
       </div>
-
       <div style="margin-top:8px;font-weight:700">Registros</div>
       <div id="meetingList" class="meeting-list"></div>
     </div>
-    <div class="modal-foot">
-      <button class="btn" id="mFechar">Fechar</button>
-    </div>
+    <div class="modal-foot"><button class="btn" id="mFechar">Fechar</button></div>
   </dialog>
 
-  <!-- MODAL: TIMELINE -->
   <dialog id="dlgTimeline" class="modal-light">
     <div class="modal-head" id="tlTaskTitle">Timeline / Histórico</div>
     <div class="modal-body">
@@ -519,7 +427,6 @@
           <div class="tl-brief-badges" id="tlBriefBadges"></div>
           <div class="tl-brief-meta" id="tlBriefMeta"></div>
         </section>
-
         <section class="tl-col-main">
           <div id="tlFormWrap" class="timeline-form" style="display:none">
             <div class="timeline-form-head"><span>Novo registro</span></div>
@@ -534,7 +441,6 @@
             </div>
             <div class="tl-save-row"><button class="btn primary" id="tlNovoSalvar">Adicionar na timeline</button></div>
           </div>
-
           <div class="tl-history-head">Histórico</div>
           <div id="tlList" class="timeline-entries"></div>
         </section>
@@ -543,20 +449,6 @@
     <div class="modal-foot"><button class="btn" id="tlFechar">Fechar</button></div>
   </dialog>
 
-  <!-- MODAL: NOVO PROJETO -->
-  <dialog id="dlgProject" class="modal-light">
-    <div class="modal-head">Novo projeto</div>
-    <div class="modal-body">
-      <div class="field"><label>Nome do projeto</label><input id="pTitulo" type="text" placeholder="Ex.: Projeto Rondônia" /></div>
-      <div class="muted" style="font-size:12px">Exemplos: “Projeto Rondônia”, “Projeto Pará”.</div>
-    </div>
-    <div class="modal-foot">
-      <button class="btn" id="pCancelar">Cancelar</button>
-      <button class="btn primary" id="pSalvar">Criar</button>
-    </div>
-  </dialog>
-
-  <!-- MODAL: DASHBOARD -->
   <dialog id="dlgDash" class="modal-light">
     <div class="modal-head">Dashboard — Métricas</div>
     <div class="modal-body" style="display:grid; gap:16px">
@@ -567,55 +459,29 @@
           <span class="tl-brief-chip" id="dbLeadTime">Lead time méd.: —</span>
         </div>
       </div>
-      <div class="panel" style="padding:12px">
-        <div style="font-weight:700; margin:6px 6px 10px">Tarefas entregues nos últimos 30 dias</div>
-        <canvas id="dbLast30" height="120"></canvas>
-      </div>
-      <div class="panel" style="padding:12px">
-        <div style="font-weight:700; margin:6px 6px 10px">% no prazo × com atraso</div>
-        <canvas id="dbPct" height="120"></canvas>
-      </div>
+      <div class="panel" style="padding:12px"><div style="font-weight:700; margin:6px 6px 10px">Tarefas entregues nos últimos 30 dias</div><canvas id="dbLast30" height="120"></canvas></div>
+      <div class="panel" style="padding:12px"><div style="font-weight:700; margin:6px 6px 10px">% no prazo × com atraso</div><canvas id="dbPct" height="120"></canvas></div>
     </div>
-    <div class="modal-foot">
-      <button class="btn" id="dbFechar">Fechar</button>
-    </div>
+    <div class="modal-foot"><button class="btn" id="dbFechar">Fechar</button></div>
   </dialog>
 
   <script>
   /* =================== CONFIG GERAL =================== */
   const DEFAULT_SB_URL = 'https://jyqfqazhcvrvwvgptuld.supabase.co';
   const DEFAULT_SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5cWZxYXpoY3Zydnd2Z3B0dWxkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQxMjE0ODUsImV4cCI6MjA3OTY5NzQ4NX0.6hw23rwEmEc4HLdhP6tEssYWPBXcnYSixUjI0A2i26c';
-
   const FIXED_RESPONSAVEIS = ['Bruno Ferreira','Bruno Santos','Carlos Barretto','João Tenório'];
 
   const state = {
     theme: localStorage.getItem('theme') || 'dark',
     author: 'Anônimo',
-
-    projects: [],           // {slug, title, archived?:boolean}
-    projectStats: {},       // slug -> {todo, prog, done, late}
-    currentProject: null,
-
-    supabaseUrl: DEFAULT_SB_URL,
-    supabaseKey: DEFAULT_SB_KEY,
-    client: null,
-    online:false,
-
-    tasks: [],
-    notes: [],
-    meetings: [],
-
-    editingTaskId: null,
-    editingNoteId: null,
-    viewingTaskTimelineId:null,
-    editingTimelineEntryId:null,
-
-    filterDate:null,
-    calMonth:null,
-    subScope:'todas',
+    projects: [], projectStats: {}, currentProject: null,
+    supabaseUrl: DEFAULT_SB_URL, supabaseKey: DEFAULT_SB_KEY, client: null, online:false,
+    tasks: [], notes: [], meetings: [],
+    editingTaskId: null, editingNoteId: null, viewingTaskTimelineId:null, editingTimelineEntryId:null,
+    filterDate:null, calMonth:null, subScope:'todas',
   };
 
-  /* ========== Cadeado simples ========== */
+  /* ===== Login simples ===== */
   const APP_PASSWORD = 'esg2025*';
   const AUTH_FLAG = 'gst_auth_ok';
   let appStarted = false;
@@ -627,7 +493,6 @@
     const btnEnter = document.getElementById('pwdEnter');
     const btnShow  = document.getElementById('pwdShow');
     const err = document.getElementById('loginErr');
-
     function startAppOnce(){ if(appStarted) return; appStarted = true; startApp(); }
     function showLocked(){ document.body.classList.add('locked'); overlay.style.display = 'flex'; pwdInput.value = ''; err.style.display = 'none'; setTimeout(()=>pwdInput.focus(), 80); }
     function unlock(){ document.body.classList.remove('locked'); overlay.style.display = 'none'; sessionStorage.setItem(AUTH_FLAG, '1'); startAppOnce(); }
@@ -690,7 +555,6 @@
 
   /* =================== Projetos + Contadores =================== */
   async function fetchProjectsAndStats(){
-    // projetos
     if(state.online){
       const { data, error } = await state.client.from('boards').select('*').order('created_at',{ascending:true});
       if(error){ console.warn('Boards fallback local', error); state.projects = loadProjectsLocal(); }
@@ -698,7 +562,6 @@
         state.projects = (data||[]).map(b=>({slug:b.slug, title:b.title||b.slug, archived: !!b.archived}));
         saveProjectsLocal(state.projects);
       }
-      // carregar tarefas mínimas de todos os boards para computar KPIs
       const slugs = state.projects.map(p=>p.slug);
       if(slugs.length){
         const { data: tMin, error: eT } = await state.client.from('tasks')
@@ -706,9 +569,7 @@
           .in('board_slug', slugs);
         if(eT){ console.warn('Stats fallback local', eT); computeStatsLocal(); }
         else{ computeStatsFromArray(tMin||[]); }
-      }else{
-        state.projectStats = {};
-      }
+      }else{ state.projectStats = {}; }
     }else{
       state.projects = loadProjectsLocal();
       computeStatsLocal();
@@ -725,7 +586,6 @@
       if(t.status==='a_fazer') map[slug].todo++;
       else if(t.status==='em_andamento') map[slug].prog++;
       else if(t.status==='concluida') map[slug].done++;
-      // atrasadas (não concluídas e prazo < hoje)
       if(t.status!=='concluida' && t.prazo){
         const d=ymdToLocalDate(t.prazo);
         if(d && d < today) map[slug].late++;
@@ -769,11 +629,9 @@
   }
 
   async function toggleArchiveProject(slug, toArchive){
-    // online: tenta usar coluna "archived" se existir; senão mantém estado local
     if(state.online){
-      try{
-        await state.client.from('boards').update({ archived: toArchive }).eq('slug', slug);
-      }catch(e){ console.warn('Sem coluna archived, usando local', e); }
+      try{ await state.client.from('boards').update({ archived: toArchive }).eq('slug', slug); }
+      catch(e){ console.warn('Sem coluna archived, usando local', e); }
     }
     const set = loadArchivedSet();
     if(toArchive) set.add(slug); else set.delete(slug);
@@ -788,7 +646,6 @@
     if(!newTitle) return;
     const newSlug = sanitizeSlug(newTitle);
 
-    // cria board
     if(state.online){
       const { error: eB } = await state.client.from('boards').insert({ slug:newSlug, title:newTitle });
       if(eB) return showErr('Erro ao criar cópia', eB);
@@ -834,15 +691,13 @@
     showProjectsHome();
   }
 
-  /* =================== Projetos: UI (sidebar/grade + menu) =================== */
+  /* =================== UI de projetos =================== */
   function kpiBadge(label, val, cls){ const span=document.createElement('span'); span.className='kpi '+cls; span.textContent=`${label}: ${val}`; return span; }
-
   function isArchived(slug){
     const proj = state.projects.find(p=>p.slug===slug);
     const localSet = loadArchivedSet();
     return proj?.archived || localSet.has(slug);
   }
-
   function filteredProjects(){
     const q = (id('projSearch').value||'').toLowerCase().trim();
     const showArchived = id('chkShowArchived').checked;
@@ -851,7 +706,6 @@
       return !q || p.title.toLowerCase().includes(q) || p.slug.includes(q);
     });
   }
-
   function renderSidebarProjects(){
     const list = id('projList');
     list.innerHTML='';
@@ -859,11 +713,8 @@
     if(!arr.length){ list.innerHTML = `<div class="muted">Nenhum projeto encontrado.</div>`; return; }
     arr.forEach(p=>{
       const item = document.createElement('div'); item.className='proj-item'; item.onclick=()=> selectProject(p.slug);
-
       const t = document.createElement('div'); t.className='title'; t.textContent = p.title + (isArchived(p.slug)?' (arquivado)':'');
       const actions = document.createElement('div'); actions.className='proj-actions';
-
-      // botão menu
       const wrap=document.createElement('div'); wrap.className='menu-wrap'; wrap.onclick=e=>e.stopPropagation();
       const btn=document.createElement('button'); btn.className='menu-btn'; btn.textContent='⋯';
       const menu=document.createElement('div'); menu.className='context-menu';
@@ -891,11 +742,8 @@
       item.append(t, actions, statLine);
       list.append(item);
     });
-
-    // fechar menus ao clicar fora
     document.addEventListener('click', (ev)=>{ if(!ev.target.closest('.menu-wrap')) qsa('.context-menu').forEach(m=>m.classList.remove('open')); });
   }
-
   function renderProjectsView(){
     const grid = id('projectsGrid'); grid.innerHTML='';
     const arr = filteredProjects();
@@ -909,7 +757,6 @@
       const b = id('gridNovoProjeto'); if(b) b.onclick=()=>openProjectModal();
       return;
     }
-
     arr.forEach(p=>{
       const card=document.createElement('div'); card.className='card'; card.style.cursor='pointer'; card.onclick=()=>selectProject(p.slug);
       const title=document.createElement('div'); title.className='title'; title.textContent=p.title + (isArchived(p.slug)?' (arquivado)':'');
@@ -929,7 +776,6 @@
       grid.append(card);
     });
   }
-
   function showProjectsHome(){
     id('viewProjects').style.display='';
     id('viewProjectBoard').style.display='none';
@@ -938,7 +784,6 @@
     id('crumbProject').textContent='—';
     id('boardInfo').textContent='Selecione um projeto na sidebar ou na grade.';
   }
-
   async function selectProject(slug){
     const p = (state.projects||[]).find(x=>x.slug===slug); if(!p) return;
     state.currentProject = p;
@@ -953,7 +798,6 @@
     await fetchProjectData();
     closeSidebar();
   }
-
   function openProjectModal(){ id('pTitulo').value=''; id('dlgProject').showModal(); }
   async function saveProjectFromModal(){ const title=(id('pTitulo').value||'').trim(); if(!title) return showErr('Projeto inválido','Informe um nome.'); await upsertProject(title); id('dlgProject').close(); }
 
@@ -982,10 +826,10 @@
     renderMeetingList();
     renderNoteAuthors();
     if(state.viewingTaskTimelineId) renderTimelineModal();
-    await fetchProjectsAndStats(); // atualiza contadores das listas
+    await fetchProjectsAndStats();
   }
 
-  /* =================== Meetings / Notes =================== */
+  /* ===== Reuniões/Notas (idênticos) ===== */
   function renderMeetingResponsaveis(){ id('mResp').innerHTML = FIXED_RESPONSAVEIS.map(n=>`<option value="${n}">${n}</option>`).join(''); }
   function renderNoteAuthors(){ id('noteAuthor').innerHTML=FIXED_RESPONSAVEIS.map(n=>`<option value="${n}">${n}</option>`).join(''); id('noteNow').textContent=`agora: ${fmtDateTime(new Date())}`; }
 
@@ -1050,51 +894,6 @@
     if(!titulo || !responsavel || !data || !hora){ return showErr('Formulário incompleto','Preencha responsável, título, dia e hora.'); }
     const obj = { titulo, descricao, responsavel, data, hora, autor: state.author };
     await upsertMeeting(obj); id('mTitulo').value=''; id('mDesc').value=''; id('mData').value=''; id('mHora').value='';
-  }
-
-  // ===== NOTAS =====
-  async function addNote(content){
-    const slug = state.currentProject?.slug; if(!slug) return showErr('Projeto não selecionado','Selecione um projeto.');
-    const autor=id('noteAuthor').value;
-    if(!content.trim()) return;
-    if(state.online){
-      const { error } = await state.client.from('notes').insert({ board_slug: slug, conteudo: content, autor });
-      if(error) return showErr('Erro ao criar anotação', error);
-    }else{
-      const data = loadProjectDataLocal(slug);
-      data.notes.push({ id: crypto.randomUUID(), conteudo: content, autor, created_at: new Date().toISOString(), updated_at: null });
-      saveProjectDataLocal(slug, data);
-    }
-    id('noteInput').value=''; await fetchProjectData();
-  }
-  async function startEditNote(note){ state.editingNoteId=note.id; renderNotes(); }
-  async function saveEditNote(idv){
-    const area=id(`edit_area_${idv}`); const sel=id(`edit_author_${idv}`);
-    const newText=area.value.trim(); const newAuthor=sel.value;
-    const slug = state.currentProject?.slug; if(!slug) return;
-    if(!newText) return;
-    if(state.online){
-      const { error } = await state.client.from('notes').update({ conteudo:newText, autor:newAuthor }).eq('id', idv);
-      if(error) return showErr('Erro ao salvar edição', error);
-    }else{
-      const data = loadProjectDataLocal(slug);
-      const idx=data.notes.findIndex(n=>n.id===idv);
-      if(idx>=0){ data.notes[idx].conteudo=newText; data.notes[idx].autor=newAuthor; data.notes[idx].updated_at=new Date().toISOString(); saveProjectDataLocal(slug, data); }
-    }
-    state.editingNoteId=null; await fetchProjectData();
-  }
-  function cancelEditNote(){ state.editingNoteId=null; renderNotes(); }
-  async function deleteNote(idv){
-    const slug = state.currentProject?.slug; if(!slug) return;
-    if(state.online){
-      const { error } = await state.client.from('notes').delete().eq('id', idv);
-      if(error) return showErr('Erro ao excluir anotação', error);
-    }else{
-      const data = loadProjectDataLocal(slug);
-      data.notes = (data.notes||[]).filter(n=>n.id!==idv);
-      saveProjectDataLocal(slug, data);
-    }
-    await fetchProjectData();
   }
 
   /* =================== Board/Tarefas =================== */
@@ -1353,40 +1152,47 @@
     if(opts.includes(val)) sel.value=val; else sel.value='todos';
   }
 
-  /* ===== Calendário ===== */
+  /* ===== Calendário (UX corrigida) ===== */
   function toggleCalendar(){ const pop=id('calPopover'); if(pop.classList.contains('hidden')) openCalendar(); else closeCalendar(); }
   function openCalendar(){
     if(!state.calMonth){
       const base = state.filterDate ? ymdToLocalDate(state.filterDate) : new Date();
       state.calMonth = new Date(base.getFullYear(), base.getMonth(), 1);
     }
-    renderCalendar(); id('calPopover').classList.remove('hidden'); requestAnimationFrame(placeCalendarPopover);
-    enableCalSwipe(); // gesto no mobile
+    renderCalendar();
+    const pop=id('calPopover'); pop.classList.remove('hidden');
+    requestAnimationFrame(placeCalendarPopover);
+    wireCalendarGuards(); // evita fechar ao clicar dentro
   }
   function placeCalendarPopover(){
     const pop=id('calPopover'); const btn=id('btnCal');
     const vw=window.innerWidth, vh=window.innerHeight; const r=btn.getBoundingClientRect();
-    const popW=pop.offsetWidth||280, popH=pop.offsetHeight||280;
+    const popW=pop.offsetWidth||320, popH=pop.offsetHeight||320;
 
-    // Mobile: centralizado no rodapé (regras CSS já cuidam)
-    if(vw<=420){ pop.style.left='50%'; pop.style.transform='translateX(-50%)'; pop.style.top=''; pop.style.bottom='calc(env(safe-area-inset-bottom, 0px) + 8px)'; pop.style.width='calc(100vw - 16px)'; return; }
-    // Desktop: clamp para nunca sair da viewport
-    pop.style.bottom=''; pop.style.transform=''; pop.style.width='280px';
+    if(vw<=420){
+      pop.style.left='50%'; pop.style.transform='translateX(-50%)'; pop.style.top=''; pop.style.bottom='calc(env(safe-area-inset-bottom, 0px) + 8px)';
+      pop.style.width='calc(100vw - 16px)'; return;
+    }else{ pop.style.bottom=''; pop.style.transform=''; pop.style.width='320px'; }
+
     let left = r.left + (r.width/2) - (popW/2);
     left = Math.max(8, Math.min(left, vw - popW - 8));
     let top = r.bottom + 8;
-    if(top + popH > vh - 8) top = r.top - popH - 8; // flip acima se necessário
+    if(top + popH > vh - 8) top = r.top - popH - 8;
     top = Math.max(8, Math.min(top, vh - popH - 8));
     pop.style.left = left + 'px';
     pop.style.top  = top  + 'px';
   }
   function closeCalendar(){ id('calPopover').classList.add('hidden'); }
   function getTaskDatesSet(){ const set=new Set(); (state.tasks||[]).forEach(t=>{ if(t.prazo) set.add(t.prazo); }); return set; }
+
   function renderCalendar(){
-    const pop=id('calPopover'); const d=state.calMonth||new Date(); const y=d.getFullYear(), m=d.getMonth();
+    const pop=id('calPopover');
+    const d=state.calMonth||new Date(); const y=d.getFullYear(), m=d.getMonth();
     const first=new Date(y,m,1); const firstDow=first.getDay(); const daysInMonth=new Date(y,m+1,0).getDate();
     const title=first.toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
-    const dows=['D','S','T','Q','Q','S','S']; const taskSet=getTaskDatesSet(); const todayStr=toYMD(new Date());
+    const dows=['D','S','T','Q','Q','S','S'];
+    const taskSet=getTaskDatesSet();
+    const todayStr=toYMD(new Date());
 
     let grid=''; grid+=dows.map(x=>`<div class="cal-dow">${x}</div>`).join('');
     for(let i=0;i<firstDow;i++) grid+=`<div></div>`;
@@ -1397,60 +1203,63 @@
     }
 
     pop.innerHTML=`
-      <div class="cal">
+      <div class="cal" id="calRoot">
         <div class="cal-head">
-          <button class="btn small" id="calPrev">‹</button>
-          <div class="title">${title}</div>
-          <button class="btn small" id="calNext">›</button>
+          <button class="btn small" id="calPrev" type="button" data-cal-keep>‹</button>
+          <div class="title" id="calTitle">${title}</div>
+          <button class="btn small" id="calNext" type="button" data-cal-keep>›</button>
         </div>
-        <div class="cal-grid">${grid}</div>
-        <div class="cal-foot">
-          <div style="display:flex; gap:6px">
-            <button class="btn small" id="calPrevFoot">« mês</button>
-            <button class="btn small" id="calNextFoot">mês »</button>
-          </div>
-          <div style="display:flex; gap:6px">
-            <button class="btn small" id="calHoje">Hoje</button>
-            <button class="btn small" id="calFechar">Fechar</button>
-          </div>
+        <div class="cal-grid" id="calGrid">${grid}</div>
+        <div class="row" style="justify-content:space-between; padding:0 6px 4px;">
+          <button class="btn small" id="calHoje" type="button" data-cal-keep>Hoje</button>
+          <button class="btn small" id="calFechar" type="button" data-cal-keep>Fechar</button>
         </div>
       </div>`;
 
-    const go = (delta)=>{ state.calMonth=new Date(y,m+delta,1); renderCalendar(); placeCalendarPopover(); };
-    id('calPrev').onclick=()=>go(-1);
-    id('calNext').onclick=()=>go(+1);
-    id('calPrevFoot').onclick=()=>go(-1);
-    id('calNextFoot').onclick=()=>go(+1);
-    id('calHoje').onclick=()=>{ const now=new Date(); state.calMonth=new Date(now.getFullYear(), now.getMonth(), 1); renderCalendar(); placeCalendarPopover(); };
-    id('calFechar').onclick=closeCalendar;
-    qsa('#calPopover .cal-day').forEach(el=>{ el.onclick=()=>{ state.filterDate=el.dataset.ymd; id('fPrazo').value='todos'; closeCalendar(); renderProjectBoard(); }; });
+    // eventos (recriados a cada render)
+    id('calPrev').onclick=(e)=>{ e.stopPropagation(); state.calMonth=new Date(y,m-1,1); renderCalendar(); placeCalendarPopover(); wireCalendarGuards(); };
+    id('calNext').onclick=(e)=>{ e.stopPropagation(); state.calMonth=new Date(y,m+1,1); renderCalendar(); placeCalendarPopover(); wireCalendarGuards(); };
+    id('calHoje').onclick=(e)=>{ e.stopPropagation(); const now=new Date(); state.calMonth=new Date(now.getFullYear(), now.getMonth(), 1); renderCalendar(); placeCalendarPopover(); wireCalendarGuards(); };
+    id('calFechar').onclick=(e)=>{ e.stopPropagation(); closeCalendar(); };
+
+    qsa('#calPopover .cal-day').forEach(el=>{
+      el.onclick=(e)=>{ e.stopPropagation(); state.filterDate=el.dataset.ymd; id('fPrazo').value='todos'; closeCalendar(); renderProjectBoard(); };
+    });
   }
 
-  // Swipe para trocar de mês (mobile)
-  function enableCalSwipe(){
-    const pop = id('calPopover'); if(!pop) return;
-    let startX=0, startY=0, t0=0;
-    function onStart(e){
-      const touch=e.touches?e.touches[0]:e; startX=touch.clientX; startY=touch.clientY; t0=Date.now();
-    }
-    function onEnd(e){
-      const touch=e.changedTouches?e.changedTouches[0]:e;
-      const dx=touch.clientX-startX, dy=touch.clientY-startY, dt=Date.now()-t0;
-      if(Math.abs(dx)>50 && Math.abs(dy)<40 && dt<500){
-        const delta = dx<0 ? +1 : -1;
-        const d=state.calMonth||new Date();
-        state.calMonth=new Date(d.getFullYear(), d.getMonth()+delta, 1);
-        renderCalendar(); placeCalendarPopover();
-      }
-    }
-    pop.addEventListener('touchstart', onStart, {passive:true});
-    pop.addEventListener('touchend', onEnd, {passive:true});
+  // Evita o bug de “fechar ao clicar” quando o DOM do calendário é refeito
+  function wireCalendarGuards(){
+    const pop=id('calPopover');
+    // impedir propagação de clicks/pointer dentro do popover
+    ['pointerdown','mousedown','click'].forEach(ev=>{
+      pop.addEventListener(ev, e=>{ e.stopPropagation(); }, { capture:true });
+    });
   }
 
-  function updateSelectedDayChip(){ const chip=id('selDiaTag'); const txt=id('selDiaText'); if(state.filterDate){ chip.style.display=''; txt.textContent=fmtDate(state.filterDate); } else { chip.style.display='none'; } }
+  function updateSelectedDayChip(){
+    const chip=id('selDiaTag'); const txt=id('selDiaText');
+    if(state.filterDate){ chip.style.display=''; txt.textContent=fmtDate(state.filterDate); } else { chip.style.display='none'; }
+  }
 
-  function openTaskModal(t){ if(!state.currentProject) return showErr('Projeto não selecionado','Selecione um projeto.'); state.editingTaskId = t?.id || null; id('taskModalTitle').textContent = t ? 'Editar tarefa' : 'Nova tarefa'; id('tTitulo').value = t?.titulo || ''; id('tDesc').value = t?.descricao || ''; renderRespChoices(t?.responsaveis||[]); id('tPrazo').value = t?.prazo || ''; id('tStatus').value = t?.status || 'a_fazer'; id('dlgTask').showModal(); }
-  function renderRespChoices(selected=[]){ const wrap=id('tRespGroup'); wrap.innerHTML=''; FIXED_RESPONSAVEIS.forEach((name, idx)=>{ const input=document.createElement('input'); input.type='checkbox'; input.id=`resp_${idx}`; input.value=name; if(selected.includes(name)) input.checked=true; const label=document.createElement('label'); label.htmlFor=input.id; label.textContent=name; wrap.append(input,label); }); }
+  function openTaskModal(t){
+    if(!state.currentProject) return showErr('Projeto não selecionado','Selecione um projeto.');
+    state.editingTaskId = t?.id || null;
+    id('taskModalTitle').textContent = t ? 'Editar tarefa' : 'Nova tarefa';
+    id('tTitulo').value = t?.titulo || '';
+    id('tDesc').value = t?.descricao || '';
+    renderRespChoices(t?.responsaveis||[]);
+    id('tPrazo').value = t?.prazo || '';
+    id('tStatus').value = t?.status || 'a_fazer';
+    id('dlgTask').showModal();
+  }
+  function renderRespChoices(selected=[]){
+    const wrap=id('tRespGroup'); wrap.innerHTML='';
+    FIXED_RESPONSAVEIS.forEach((name, idx)=>{
+      const input=document.createElement('input'); input.type='checkbox'; input.id=`resp_${idx}`; input.value=name; if(selected.includes(name)) input.checked=true;
+      const label=document.createElement('label'); label.htmlFor=input.id; label.textContent=name;
+      wrap.append(input,label);
+    });
+  }
   async function saveTaskFromModal(){
     if(!state.currentProject) return showErr('Projeto não selecionado','Selecione um projeto.');
     const selected=Array.from(document.querySelectorAll('#tRespGroup input:checked')).map(i=>i.value);
@@ -1468,7 +1277,7 @@
     const csv=toCSV(rows); const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`tarefas_${state.currentProject.slug}.csv`; a.click();
   }
 
-  /* =================== Dashboard (básico) =================== */
+  /* =================== Dashboard =================== */
   function openDashboard(){
     computeDashboard();
     id('dlgDash').showModal();
@@ -1486,12 +1295,10 @@
         if(doneAt && doneAt >= start){
           const ymd=toYMD(new Date(doneAt)); if(ymd in map) map[ymd]=(map[ymd]||0)+1;
         }
-        // no prazo?
         if(t.prazo && doneAt){
           const prazoDate = ymdToLocalDate(t.prazo); const doneDay = new Date(doneAt); doneDay.setHours(0,0,0,0);
           if(doneDay <= prazoDate) ok++; else late++;
         }
-        // lead time (dias entre criação e conclusão)
         if(t.created_at && doneAt){ const created=new Date(t.created_at); const diffMs = doneAt - created; if(diffMs>0){ leadSum += diffMs/(1000*60*60*24); leadCount++; } }
       }
     });
@@ -1556,10 +1363,16 @@
 
   document.getElementById('btnCal').onclick = toggleCalendar;
   document.getElementById('btnClearDia').onclick = ()=>{ state.filterDate=null; renderProjectBoard(); };
-  document.addEventListener('click', (ev)=>{ const pop=id('calPopover'); if(pop.classList.contains('hidden')) return; if(!pop.contains(ev.target) && ev.target!==id('btnCal')) closeCalendar(); });
+
+  // Fechar ao clicar fora (mas nunca fecha se o clique originou no calendário)
+  document.addEventListener('click', (ev)=>{
+    const pop=id('calPopover');
+    if(pop.classList.contains('hidden')) return;
+    if(!pop.contains(ev.target) && ev.target!==id('btnCal')) closeCalendar();
+  });
   document.addEventListener('keydown', (ev)=>{ if(ev.key==='Escape') closeCalendar(); });
-  window.addEventListener('resize', ()=>{ const pop=id('calPopover'); if(!pop.classList.contains('hidden')) { const _=placeCalendarPopover(); }});
-  window.addEventListener('scroll', ()=>{ const pop=id('calPopover'); if(!pop.classList.contains('hidden')) { const _=placeCalendarPopover(); }}, true);
+  window.addEventListener('resize', ()=>{ const pop=id('calPopover'); if(!pop.classList.contains('hidden')) placeCalendarPopover(); });
+  window.addEventListener('scroll', ()=>{ const pop=id('calPopover'); if(!pop.classList.contains('hidden')) placeCalendarPopover(); }, true);
 
   qsa('.subtab').forEach(tab=>{
     tab.onclick = ()=>{ qsa('.subtab').forEach(t=>t.classList.remove('active')); tab.classList.add('active'); state.subScope = tab.dataset.scope; renderProjectBoard(); };

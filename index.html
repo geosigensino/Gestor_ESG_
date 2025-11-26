@@ -39,12 +39,7 @@
       color:var(--txt)
     }
 
-    /* ===== Layout com sidebar ===== */
-    .app-shell{
-      display:grid;
-      grid-template-columns: 280px 1fr;
-      min-height:100vh;
-    }
+    .app-shell{ display:grid; grid-template-columns: 280px 1fr; min-height:100vh; }
     .sidebar{
       background:var(--panel); border-right:1px solid var(--border); padding:14px; position:sticky; top:0; height:100vh; box-sizing:border-box;
       display:flex; flex-direction:column; gap:12px;
@@ -57,18 +52,36 @@
 
     .proj-list{ display:grid; gap:6px; overflow:auto; padding-right:4px; }
     .proj-item{
-      display:flex; align-items:center; justify-content:space-between; gap:8px;
+      display:grid; grid-template-columns: 1fr auto; grid-template-rows:auto auto; gap:6px 8px;
       background:var(--card); border:1px solid var(--border); border-radius:10px; padding:10px; cursor:pointer;
     }
     .proj-item:hover{ box-shadow:var(--shadow); }
     .proj-item .title{ font-weight:600; }
-    .proj-actions{ display:flex; gap:6px; }
-    .proj-actions .btn.small{ padding:6px 8px; }
+    .proj-actions{ display:flex; gap:6px; align-items:center; }
+    .proj-stats{ display:flex; flex-wrap:wrap; gap:6px; grid-column:1 / -1; }
+    .kpi{ font-size:11px; padding:2px 8px; border-radius:999px; border:1px solid var(--border); background:var(--panel); }
+    .kpi.late{ background:var(--st-late-bg); color:var(--st-late-tx); border-color:var(--st-late-bd) }
+    .kpi.todo{ background:var(--st-todo-bg); color:var(--st-todo-tx); border-color:var(--st-todo-bd) }
+    .kpi.prog{ background:var(--st-prog-bg); color:var(--st-prog-tx); border-color:var(--st-prog-bd) }
+    .kpi.done{ background:var(--st-done-bg); color:var(--st-done-tx); border-color:var(--st-done-bd) }
 
-    .main{
-      display:flex; flex-direction:column; gap:0;
+    /* menu de contexto (projetos) */
+    .menu-wrap{ position:relative; }
+    .menu-btn{ padding:6px 8px; border-radius:8px; border:1px solid var(--border); background:var(--panel); }
+    .context-menu{
+      position:absolute; right:0; top:110%; z-index:20;
+      background:var(--panel); border:1px solid var(--border); border-radius:10px; box-shadow:var(--shadow);
+      display:none; min-width:180px; overflow:hidden;
     }
+    .context-menu.open{ display:block; }
+    .context-menu button{
+      display:block; width:100%; text-align:left; border:none; background:transparent; color:var(--txt);
+      padding:10px 12px; cursor:pointer; border-bottom:1px solid var(--border);
+    }
+    .context-menu button:last-child{ border-bottom:none; }
+    .context-menu button:hover{ background:rgba(255,255,255,.04); }
 
+    .main{ display:flex; flex-direction:column; gap:0; }
     header.main-head{
       display:flex; align-items:center; gap:10px; flex-wrap:wrap;
       padding:16px 18px; border-bottom:1px solid var(--border); background:var(--panel); position:sticky; top:0; z-index:10;
@@ -82,18 +95,14 @@
       transition:transform .05s,box-shadow .2s,background .2s
     }
     .btn:active{transform:translateY(1px)}
-    .btn.primary{
-      background:linear-gradient(180deg,var(--brand),var(--brand-2));color:#fff;border:none
-    }
+    .btn.primary{ background:linear-gradient(180deg,var(--brand),var(--brand-2));color:#fff;border:none }
     .btn.primary:hover{filter:saturate(1.1);box-shadow:0 10px 22px rgba(24,91,36,.35)}
     .btn.small{padding:6px 9px}
     .spacer{ flex:1; }
 
-    /* Toolbar dentro do projeto */
     .toolbar{
       display:flex;gap:12px;align-items:center;flex-wrap:wrap;
-      padding:12px 18px;
-      border-bottom:1px solid var(--border);
+      padding:12px 18px; border-bottom:1px solid var(--border);
       background:linear-gradient(180deg,rgba(255,255,255,.02),transparent);
       backdrop-filter:saturate(160%) blur(6px);
       position:sticky; top:60px; z-index:9;
@@ -114,141 +123,67 @@
       border:1px solid var(--border);border-radius:10px;padding:8px 10px
     }
 
-    /* Sub-linhas (abas rápidas) de status */
     .subtabs{ display:flex; gap:8px; flex-wrap:wrap; padding:10px 18px; border-bottom:1px solid var(--border); background:var(--panel); position:sticky; top:114px; z-index:8; }
-    .subtab{
-      border:1px solid var(--border); background:var(--card); color:var(--txt); padding:6px 10px; border-radius:999px; font-size:13px; cursor:pointer;
-    }
+    .subtab{ border:1px solid var(--border); background:var(--card); color:var(--txt); padding:6px 10px; border-radius:999px; font-size:13px; cursor:pointer; }
     .subtab.active{ background:linear-gradient(180deg,var(--brand),var(--brand-2)); color:#fff; border:none; }
 
     .wrap{max-width:1400px;margin:0 auto;padding:0 18px 36px}
-
-    .grid{
-      display:grid;grid-template-columns:minmax(0,1.8fr) minmax(320px,1fr);
-      gap:28px;margin-top:18px;align-items:start
-    }
-    .panel{
-      background:var(--panel);border:1px solid var(--border);
-      border-radius:14px;box-shadow:var(--shadow);overflow:hidden
-    }
+    .grid{ display:grid;grid-template-columns:minmax(0,1.8fr) minmax(320px,1fr); gap:28px;margin-top:18px;align-items:start }
+    .panel{ background:var(--panel);border:1px solid var(--border); border-radius:14px;box-shadow:var(--shadow);overflow:hidden }
     .panel h3{margin:18px;font-size:16px}
 
-    .kanban{
-      display:grid;grid-template-columns:repeat(auto-fit, minmax(280px,1fr));
-      gap:24px;padding:24px
-    }
-    .col{
-      background:var(--card);border:1px solid var(--border);
-      border-radius:12px;min-height:260px;display:flex;flex-direction:column
-    }
-    .col header{
-      display:flex;align-items:center;justify-content:space-between;
-      padding:14px;border-bottom:1px solid var(--border)
-    }
+    .kanban{ display:grid;grid-template-columns:repeat(auto-fit, minmax(280px,1fr)); gap:24px;padding:24px }
+    .col{ background:var(--card);border:1px solid var(--border); border-radius:12px;min-height:260px;display:flex;flex-direction:column }
+    .col header{ display:flex;align-items:center;justify-content:space-between; padding:14px;border-bottom:1px solid var(--border) }
     .dropzone{flex:1;padding:14px;min-height:160px}
     .dropzone.readonly{opacity:.95}
 
-    .card{
-      background:var(--panel);border:1px solid var(--border);border-radius:12px;
-      padding:14px;margin:12px 6px;box-shadow:var(--shadow);
-      transition:box-shadow .2s,transform .05s;
-      cursor:pointer
-    }
+    .card{ background:var(--panel);border:1px solid var(--border);border-radius:12px; padding:14px;margin:12px 6px;box-shadow:var(--shadow); transition:box-shadow .2s,transform .05s; cursor:pointer }
     .card:hover{box-shadow:0 10px 22px rgba(0,0,0,.25)}
     .title{font-weight:700}
     .tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-    .tag{
-      background:rgba(255,255,255,.06);border:1px solid var(--border);
-      padding:4px 8px;border-radius:999px;font-size:12px
-    }
+    .tag{ background:rgba(255,255,255,.06);border:1px solid var(--border); padding:4px 8px;border-radius:999px;font-size:12px }
     .row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
     .actions{display:flex;gap:8px;margin-top:10px}
     .actions .btn.small{cursor:pointer}
 
     .status-inline{font-size:12px;padding:4px 6px;border-radius:8px}
 
-    .note{
-      background:var(--card);border:1px solid var(--border);
-      border-radius:12px;padding:12px;margin:10px 14px
-    }
-    .note-meta{
-      display:flex;gap:8px;flex-wrap:wrap;
-      color:var(--muted);font-size:12px;margin-top:6px
-    }
+    .note{ background:var(--card);border:1px solid var(--border); border-radius:12px;padding:12px;margin:10px 14px }
+    .note-meta{ display:flex;gap:8px;flex-wrap:wrap; color:var(--muted);font-size:12px;margin-top:6px }
     .note-edit{display:grid;gap:8px}
-    textarea{
-      width:100%;min-height:64px;
-      background:var(--panel);color:var(--txt);
-      border:1px solid var(--border);border-radius:10px;padding:8px 10px
-    }
+    textarea{ width:100%;min-height:64px; background:var(--panel);color:var(--txt); border:1px solid var(--border);border-radius:10px;padding:8px 10px }
 
     .badges{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-    .badge{
-      font-size:12px;padding:2px 8px;border-radius:999px;
-      border:1px solid var(--border);background:var(--panel)
-    }
-    .badge.status-a_fazer{
-      background:var(--st-todo-bg);color:var(--st-todo-tx);border-color:var(--st-todo-bd)
-    }
-    .badge.status-em_andamento{
-      background:var(--st-prog-bg);color:var(--st-prog-tx);border-color:var(--st-prog-bd)
-    }
-    .badge.status-concluida{
-      background:var(--st-done-bg);color:var(--st-done-tx);border-color:var(--st-done-bd)
-    }
+    .badge{ font-size:12px;padding:2px 8px;border-radius:999px; border:1px solid var(--border);background:var(--panel) }
+    .badge.status-a_fazer{ background:var(--st-todo-bg);color:var(--st-todo-tx);border-color:var(--st-todo-bd) }
+    .badge.status-em_andamento{ background:var(--st-prog-bg);color:var(--st-prog-tx);border-color:var(--st-prog-bd) }
+    .badge.status-concluida{ background:var(--st-done-bg);color:var(--st-done-tx);border-color:var(--st-done-bd) }
 
-    .col[data-status="atrasadas"] .card{
-      background:var(--st-late-bg);border-color:var(--st-late-bd)
-    }
-    .col[data-status="atrasadas"] .badge{
-      background:transparent;color:var(--st-late-tx);border-color:var(--st-late-bd)
-    }
+    .col[data-status="atrasadas"] .card{ background:var(--st-late-bg);border-color:var(--st-late-bd) }
+    .col[data-status="atrasadas"] .badge{ background:transparent;color:var(--st-late-tx);border-color:var(--st-late-bd) }
 
     .card.is-a_fazer{box-shadow:inset 3px 0 0 0 var(--st-todo-bd)}
     .card.is-em_andamento{box-shadow:inset 3px 0 0 0 var(--st-prog-bd)}
     .card.is-concluida{box-shadow:inset 3px 0 0 0 var(--st-done-bd)}
 
-    .col:not([data-status="atrasadas"]) .card.is-a_fazer{
-      background:var(--st-todo-bg);border-color:var(--st-todo-bd)
-    }
-    .col:not([data-status="atrasadas"]) .card.is-em_andamento{
-      background:var(--st-prog-bg);border-color:var(--st-prog-bd)
-    }
-    .col:not([data-status="atrasadas"]) .card.is-concluida{
-      background:var(--st-done-bg);border-color:var(--st-done-bd)
-    }
+    .col:not([data-status="atrasadas"]) .card.is-a_fazer{ background:var(--st-todo-bg);border-color:var(--st-todo-bd) }
+    .col:not([data-status="atrasadas"]) .card.is-em_andamento{ background:var(--st-prog-bg);border-color:var(--st-prog-bd) }
+    .col:not([data-status="atrasadas"]) .card.is-concluida{ background:var(--st-done-bg);border-color:var(--st-done-bd) }
 
-    .foot{
-      margin-top:28px;display:flex;
-      justify-content:space-between;align-items:center;color:var(--muted)
-    }
+    .foot{ margin-top:28px;display:flex; justify-content:space-between;align-items:center;color:var(--muted) }
 
     .assignees{display:flex;gap:8px;flex-wrap:wrap}
     .assignees input[type="checkbox"]{display:none}
-    .assignees label{
-      user-select:none;cursor:pointer;
-      padding:6px 10px;border-radius:999px;
-      border:1px solid var(--border);background:var(--panel);
-      transition:background .2s,color .2s,box-shadow .2s
-    }
-    .assignees input[type="checkbox"]:checked + label{
-      background:var(--brand);color:#fff;border-color:transparent;box-shadow:var(--ring)
-    }
+    .assignees label{ user-select:none;cursor:pointer; padding:6px 10px;border-radius:999px; border:1px solid var(--border);background:var(--panel); transition:background .2s,color .2s,box-shadow .2s }
+    .assignees input[type="checkbox"]:checked + label{ background:var(--brand);color:#fff;border-color:transparent;box-shadow:var(--ring) }
 
-    dialog{ width:min(780px, calc(100% - 32px)); }
-    dialog.modal-light{
-      background:#ffffff; color:#111827; border:1px solid #e6ebf2;
-      border-radius:14px; box-shadow:var(--shadow);
-    }
+    dialog{ width:min(820px, calc(100% - 32px)); }
+    dialog.modal-light{ background:#ffffff; color:#111827; border:1px solid #e6ebf2; border-radius:14px; box-shadow:var(--shadow); }
     dialog.modal-light::backdrop{ background:rgba(0,0,0,.45); }
-    dialog.modal-light .modal-head{
-      padding:14px 16px; border-bottom:1px solid #e6ebf2; font-weight:700; color:#0f172a;
-      display:flex; justify-content:space-between; align-items:flex-start; gap:8px; flex-wrap:wrap;
-    }
+    dialog.modal-light .modal-head{ padding:14px 16px; border-bottom:1px solid #e6ebf2; font-weight:700; color:#0f172a; display:flex; justify-content:space-between; align-items:flex-start; gap:8px; flex-wrap:wrap; }
     dialog.modal-light .modal-body{ padding:14px 16px; display:grid; gap:16px; }
-    dialog.modal-light .modal-foot{
-      padding:14px 16px; border-top:1px solid #e6ebf2; display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap;
-    }
+    dialog.modal-light .modal-foot{ padding:14px 16px; border-top:1px solid #e6ebf2; display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap; }
     dialog.modal-light label{ color:#4b5563; font-size:13px; }
     dialog.modal-light input[type="text"],
     dialog.modal-light input[type="date"],
@@ -261,7 +196,7 @@
     dialog.modal-light .btn{ background:#f8fafc; color:#0f172a; border:1px solid #e5e7eb; }
     dialog.modal-light .btn.primary{ background:linear-gradient(180deg,var(--brand),var(--brand-2)); color:#fff; border:none; }
 
-    /* ===== Mini-calendário (popover) ===== */
+    /* ===== Mini-calendário ===== */
     .cal-pop{ position:fixed; z-index:20; width:280px; max-width:96vw; background:var(--panel); border:1px solid var(--border); border-radius:12px; box-shadow:var(--shadow); padding:8px; }
     .cal-pop.hidden{ display:none; }
     .cal{ display:grid; gap:8px; }
@@ -296,7 +231,6 @@
     .meeting-top{ display:flex; gap:8px; align-items:center; justify-content:space-between; }
     .meeting-meta{ color:var(--muted); font-size:12px; display:flex; gap:8px; flex-wrap:wrap; }
     .meeting-actions{ display:flex; gap:8px; }
-    .pill-inline{ background:rgba(255,255,255,.06); border:1px solid var(--border); border-radius:999px; padding:2px 8px; font-size:12px; }
 
     /* ===== TIMELINE ===== */
     .tl-body-grid{ display:grid; grid-template-columns: minmax(0,1fr); gap:16px; }
@@ -306,52 +240,22 @@
     .tl-brief-badges{ display:flex; flex-wrap:wrap; gap:6px; font-size:12px; }
     .tl-brief-chip{ background:#fff; border:1px solid #d1d5db; border-radius:999px; padding:2px 8px; line-height:1.2; color:#1f2937; font-size:12px; }
     .timeline-form{ display:grid; gap:10px; background:#ffffff; border:1px solid #d1d5db; border-radius:12px; padding:12px 14px; }
-    .timeline-form-head{ font-weight:600; color:#0f172a; font-size:14px; display:flex; justify-content:space-between; align-items:center; }
-    .tl-edit-row{ display:grid; gap:4px; }
-    .tl-edit-row label{ font-size:12px; color:#4b5563; font-weight:500; }
-    .tl-edit-row input[type="text"], .tl-edit-row textarea, .tl-edit-row select{
-      background:#f9fafb; border:1px solid #d1d5db; border-radius:8px; padding:8px 10px; font-size:13px; color:#111827; width:100%; box-sizing:border-box;
-    }
-    .tl-save-row{ display:flex; justify-content:flex-end; gap:8px; flex-wrap:wrap; }
-    .tl-history-head{ font-weight:600; color:#0f172a; font-size:14px; }
     .timeline-entries{ position:relative; max-height:45vh; overflow:auto; padding-left:20px; padding-right:4px; }
     .timeline-entries::before{ content:""; position:absolute; left:6px; top:0; bottom:0; width:2px; background:#e5e7eb; }
-    .tl-item{ position:relative; background:#ffffff; border:1px solid #e5e7eb; border-radius:10px; padding:10px 12px; margin-bottom:12px;
-      box-shadow:0 6px 16px rgba(0,0,0,.04); display:grid; gap:6px; }
+    .tl-item{ position:relative; background:#ffffff; border:1px solid #e5e7eb; border-radius:10px; padding:10px 12px; margin-bottom:12px; box-shadow:0 6px 16px rgba(0,0,0,.04); display:grid; gap:6px; }
     .tl-item-dot{ position:absolute; left:-14px; top:12px; width:12px; height:12px; border-radius:50%; border:2px solid #fff; box-shadow:0 0 0 2px #e5e7eb; }
     .dot-concluido{ background:var(--ok); } .dot-andamento{ background:var(--warn); } .dot-parado{ background:var(--danger); }
-    .tl-top-line{ display:flex; flex-wrap:wrap; justify-content:space-between; gap:8px; align-items:flex-start; }
-    .tl-left-block{ display:grid; gap:4px; min-width:0; }
-    .tl-titulo{ font-weight:600; color:#0f172a; font-size:14px; line-height:1.3; word-break:break-word; }
-    .tl-line2{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; font-size:12px; line-height:1.4; color:#6b7280; }
-    .tl-pill{ font-size:11px; font-weight:600; padding:2px 6px; border-radius:999px; line-height:1.2; border:1px solid transparent; }
-    .tl-pill-concluido{ background:rgba(56,193,114,.14); color:#065f46; border-color:rgba(56,193,114,.4); }
-    .tl-pill-andamento{ background:rgba(255,204,0,.14); color:#7a6400; border-color:rgba(255,204,0,.4); }
-    .tl-pill-parado{ background:rgba(239,107,107,.16); color:#7a1b1b; border-color:rgba(239,107,107,.45); }
-    .tl-desc{ font-size:13px; color:#4b5563; white-space:pre-wrap; word-break:break-word; }
-    .tl-actions{ display:flex; flex-wrap:wrap; gap:8px; }
-    .tl-actions .btn.small{ padding:4px 8px; font-size:12px; line-height:1.2; background:#f9fafb; border:1px solid #d1d5db; color:#1f2937; box-shadow:none; }
-    .tl-edit-block{ display:grid; gap:10px; }
-    .tl-edit-buttons{ display:flex; justify-content:flex-end; flex-wrap:wrap; gap:8px; }
+    .tl-actions .btn.small{ padding:4px 8px; font-size:12px; line-height:1.2; box-shadow:none; }
 
     /* ===== Overlay de senha ===== */
     .locked #app-root{ filter: blur(8px) saturate(80%); pointer-events:none; user-select:none; }
-    #loginOverlay{ position:fixed; inset:0; display:none; align-items:center; justify-content:center;
-      background:rgba(0,0,0,.45); z-index:50; backdrop-filter: blur(3px); }
-    #loginCard{
-      width:min(420px, calc(100% - 32px));
-      background:#ffffff; color:#0f172a;
-      border:1px solid #e6ebf2; border-radius:14px; box-shadow:var(--shadow);
-      padding:18px; display:grid; gap:12px;
-    }
+    #loginOverlay{ position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,.45); z-index:50; backdrop-filter: blur(3px); }
+    #loginCard{ width:min(420px, calc(100% - 32px)); background:#ffffff; color:#0f172a; border:1px solid #e6ebf2; border-radius:14px; box-shadow:var(--shadow); padding:18px; display:grid; gap:12px; }
     #loginCard .brand{ font-weight:800; font-size:18px; }
     .login-meta{ color:#6b7280; font-size:12px; }
     .login-row{ display:grid; gap:6px; }
     .login-row label{ color:#4b5563; font-size:12px; }
-    .login-row input{
-      width:100%; background:#f8fafc; color:#0f172a; border:1px solid #e5e7eb;
-      border-radius:10px; padding:10px 12px; font-size:14px;
-    }
+    .login-row input{ width:100%; background:#f8fafc; color:#0f172a; border:1px solid #e5e7eb; border-radius:10px; padding:10px 12px; font-size:14px; }
     .login-actions{ display:flex; gap:8px; justify-content:flex-end; align-items:center; }
     .login-btn{ cursor:pointer; padding:10px 14px; border-radius:10px; border:1px solid #e5e7eb; background:#f8fafc; }
     .login-btn.primary{ border:none; background:linear-gradient(180deg,var(--brand),var(--brand-2)); color:#fff; }
@@ -400,6 +304,9 @@
       <div id="projList" class="proj-list"></div>
 
       <div style="margin-top:auto">
+        <label class="pill" style="display:flex;align-items:center;gap:6px">
+          <input type="checkbox" id="chkShowArchived"> mostrar arquivados
+        </label>
         <div class="muted" id="onlineState">Offline (LocalStorage)</div>
         <button class="btn" id="btnTheme">Alternar tema</button>
       </div>
@@ -442,20 +349,20 @@
           </select>
         </div>
 
-        <!-- Calendário + chip de dia -->
         <button class="btn small" id="btnCal" title="Abrir calendário">📅</button>
         <span id="selDiaTag" class="pill" style="display:none">dia: <strong id="selDiaText"></strong> <button class="btn small" id="btnClearDia" title="Limpar">×</button></span>
 
         <div id="calPopover" class="cal-pop hidden" role="dialog" aria-label="Calendário"></div>
 
         <span class="spacer"></span>
+        <button class="btn" id="btnDashboard" title="Dashboard">📊 Dashboard</button>
         <button class="btn" id="btnMeetings" title="Reuniões">🗓 Reuniões</button>
         <button class="btn" id="btnExport">Exportar CSV</button>
         <button class="btn" id="btnLink">Gerar link com dados</button>
         <label class="pill"><input type="checkbox" id="chkUpdateLink" checked> atualizar link ao editar</label>
       </div>
 
-      <!-- Abas rápidas (sub-linhas) de status -->
+      <!-- Abas rápidas -->
       <div id="subtabs" class="subtabs" style="display:none">
         <button class="subtab active" data-scope="todas">Todas</button>
         <button class="subtab" data-scope="atrasadas">Atrasadas</button>
@@ -472,7 +379,7 @@
           <div id="projectsGrid" class="kanban" style="grid-template-columns:repeat(auto-fit, minmax(240px,1fr));"></div>
         </section>
 
-        <!-- Tela do Projeto (Kanban + Notas) -->
+        <!-- Tela do Projeto -->
         <section id="viewProjectBoard" style="display:none">
           <section class="panel">
             <h3 id="projBoardTitle">Tarefas</h3>
@@ -584,7 +491,7 @@
     </div>
   </dialog>
 
-  <!-- MODAL: TIMELINE / HISTÓRICO DA TAREFA -->
+  <!-- MODAL: TIMELINE -->
   <dialog id="dlgTimeline" class="modal-light">
     <div class="modal-head" id="tlTaskTitle">Timeline / Histórico</div>
     <div class="modal-body">
@@ -597,28 +504,17 @@
 
         <section class="tl-col-main">
           <div id="tlFormWrap" class="timeline-form" style="display:none">
-            <div class="timeline-form-head">
-              <span>Novo registro</span>
-            </div>
-            <div class="tl-edit-row">
-              <label>Título</label>
-              <input id="tlNovoTitulo" type="text" placeholder="Ex.: Documento entregue / Reunião feita" />
-            </div>
-            <div class="tl-edit-row">
-              <label>Descrição</label>
-              <textarea id="tlNovoDesc" placeholder="Descreva rapidamente o que aconteceu…"></textarea>
-            </div>
-            <div class="tl-edit-row">
-              <label>Status</label>
+            <div class="timeline-form-head"><span>Novo registro</span></div>
+            <div class="tl-edit-row"><label>Título</label><input id="tlNovoTitulo" type="text" placeholder="Ex.: Documento entregue / Reunião feita" /></div>
+            <div class="tl-edit-row"><label>Descrição</label><textarea id="tlNovoDesc" placeholder="Descreva rapidamente o que aconteceu…"></textarea></div>
+            <div class="tl-edit-row"><label>Status</label>
               <select id="tlNovoStatus">
                 <option value="parado">Parado (vermelho)</option>
                 <option value="andamento">Em andamento (amarelo)</option>
                 <option value="concluido">Concluído (verde)</option>
               </select>
             </div>
-            <div class="tl-save-row">
-              <button class="btn primary" id="tlNovoSalvar">Adicionar na timeline</button>
-            </div>
+            <div class="tl-save-row"><button class="btn primary" id="tlNovoSalvar">Adicionar na timeline</button></div>
           </div>
 
           <div class="tl-history-head">Histórico</div>
@@ -626,9 +522,7 @@
         </section>
       </div>
     </div>
-    <div class="modal-foot">
-      <button class="btn" id="tlFechar">Fechar</button>
-    </div>
+    <div class="modal-foot"><button class="btn" id="tlFechar">Fechar</button></div>
   </dialog>
 
   <!-- MODAL: NOVO PROJETO -->
@@ -644,6 +538,31 @@
     </div>
   </dialog>
 
+  <!-- MODAL: DASHBOARD -->
+  <dialog id="dlgDash" class="modal-light">
+    <div class="modal-head">Dashboard — Métricas</div>
+    <div class="modal-body" style="display:grid; gap:16px">
+      <div class="tl-brief-card">
+        <div style="display:flex; gap:10px; flex-wrap:wrap">
+          <span class="tl-brief-chip" id="dbTotalConcluidas">Concluídas: 0</span>
+          <span class="tl-brief-chip" id="dbPctNoPrazo">% no prazo: 0%</span>
+          <span class="tl-brief-chip" id="dbLeadTime">Lead time méd.: —</span>
+        </div>
+      </div>
+      <div class="panel" style="padding:12px">
+        <div style="font-weight:700; margin:6px 6px 10px">Tarefas entregues nos últimos 30 dias</div>
+        <canvas id="dbLast30" height="120"></canvas>
+      </div>
+      <div class="panel" style="padding:12px">
+        <div style="font-weight:700; margin:6px 6px 10px">% no prazo × com atraso</div>
+        <canvas id="dbPct" height="120"></canvas>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" id="dbFechar">Fechar</button>
+    </div>
+  </dialog>
+
   <script>
   /* =================== CONFIG GERAL =================== */
   const DEFAULT_SB_URL = 'https://oakntljdkkoqwttkgzpk.supabase.co';
@@ -655,36 +574,30 @@
     theme: localStorage.getItem('theme') || 'dark',
     author: 'Anônimo',
 
-    // projetos (usando 'boards' como tabela de projetos)
-    projects: [],           // {slug, title}
-    currentProject: null,   // {slug, title}
+    projects: [],           // {slug, title, archived?:boolean}
+    projectStats: {},       // slug -> {todo, prog, done, late}
+    currentProject: null,
 
-    // supabase
     supabaseUrl: DEFAULT_SB_URL,
     supabaseKey: DEFAULT_SB_KEY,
     client: null,
     online:false,
 
-    // dados do projeto atual
     tasks: [],
     notes: [],
     meetings: [],
 
-    // UI
     editingTaskId: null,
     editingNoteId: null,
     viewingTaskTimelineId:null,
     editingTimelineEntryId:null,
 
-    // filtros
     filterDate:null,
     calMonth:null,
-
-    // subtabs
-    subScope:'todas', // todas | atrasadas | a_fazer | em_andamento | concluida
+    subScope:'todas',
   };
 
-  /* ========== Cadeado simples (senha no front) ========== */
+  /* ========== Cadeado simples ========== */
   const APP_PASSWORD = 'esg2025*';
   const AUTH_FLAG = 'gst_auth_ok';
   let appStarted = false;
@@ -697,130 +610,52 @@
     const btnShow  = document.getElementById('pwdShow');
     const err = document.getElementById('loginErr');
 
-    function startAppOnce(){
-      if(appStarted) return;
-      appStarted = true;
-      startApp();
-    }
-    function showLocked(){
-      document.body.classList.add('locked');
-      overlay.style.display = 'flex';
-      pwdInput.value = '';
-      err.style.display = 'none';
-      setTimeout(()=>pwdInput.focus(), 80);
-    }
-    function unlock(){
-      document.body.classList.remove('locked');
-      overlay.style.display = 'none';
-      sessionStorage.setItem(AUTH_FLAG, '1');
-      startAppOnce();
-    }
-    function wrong(){
-      err.style.display = 'block';
-      const card = document.getElementById('loginCard');
-      card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
-    }
+    function startAppOnce(){ if(appStarted) return; appStarted = true; startApp(); }
+    function showLocked(){ document.body.classList.add('locked'); overlay.style.display = 'flex'; pwdInput.value = ''; err.style.display = 'none'; setTimeout(()=>pwdInput.focus(), 80); }
+    function unlock(){ document.body.classList.remove('locked'); overlay.style.display = 'none'; sessionStorage.setItem(AUTH_FLAG, '1'); startAppOnce(); }
+    function wrong(){ err.style.display = 'block'; const card = document.getElementById('loginCard'); card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake'); }
     btnEnter.onclick = ()=>{ if(pwdInput.value === APP_PASSWORD) unlock(); else wrong(); };
     btnShow.onclick = ()=>{ if(pwdInput.type === 'password'){ pwdInput.type = 'text'; btnShow.textContent = '🙈 Ocultar'; } else { pwdInput.type = 'password'; btnShow.textContent = '👁 Mostrar'; } };
     pwdInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter') btnEnter.click(); });
-
     if(ok){ startAppOnce(); } else { showLocked(); }
   }
   document.addEventListener('DOMContentLoaded', bootWithPassword);
 
   /* =================== Helpers =================== */
-  function applyTheme(){
-    if(state.theme==='light') document.body.classList.add('light');
-    else document.body.classList.remove('light');
-  } applyTheme();
-
+  function applyTheme(){ if(state.theme==='light') document.body.classList.add('light'); else document.body.classList.remove('light'); } applyTheme();
   const id = x => document.getElementById(x);
   const qsa = s => Array.from(document.querySelectorAll(s));
   const unique = a => [...new Set(a)];
   const pad2 = n => String(n).padStart(2,'0');
   const toYMD = d => `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
-  const toHM  = d => `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
-
-  function ymdToLocalDate(s){
-    if(!s) return null;
-    const [y,m,d]=s.split('-').map(Number);
-    return new Date(y,m-1,d);
-  }
-  function fmtDate(d){
-    if(!d) return '';
-    const dt=(typeof d==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(d))?ymdToLocalDate(d):new Date(d);
-    return dt.toLocaleDateString();
-  }
-  function fmtTime(hm){
-    if(!hm) return '';
-    const [h,m]=(hm||'').split(':').map(Number);
-    const d=new Date();
-    d.setHours(h||0,m||0,0,0);
-    return d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-  }
+  function ymdToLocalDate(s){ if(!s) return null; const [y,m,d]=s.split('-').map(Number); return new Date(y,m-1,d); }
+  function fmtDate(d){ if(!d) return ''; const dt=(typeof d==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(d))?ymdToLocalDate(d):new Date(d); return dt.toLocaleDateString(); }
+  function fmtTime(hm){ if(!hm) return ''; const [h,m]=(hm||'').split(':').map(Number); const d=new Date(); d.setHours(h||0,m||0,0,0); return d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}); }
   function fmtDateTime(d){ return d?new Date(d).toLocaleString():''; }
-
-  const toCSV = rows=>{
-    if(!rows.length) return '';
-    const head=Object.keys(rows[0]);
-    const body=rows.map(r=>head.map(k=>`"${String(r[k]??'').replaceAll('"','""')}"`).join(','));
-    return [head.join(','),...body].join('\n');
-  };
-  function showErr(ctx, err){
-    console.error(ctx, err);
-    alert(`${ctx}:\n${(err && err.message) || err}`);
-  }
-
-  function sanitizeSlug(text){
-    return (text||'').toLowerCase()
-      .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
-      .replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'')
-      || ('proj-'+Math.random().toString(36).slice(2,7));
-  }
+  const toCSV = rows=>{ if(!rows.length) return ''; const head=Object.keys(rows[0]); const body=rows.map(r=>head.map(k=>`"${String(r[k]??'').replaceAll('"','""')}"`).join(',')); return [head.join(','),...body].join('\n'); };
+  function showErr(ctx, err){ console.error(ctx, err); alert(`${ctx}:\n${(err && err.message) || err}`); }
+  function sanitizeSlug(text){ return (text||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'') || ('proj-'+Math.random().toString(36).slice(2,7)); }
 
   /* =================== Storage Local =================== */
+  const ARCH_KEY = 'gst_archived_slugs';
   function lsKeyProj(){ return `gst_projects`; }
   function lsKeyData(slug){ return `gst_${slug}`; }
-
-  function loadProjectsLocal(){
-    try{ return JSON.parse(localStorage.getItem(lsKeyProj()))||[]; }catch{return [];}
-  }
+  function loadProjectsLocal(){ try{ return JSON.parse(localStorage.getItem(lsKeyProj()))||[]; }catch{return [];} }
   function saveProjectsLocal(arr){ localStorage.setItem(lsKeyProj(), JSON.stringify(arr||[])); }
-
-  function loadProjectDataLocal(slug){
-    const raw=localStorage.getItem(lsKeyData(slug));
-    if(!raw) return {tasks:[],notes:[],meetings:[]};
-    try{
-      const obj = JSON.parse(raw);
-      return { tasks:obj.tasks||[], notes:obj.notes||[], meetings:obj.meetings||[] };
-    }catch{ return {tasks:[],notes:[],meetings:[]}; }
-  }
-  function saveProjectDataLocal(slug, data){
-    localStorage.setItem(lsKeyData(slug), JSON.stringify({
-      tasks:data.tasks||[], notes:data.notes||[], meetings:data.meetings||[]
-    }));
-  }
+  function loadProjectDataLocal(slug){ const raw=localStorage.getItem(lsKeyData(slug)); if(!raw) return {tasks:[],notes:[],meetings:[]}; try{ const obj=JSON.parse(raw); return { tasks:obj.tasks||[], notes:obj.notes||[], meetings:obj.meetings||[] }; }catch{ return {tasks:[],notes:[],meetings:[]}; } }
+  function saveProjectDataLocal(slug, data){ localStorage.setItem(lsKeyData(slug), JSON.stringify({ tasks:data.tasks||[], notes:data.notes||[], meetings:data.meetings||[] })); }
+  function loadArchivedSet(){ try{ return new Set(JSON.parse(localStorage.getItem(ARCH_KEY))||[]); }catch{return new Set();} }
+  function saveArchivedSet(set){ localStorage.setItem(ARCH_KEY, JSON.stringify([...set])); }
 
   /* =================== Supabase =================== */
   async function maybeInitSupabase(){
     try{
-      state.client = window.supabase.createClient(
-        state.supabaseUrl,
-        state.supabaseKey,
-        { auth: { persistSession:false }}
-      );
-
-      // Sala para mudanças em boards/projects e nas entidades do projeto atual
+      state.client = window.supabase.createClient(state.supabaseUrl, state.supabaseKey, { auth: { persistSession:false }});
       state.online = true;
       id('onlineState').textContent='Online (Supabase)';
       id('modeLabel').textContent='Online • Projetos';
 
-      // Realtime — boards
-      state.client.channel('ch-boards')
-        .on('postgres_changes', { event:'*', schema:'public', table:'boards' }, async ()=>{ await fetchProjects(); })
-        .subscribe();
-
-      // Realtime — tasks/notes/meetings do projeto atual
+      state.client.channel('ch-boards').on('postgres_changes', { event:'*', schema:'public', table:'boards' }, fetchProjectsAndStats).subscribe();
       state.client.channel('ch-app')
         .on('postgres_changes', { event:'*', schema:'public', table:'tasks' }, handleRealtimeIfCurrent)
         .on('postgres_changes', { event:'*', schema:'public', table:'notes' }, handleRealtimeIfCurrent)
@@ -833,182 +668,246 @@
       console.warn('Sem Supabase, operando local:', e);
     }
   }
+  async function handleRealtimeIfCurrent(){ await fetchProjectData(); }
 
-  async function handleRealtimeIfCurrent(payload){
-    // Atualiza somente se for o projeto atual
-    await fetchProjectData();
-  }
-
-  async function fetchProjects(){
+  /* =================== Projetos + Contadores =================== */
+  async function fetchProjectsAndStats(){
+    // projetos
     if(state.online){
-      const { data, error } = await state.client
-        .from('boards')
-        .select('*')
-        .order('created_at',{ascending:true});
-      if(error){ console.warn('Boards offline fallback', error); state.projects = loadProjectsLocal(); }
-      else{ state.projects = (data||[]).map(b=>({slug:b.slug, title:b.title||b.slug})); saveProjectsLocal(state.projects); }
+      const { data, error } = await state.client.from('boards').select('*').order('created_at',{ascending:true});
+      if(error){ console.warn('Boards fallback local', error); state.projects = loadProjectsLocal(); }
+      else{
+        state.projects = (data||[]).map(b=>({slug:b.slug, title:b.title||b.slug, archived: !!b.archived}));
+        saveProjectsLocal(state.projects);
+      }
+      // carregar tarefas mínimas de todos os boards para computar KPIs
+      const slugs = state.projects.map(p=>p.slug);
+      if(slugs.length){
+        const { data: tMin, error: eT } = await state.client.from('tasks')
+          .select('id,board_slug,status,prazo,updated_at,created_at')
+          .in('board_slug', slugs);
+        if(eT){ console.warn('Stats fallback local', eT); computeStatsLocal(); }
+        else{ computeStatsFromArray(tMin||[]); }
+      }else{
+        state.projectStats = {};
+      }
     }else{
       state.projects = loadProjectsLocal();
+      computeStatsLocal();
     }
-    renderProjectsView();
     renderSidebarProjects();
+    renderProjectsView();
+  }
+
+  function computeStatsFromArray(arr){
+    const today=new Date(); today.setHours(0,0,0,0);
+    const map={};
+    arr.forEach(t=>{
+      const slug=t.board_slug; map[slug]=map[slug]||{todo:0,prog:0,done:0,late:0};
+      if(t.status==='a_fazer') map[slug].todo++;
+      else if(t.status==='em_andamento') map[slug].prog++;
+      else if(t.status==='concluida') map[slug].done++;
+      // atrasadas (não concluídas e prazo < hoje)
+      if(t.status!=='concluida' && t.prazo){
+        const d=ymdToLocalDate(t.prazo);
+        if(d && d < today) map[slug].late++;
+      }
+    });
+    state.projectStats = map;
+  }
+  function computeStatsLocal(){
+    const map={};
+    state.projects.forEach(p=>{
+      const {tasks}=loadProjectDataLocal(p.slug);
+      computeStatsFromArray((tasks||[]).map(t=>({ ...t, board_slug:p.slug })));
+    });
   }
 
   async function upsertProject(title){
     const slug = sanitizeSlug(title);
     if(state.online){
-      // upsert board como projeto
-      const { error } = await state.client
-        .from('boards')
-        .upsert({ slug, title }, { onConflict: 'slug' });
+      const { error } = await state.client.from('boards').upsert({ slug, title }, { onConflict: 'slug' });
       if(error) return showErr('Erro ao criar projeto', error);
     }else{
       const arr = loadProjectsLocal();
       if(!arr.find(p=>p.slug===slug)) arr.push({slug, title});
       saveProjectsLocal(arr);
-      // cria storage do projeto
       saveProjectDataLocal(slug, {tasks:[],notes:[],meetings:[]});
     }
-    await fetchProjects();
+    await fetchProjectsAndStats();
     selectProject(slug);
+  }
+
+  async function renameProject(slug, newTitle){
+    if(state.online){
+      const { error } = await state.client.from('boards').update({ title:newTitle }).eq('slug', slug);
+      if(error) return showErr('Erro ao renomear projeto', error);
+    }else{
+      const arr = loadProjectsLocal();
+      const ix = arr.findIndex(p=>p.slug===slug);
+      if(ix>=0){ arr[ix].title=newTitle; saveProjectsLocal(arr); }
+    }
+    await fetchProjectsAndStats();
+  }
+
+  async function toggleArchiveProject(slug, toArchive){
+    // online: tenta usar coluna "archived" se existir; senão mantém estado local
+    if(state.online){
+      try{
+        await state.client.from('boards').update({ archived: toArchive }).eq('slug', slug);
+      }catch(e){ console.warn('Sem coluna archived, usando local', e); }
+    }
+    const set = loadArchivedSet();
+    if(toArchive) set.add(slug); else set.delete(slug);
+    saveArchivedSet(set);
+    await fetchProjectsAndStats();
+  }
+
+  async function duplicateProject(slug){
+    const base = state.projects.find(p=>p.slug===slug);
+    if(!base) return;
+    const newTitle = prompt('Nome do novo projeto (cópia):', base.title + ' (cópia)');
+    if(!newTitle) return;
+    const newSlug = sanitizeSlug(newTitle);
+
+    // cria board
+    if(state.online){
+      const { error: eB } = await state.client.from('boards').insert({ slug:newSlug, title:newTitle });
+      if(eB) return showErr('Erro ao criar cópia', eB);
+
+      const { data: t, error: e1 } = await state.client.from('tasks').select('*').eq('board_slug', slug);
+      const { data: n, error: e2 } = await state.client.from('notes').select('*').eq('board_slug', slug);
+      const { data: m, error: e3 } = await state.client.from('meetings').select('*').eq('board_slug', slug);
+      if(e1||e2||e3) console.warn('Falha parcial ao ler dados para cópia', e1||e2||e3);
+
+      const toTasks = (t||[]).map(x=>{ const {id,board_slug,created_at,updated_at,...rest}=x; return { ...rest, board_slug:newSlug }; });
+      const toNotes = (n||[]).map(x=>{ const {id,board_slug,created_at,updated_at,...rest}=x; return { ...rest, board_slug:newSlug }; });
+      const toMeet  = (m||[]).map(x=>{ const {id,board_slug,created_at,updated_at,...rest}=x; return { ...rest, board_slug:newSlug }; });
+
+      if(toTasks.length) await state.client.from('tasks').insert(toTasks);
+      if(toNotes.length) await state.client.from('notes').insert(toNotes);
+      if(toMeet.length)  await state.client.from('meetings').insert(toMeet);
+    }else{
+      const data = loadProjectDataLocal(slug);
+      saveProjectsLocal([...(loadProjectsLocal()), { slug:newSlug, title:newTitle }]);
+      saveProjectDataLocal(newSlug, JSON.parse(JSON.stringify(data)));
+    }
+
+    await fetchProjectsAndStats();
+    selectProject(newSlug);
   }
 
   async function deleteProject(slug){
     if(!confirm('Excluir projeto e todos os dados locais/online?')) return;
     if(state.online){
       try{
-        // remove tasks/notes/meetings do board
         await state.client.from('tasks').delete().eq('board_slug', slug);
         await state.client.from('notes').delete().eq('board_slug', slug);
         await state.client.from('meetings').delete().eq('board_slug', slug);
-        // remove board
         await state.client.from('boards').delete().eq('slug', slug);
       }catch(e){ return showErr('Erro ao excluir projeto', e); }
     }else{
-      // apaga dados locais
       localStorage.removeItem(lsKeyData(slug));
       const arr = loadProjectsLocal().filter(p=>p.slug!==slug);
       saveProjectsLocal(arr);
     }
     if(state.currentProject?.slug === slug) state.currentProject=null;
-    await fetchProjects();
+    await fetchProjectsAndStats();
     showProjectsHome();
   }
 
-  async function fetchProjectData(){
-    if(!state.currentProject) return;
-    const slug = state.currentProject.slug;
+  /* =================== Projetos: UI (sidebar/grade + menu) =================== */
+  function kpiBadge(label, val, cls){ const span=document.createElement('span'); span.className='kpi '+cls; span.textContent=`${label}: ${val}`; return span; }
 
-    if(state.online){
-      const { data: t, error: e1 } = await state.client
-        .from('tasks')
-        .select('*')
-        .eq('board_slug', slug)
-        .order('created_at',{ascending:true});
-      state.tasks = e1 ? [] : (t||[]);
-      if(e1) showErr('Erro ao carregar tarefas', e1);
-
-      const { data: n, error: e2 } = await state.client
-        .from('notes')
-        .select('*')
-        .eq('board_slug', slug)
-        .order('created_at',{ascending:false});
-      state.notes = e2 ? [] : (n||[]);
-      if(e2) showErr('Erro ao carregar anotações', e2);
-
-      const { data: m, error: e3 } = await state.client
-        .from('meetings')
-        .select('*')
-        .eq('board_slug', slug)
-        .order('created_at',{ascending:false});
-      state.meetings = e3 ? [] : (m||[]);
-      if(e3) showErr('Erro ao carregar reuniões', e3);
-
-      // cache local
-      saveProjectDataLocal(slug, {tasks:state.tasks, notes:state.notes, meetings:state.meetings});
-    }else{
-      const {tasks,notes,meetings} = loadProjectDataLocal(slug);
-      state.tasks=tasks; state.notes=notes; state.meetings=meetings;
-    }
-
-    renderProjectBoard();
-    renderMeetingList();
-    renderNoteAuthors();
-
-    if(state.viewingTaskTimelineId) renderTimelineModal();
+  function isArchived(slug){
+    const proj = state.projects.find(p=>p.slug===slug);
+    const localSet = loadArchivedSet();
+    return proj?.archived || localSet.has(slug);
   }
 
-  /* =================== UI de Projetos =================== */
-  function renderSidebarProjects(){
-    const list = id('projList');
+  function filteredProjects(){
     const q = (id('projSearch').value||'').toLowerCase().trim();
-    list.innerHTML='';
-    const arr = state.projects.filter(p => !q || p.title.toLowerCase().includes(q) || p.slug.includes(q));
-    if(!arr.length){
-      list.innerHTML = `<div class="muted">Nenhum projeto encontrado.</div>`;
-      return;
-    }
-    arr.forEach(p=>{
-      const item = document.createElement('div');
-      item.className='proj-item';
-      item.onclick=()=> selectProject(p.slug);
-
-      const t = document.createElement('div');
-      t.className='title';
-      t.textContent = p.title;
-
-      const actions = document.createElement('div');
-      actions.className='proj-actions';
-      const del = document.createElement('button');
-      del.className='btn small';
-      del.textContent='Excluir';
-      del.onclick=(ev)=>{ ev.stopPropagation(); deleteProject(p.slug); };
-      actions.append(del);
-
-      item.append(t, actions);
-      list.append(item);
+    const showArchived = id('chkShowArchived').checked;
+    return state.projects.filter(p=>{
+      if(!showArchived && isArchived(p.slug)) return false;
+      return !q || p.title.toLowerCase().includes(q) || p.slug.includes(q);
     });
   }
 
-  function renderProjectsView(){
-    const grid = id('projectsGrid');
-    grid.innerHTML = '';
+  function renderSidebarProjects(){
+    const list = id('projList');
+    list.innerHTML='';
+    const arr = filteredProjects();
+    if(!arr.length){ list.innerHTML = `<div class="muted">Nenhum projeto encontrado.</div>`; return; }
+    arr.forEach(p=>{
+      const item = document.createElement('div'); item.className='proj-item'; item.onclick=()=> selectProject(p.slug);
 
+      const t = document.createElement('div'); t.className='title'; t.textContent = p.title + (isArchived(p.slug)?' (arquivado)':'');
+      const actions = document.createElement('div'); actions.className='proj-actions';
+
+      // botão menu
+      const wrap=document.createElement('div'); wrap.className='menu-wrap'; wrap.onclick=e=>e.stopPropagation();
+      const btn=document.createElement('button'); btn.className='menu-btn'; btn.textContent='⋯';
+      const menu=document.createElement('div'); menu.className='context-menu';
+      const bRen=document.createElement('button'); bRen.textContent='Renomear';
+      bRen.onclick=()=>{ const nv=prompt('Novo nome:', p.title); if(nv&&nv.trim()) renameProject(p.slug, nv.trim()); menu.classList.remove('open'); };
+      const bDup=document.createElement('button'); bDup.textContent='Duplicar';
+      bDup.onclick=()=>{ duplicateProject(p.slug); menu.classList.remove('open'); };
+      const bArc=document.createElement('button'); bArc.textContent=isArchived(p.slug)?'Desarquivar':'Arquivar';
+      bArc.onclick=()=>{ toggleArchiveProject(p.slug, !isArchived(p.slug)); menu.classList.remove('open'); };
+      const bDel=document.createElement('button'); bDel.textContent='Excluir'; bDel.onclick=()=>{ deleteProject(p.slug); menu.classList.remove('open'); };
+      menu.append(bRen,bDup,bArc,bDel);
+      btn.onclick=()=>{ qsa('.context-menu').forEach(m=>m.classList.remove('open')); menu.classList.toggle('open'); };
+      wrap.append(btn,menu);
+      actions.append(wrap);
+
+      const stats=state.projectStats[p.slug]||{todo:0,prog:0,done:0,late:0};
+      const statLine=document.createElement('div'); statLine.className='proj-stats';
+      statLine.append(
+        kpiBadge('Atrasadas', stats.late, 'late'),
+        kpiBadge('A fazer', stats.todo, 'todo'),
+        kpiBadge('Em andamento', stats.prog, 'prog'),
+        kpiBadge('Concluídas', stats.done, 'done'),
+      );
+
+      item.append(t, actions, statLine);
+      list.append(item);
+    });
+
+    // fechar menus ao clicar fora
+    document.addEventListener('click', (ev)=>{ if(!ev.target.closest('.menu-wrap')) qsa('.context-menu').forEach(m=>m.classList.remove('open')); });
+  }
+
+  function renderProjectsView(){
+    const grid = id('projectsGrid'); grid.innerHTML='';
+    const arr = filteredProjects();
     if(!state.projects.length){
       grid.innerHTML = `
         <div class="card">
           <div class="title">Sem projetos ainda</div>
           <div class="muted" style="margin-top:6px">Crie seu primeiro projeto para começar (ex.: Projeto Rondônia).</div>
-          <div class="actions" style="margin-top:10px">
-            <button class="btn primary" id="gridNovoProjeto">+ Criar projeto</button>
-          </div>
+          <div class="actions" style="margin-top:10px"><button class="btn primary" id="gridNovoProjeto">+ Criar projeto</button></div>
         </div>`;
       const b = id('gridNovoProjeto'); if(b) b.onclick=()=>openProjectModal();
       return;
     }
 
-    state.projects.forEach(p=>{
-      const card=document.createElement('div');
-      card.className='card';
-      card.style.cursor='pointer';
-      card.onclick=()=>selectProject(p.slug);
-
-      const title=document.createElement('div');
-      title.className='title';
-      title.textContent=p.title;
-
-      const meta=document.createElement('div');
-      meta.className='muted';
-      meta.style.fontSize='12px';
-      meta.textContent=`slug: ${p.slug}`;
-
-      const actions=document.createElement('div');
-      actions.className='actions';
-      const del=document.createElement('button'); del.className='btn small'; del.textContent='Excluir';
-      del.onclick=(ev)=>{ev.stopPropagation(); deleteProject(p.slug);};
+    arr.forEach(p=>{
+      const card=document.createElement('div'); card.className='card'; card.style.cursor='pointer'; card.onclick=()=>selectProject(p.slug);
+      const title=document.createElement('div'); title.className='title'; title.textContent=p.title + (isArchived(p.slug)?' (arquivado)':'');
+      const meta=document.createElement('div'); meta.className='muted'; meta.style.fontSize='12px'; meta.textContent=`slug: ${p.slug}`;
+      const stats=state.projectStats[p.slug]||{todo:0,prog:0,done:0,late:0};
+      const kpis=document.createElement('div'); kpis.className='proj-stats';
+      kpis.append(
+        kpiBadge('Atrasadas', stats.late, 'late'),
+        kpiBadge('A fazer', stats.todo, 'todo'),
+        kpiBadge('Em and.',  stats.prog, 'prog'),
+        kpiBadge('Concl.',   stats.done, 'done'),
+      );
+      const actions=document.createElement('div'); actions.className='actions';
+      const del=document.createElement('button'); del.className='btn small'; del.textContent='Excluir'; del.onclick=(ev)=>{ev.stopPropagation(); deleteProject(p.slug);};
       actions.append(del);
-
-      card.append(title, meta, actions);
+      card.append(title, meta, kpis, actions);
       grid.append(card);
     });
   }
@@ -1023,192 +922,93 @@
   }
 
   async function selectProject(slug){
-    const p = (state.projects||[]).find(x=>x.slug===slug);
-    if(!p) return;
+    const p = (state.projects||[]).find(x=>x.slug===slug); if(!p) return;
     state.currentProject = p;
-
     id('crumbProject').textContent = p.title;
     id('projBoardTitle').textContent = `Tarefas — ${p.title}`;
     id('boardInfo').textContent = `Projeto: ${p.title} (slug: ${p.slug})`;
-
     id('viewProjects').style.display='none';
     id('viewProjectBoard').style.display='';
     id('projectToolbar').style.display='';
     id('subtabs').style.display='';
-
-    // Atualiza URL
-    const url=new URL(location.href);
-    url.searchParams.set('board', p.slug);
-    url.searchParams.set('theme', state.theme);
-    history.replaceState({},'',url.toString());
-
+    const url=new URL(location.href); url.searchParams.set('board', p.slug); url.searchParams.set('theme', state.theme); history.replaceState({},'',url.toString());
     await fetchProjectData();
-    closeSidebar(); // mobile
+    closeSidebar();
   }
 
-  function openProjectModal(){
-    id('pTitulo').value='';
-    id('dlgProject').showModal();
-  }
-  async function saveProjectFromModal(){
-    const title = (id('pTitulo').value||'').trim();
-    if(!title) return showErr('Projeto inválido','Informe um nome.');
-    await upsertProject(title);
-    id('dlgProject').close();
-  }
+  function openProjectModal(){ id('pTitulo').value=''; id('dlgProject').showModal(); }
+  async function saveProjectFromModal(){ const title=(id('pTitulo').value||'').trim(); if(!title) return showErr('Projeto inválido','Informe um nome.'); await upsertProject(title); id('dlgProject').close(); }
 
-  /* =================== Tasks / Notes / Meetings (por projeto) =================== */
-  function renderRespChoices(selected=[]){
-    const wrap=id('tRespGroup'); wrap.innerHTML='';
-    FIXED_RESPONSAVEIS.forEach((name, idx)=>{
-      const input=document.createElement('input');
-      input.type='checkbox';
-      input.id=`resp_${idx}`;
-      input.value=name;
-      if(selected.includes(name)) input.checked=true;
-      const label=document.createElement('label');
-      label.htmlFor=input.id;
-      label.textContent=name;
-      wrap.append(input,label);
-    });
-  }
-  function renderMeetingResponsaveis(){
-    const sel=id('mResp');
-    sel.innerHTML = FIXED_RESPONSAVEIS.map(n=>`<option value="${n}">${n}</option>`).join('');
-  }
-  function renderNoteAuthors(){
-    const sel=id('noteAuthor');
-    sel.innerHTML=FIXED_RESPONSAVEIS.map(n=>`<option value="${n}">${n}</option>`).join('');
-    id('noteNow').textContent=`agora: ${fmtDateTime(new Date())}`;
-  }
-
-  async function upsertTask(obj){
-    if(!state.currentProject) return showErr('Projeto não selecionado','Selecione um projeto.');
+  /* =================== Dados do Projeto =================== */
+  async function fetchProjectData(){
+    if(!state.currentProject) return;
     const slug = state.currentProject.slug;
 
     if(state.online){
-      if(obj.id){
-        const { error } = await state.client
-          .from('tasks')
-          .update(obj)
-          .eq('id', obj.id);
-        if(error) return showErr('Erro ao atualizar tarefa', error);
-      }else{
-        const payload = { ...obj, board_slug: slug };
-        const { error } = await state.client
-          .from('tasks')
-          .insert(payload);
-        if(error) return showErr('Erro ao criar tarefa', error);
-      }
+      const { data: t, error: e1 } = await state.client.from('tasks').select('*').eq('board_slug', slug).order('created_at',{ascending:true});
+      state.tasks = e1 ? [] : (t||[]); if(e1) showErr('Erro ao carregar tarefas', e1);
+
+      const { data: n, error: e2 } = await state.client.from('notes').select('*').eq('board_slug', slug).order('created_at',{ascending:false});
+      state.notes = e2 ? [] : (n||[]); if(e2) showErr('Erro ao carregar anotações', e2);
+
+      const { data: m, error: e3 } = await state.client.from('meetings').select('*').eq('board_slug', slug).order('created_at',{ascending:false});
+      state.meetings = e3 ? [] : (m||[]); if(e3) showErr('Erro ao carregar reuniões', e3);
+
+      saveProjectDataLocal(slug, {tasks:state.tasks, notes:state.notes, meetings:state.meetings});
     }else{
-      // offline
-      if(!obj.id){
-        obj.id=crypto.randomUUID();
-        obj.created_at=new Date().toISOString();
-      }
-      const data = loadProjectDataLocal(slug);
-      const idx=data.tasks.findIndex(x=>x.id===obj.id);
-      if(idx>=0){ data.tasks[idx]={...data.tasks[idx],...obj}; }
-      else{ data.tasks.push(obj); }
-      saveProjectDataLocal(slug, data);
+      const {tasks,notes,meetings} = loadProjectDataLocal(slug);
+      state.tasks=tasks; state.notes=notes; state.meetings=meetings;
     }
-    await fetchProjectData();
+
+    renderProjectBoard();
+    renderMeetingList();
+    renderNoteAuthors();
+    if(state.viewingTaskTimelineId) renderTimelineModal();
+    await fetchProjectsAndStats(); // atualiza contadores das listas
   }
 
-  async function deleteTask(idv){
-    const slug = state.currentProject?.slug;
-    if(!slug) return;
-    if(state.online){
-      const { error } = await state.client.from('tasks').delete().eq('id', idv);
-      if(error) return showErr('Erro ao excluir tarefa', error);
-    }else{
-      const data = loadProjectDataLocal(slug);
-      data.tasks = (data.tasks||[]).filter(t=>t.id!==idv);
-      saveProjectDataLocal(slug, data);
-    }
-    await fetchProjectData();
-  }
+  /* =================== Meetings / Notes (iguais ao seu) =================== */
+  function renderMeetingResponsaveis(){ id('mResp').innerHTML = FIXED_RESPONSAVEIS.map(n=>`<option value="${n}">${n}</option>`).join(''); }
+  function renderNoteAuthors(){ id('noteAuthor').innerHTML=FIXED_RESPONSAVEIS.map(n=>`<option value="${n}">${n}</option>`).join(''); id('noteNow').textContent=`agora: ${fmtDateTime(new Date())}`; }
 
   async function upsertMeeting(obj){
-    const slug = state.currentProject?.slug;
-    if(!slug) return showErr('Projeto não selecionado','Selecione um projeto.');
+    const slug = state.currentProject?.slug; if(!slug) return showErr('Projeto não selecionado','Selecione um projeto.');
     if(state.online){
       if(obj.id){
-        const { error } = await state.client
-          .from('meetings')
-          .update({ ...obj, updated_at:new Date().toISOString() })
-          .eq('id', obj.id);
+        const { error } = await state.client.from('meetings').update({ ...obj, updated_at:new Date().toISOString() }).eq('id', obj.id);
         if(error) return showErr('Erro ao atualizar reunião', error);
       }else{
         const tempId = crypto.randomUUID();
         const optimistic = { id: tempId, board_slug: slug, created_at: new Date().toISOString(), ...obj };
         state.meetings = [optimistic, ...(state.meetings||[])];
         renderMeetingList();
-
-        const { data, error } = await state.client
-          .from('meetings')
-          .insert({ ...obj, board_slug: slug })
-          .select()
-          .single();
-
-        if(error){
-          state.meetings = state.meetings.filter(m => m.id !== tempId);
-          renderMeetingList();
-          return showErr('Erro ao criar reunião', error);
-        }
-        const ix = state.meetings.findIndex(m => m.id === tempId);
-        if(ix >= 0) state.meetings[ix] = data;
-        renderMeetingList();
-        return;
+        const { data, error } = await state.client.from('meetings').insert({ ...obj, board_slug: slug }).select().single();
+        if(error){ state.meetings = state.meetings.filter(m => m.id !== tempId); renderMeetingList(); return showErr('Erro ao criar reunião', error); }
+        const ix = state.meetings.findIndex(m => m.id === tempId); if(ix >= 0) state.meetings[ix] = data; renderMeetingList(); return;
       }
     }else{
       const data = loadProjectDataLocal(slug);
-      if(!obj.id){
-        obj.id=crypto.randomUUID();
-        obj.created_at=new Date().toISOString();
-      }
+      if(!obj.id){ obj.id=crypto.randomUUID(); obj.created_at=new Date().toISOString(); }
       const idx=data.meetings.findIndex(x=>x.id===obj.id);
-      if(idx>=0){ data.meetings[idx]={...data.meetings[idx],...obj}; }
-      else{ data.meetings.unshift(obj); }
+      if(idx>=0){ data.meetings[idx]={...data.meetings[idx],...obj}; } else { data.meetings.unshift(obj); }
       saveProjectDataLocal(slug, data);
     }
     await fetchProjectData();
   }
-
   async function deleteMeeting(idv){
-    const slug = state.currentProject?.slug;
-    if(!slug) return;
+    const slug = state.currentProject?.slug; if(!slug) return;
     const backup = [...(state.meetings||[])];
-    state.meetings = state.meetings.filter(m => m.id !== idv);
-    renderMeetingList();
-
+    state.meetings = state.meetings.filter(m => m.id !== idv); renderMeetingList();
     if(state.online){
       const { error } = await state.client.from('meetings').delete().eq('id', idv);
-      if(error){
-        state.meetings = backup;
-        renderMeetingList();
-        return showErr('Erro ao excluir reunião', error);
-      }
+      if(error){ state.meetings = backup; renderMeetingList(); return showErr('Erro ao excluir reunião', error); }
     }else{
-      const data = loadProjectDataLocal(slug);
-      data.meetings = (data.meetings||[]).filter(m=>m.id!==idv);
-      saveProjectDataLocal(slug, data);
+      const data = loadProjectDataLocal(slug); data.meetings = (data.meetings||[]).filter(m=>m.id!==idv); saveProjectDataLocal(slug, data);
     }
   }
-
-  function openMeetings(){
-    renderMeetingResponsaveis();
-    id('mResp').value = FIXED_RESPONSAVEIS[0] || '';
-    id('mTitulo').value = '';
-    id('mDesc').value = '';
-    id('mData').value = '';
-    id('mHora').value = '';
-    renderMeetingList();
-    id('dlgMeetings').showModal();
-  }
+  function openMeetings(){ renderMeetingResponsaveis(); id('mResp').value = FIXED_RESPONSAVEIS[0] || ''; id('mTitulo').value = ''; id('mDesc').value = ''; id('mData').value = ''; id('mHora').value = ''; renderMeetingList(); id('dlgMeetings').showModal(); }
   function renderMeetingList(){
-    const wrap=id('meetingList'); if(!wrap) return;
-    wrap.innerHTML='';
+    const wrap=id('meetingList'); if(!wrap) return; wrap.innerHTML='';
     const list = [...(state.meetings||[])].sort((a,b)=> new Date(b.created_at||0) - new Date(a.created_at||0));
     if(!list.length){ wrap.innerHTML = `<div class="muted">Sem reuniões registradas.</div>`; return; }
     list.forEach(m=>{
@@ -1218,29 +1018,20 @@
       const actions=document.createElement('div'); actions.className='meeting-actions';
       const bDel=document.createElement('button'); bDel.className='btn small'; bDel.textContent='Excluir'; bDel.onclick=()=>deleteMeeting(m.id);
       actions.append(bDel); top.append(ttl, actions);
-
       const meta=document.createElement('div'); meta.className='meeting-meta';
-      const resp=`<span class="pill-inline">${m.responsavel||'—'}</span>`;
-      const dia = m.data ? fmtDate(m.data) : 'sem dia';
-      const hora= m.hora ? fmtTime(m.hora) : '';
+      const resp=`<span class="kpi">${m.responsavel||'—'}</span>`;
+      const dia = m.data ? fmtDate(m.data) : 'sem dia'; const hora= m.hora ? fmtTime(m.hora) : '';
       meta.innerHTML = `${resp}<span>•</span><span>${dia}${hora? ' — '+hora:''}</span><span>•</span><span>criada: ${fmtDateTime(m.created_at)}</span>`;
-
       const desc=document.createElement('div'); desc.className='muted'; desc.textContent=m.descricao||'';
-
-      dv.append(top, meta, desc);
-      wrap.append(dv);
+      dv.append(top, meta, desc); wrap.append(dv);
     });
   }
   async function saveMeetingFromModal(){
-    const responsavel=id('mResp').value;
-    const titulo=(id('mTitulo').value||'').trim();
-    const descricao=(id('mDesc').value||'').trim() || null;
-    const data=id('mData').value || null;
-    const hora=id('mHora').value || null;
+    const responsavel=id('mResp').value; const titulo=(id('mTitulo').value||'').trim();
+    const descricao=(id('mDesc').value||'').trim() || null; const data=id('mData').value || null; const hora=id('mHora').value || null;
     if(!titulo || !responsavel || !data || !hora){ return showErr('Formulário incompleto','Preencha responsável, título, dia e hora.'); }
     const obj = { titulo, descricao, responsavel, data, hora, autor: state.author };
-    await upsertMeeting(obj);
-    id('mTitulo').value=''; id('mDesc').value=''; id('mData').value=''; id('mHora').value='';
+    await upsertMeeting(obj); id('mTitulo').value=''; id('mDesc').value=''; id('mData').value=''; id('mHora').value='';
   }
 
   // ===== NOTAS =====
@@ -1256,8 +1047,7 @@
       data.notes.push({ id: crypto.randomUUID(), conteudo: content, autor, created_at: new Date().toISOString(), updated_at: null });
       saveProjectDataLocal(slug, data);
     }
-    id('noteInput').value='';
-    await fetchProjectData();
+    id('noteInput').value=''; await fetchProjectData();
   }
   async function startEditNote(note){ state.editingNoteId=note.id; renderNotes(); }
   async function saveEditNote(idv){
@@ -1289,7 +1079,41 @@
     await fetchProjectData();
   }
 
-  /* =================== Render Board =================== */
+  /* =================== Board/Tarefas =================== */
+  async function upsertTask(obj){
+    if(!state.currentProject) return showErr('Projeto não selecionado','Selecione um projeto.');
+    const slug = state.currentProject.slug;
+    if(state.online){
+      if(obj.id){
+        const { error } = await state.client.from('tasks').update(obj).eq('id', obj.id);
+        if(error) return showErr('Erro ao atualizar tarefa', error);
+      }else{
+        const payload = { ...obj, board_slug: slug };
+        const { error } = await state.client.from('tasks').insert(payload);
+        if(error) return showErr('Erro ao criar tarefa', error);
+      }
+    }else{
+      if(!obj.id){ obj.id=crypto.randomUUID(); obj.created_at=new Date().toISOString(); }
+      const data = loadProjectDataLocal(slug);
+      const idx=data.tasks.findIndex(x=>x.id===obj.id);
+      if(idx>=0){ data.tasks[idx]={...data.tasks[idx],...obj}; } else { data.tasks.push(obj); }
+      saveProjectDataLocal(slug, data);
+    }
+    await fetchProjectData();
+  }
+  async function deleteTask(idv){
+    const slug = state.currentProject?.slug; if(!slug) return;
+    if(state.online){
+      const { error } = await state.client.from('tasks').delete().eq('id', idv);
+      if(error) return showErr('Erro ao excluir tarefa', error);
+    }else{
+      const data = loadProjectDataLocal(slug);
+      data.tasks = (data.tasks||[]).filter(t=>t.id!==idv);
+      saveProjectDataLocal(slug, data);
+    }
+    await fetchProjectData();
+  }
+
   function getDueBadge(prazo, status){
     if(!prazo || status==='concluida') return null;
     const today=new Date(); today.setHours(0,0,0,0);
@@ -1309,7 +1133,6 @@
 
   async function saveTaskTimeline(task){
     const slug = state.currentProject?.slug; if(!slug) return;
-    // offline fallback
     if(!state.online){
       const data = loadProjectDataLocal(slug);
       const idx=data.tasks.findIndex(t=>t.id===task.id);
@@ -1323,189 +1146,111 @@
     renderTimelineModal(); renderTasks();
   }
 
-  function openTimelineModal(taskId){
-    state.viewingTaskTimelineId = taskId;
-    state.editingTimelineEntryId = null;
-    renderTimelineModal();
-    id('dlgTimeline').showModal();
-  }
+  function openTimelineModal(taskId){ state.viewingTaskTimelineId = taskId; state.editingTimelineEntryId = null; renderTimelineModal(); id('dlgTimeline').showModal(); }
 
   function renderTimelineModal(){
-    const task = getTaskById(state.viewingTaskTimelineId);
-    if(!task) return;
-
+    const task = getTaskById(state.viewingTaskTimelineId); if(!task) return;
     const isAutor = task.autor === state.author || !task.autor;
-
     id('tlTaskTitle').textContent = 'Timeline / Histórico';
     id('tlBriefTitulo').textContent = task.titulo || '(sem título)';
-
     const badgesWrap = id('tlBriefBadges'); badgesWrap.innerHTML = '';
     const stSpan = document.createElement('span'); stSpan.className='tl-brief-chip'; stSpan.textContent = 'Status: ' + (task.status||''); badgesWrap.appendChild(stSpan);
     if(task.prazo){ const prazoSpan=document.createElement('span'); prazoSpan.className='tl-brief-chip'; prazoSpan.textContent='Prazo: '+fmtDate(task.prazo); badgesWrap.appendChild(prazoSpan); }
     if(Array.isArray(task.responsaveis)){ task.responsaveis.forEach(r=>{ const chip=document.createElement('span'); chip.className='tl-brief-chip'; chip.textContent=r; badgesWrap.appendChild(chip); }); }
-
     const metaWrap = id('tlBriefMeta'); metaWrap.innerHTML = '';
-    const partesMeta = [];
-    if(task.autor){ partesMeta.push('Autor: '+task.autor); }
-    if(task.created_at){ partesMeta.push('Criada: '+fmtDateTime(task.created_at)); }
-    if(task.updated_at){ partesMeta.push('Atualizada: '+fmtDateTime(task.updated_at)); }
+    const partesMeta = []; if(task.autor){ partesMeta.push('Autor: '+task.autor); } if(task.created_at){ partesMeta.push('Criada: '+fmtDateTime(task.created_at)); } if(task.updated_at){ partesMeta.push('Atualizada: '+fmtDateTime(task.updated_at)); }
     if(!partesMeta.length){ partesMeta.push('Sem metadados'); }
     metaWrap.textContent = partesMeta.join(' • ');
+    id('tlFormWrap').style.display = isAutor ? '' : 'none';
 
-    const tlFormWrap = id('tlFormWrap');
-    tlFormWrap.style.display = isAutor ? '' : 'none';
-
-    const tlList = id('tlList');
-    tlList.innerHTML='';
+    const tlList = id('tlList'); tlList.innerHTML='';
     const timelineArr = Array.isArray(task.timeline) ? [...task.timeline] : [];
     timelineArr.sort((a,b)=> new Date(b.created_at||0) - new Date(a.created_at||0));
-
-    if(!timelineArr.length){
-      tlList.innerHTML = `<div style="font-size:13px;color:#6b7280;padding:8px 0 0 0;">Sem registros na timeline.</div>`;
-      return;
-    }
-
+    if(!timelineArr.length){ tlList.innerHTML = `<div style="font-size:13px;color:#6b7280;padding:8px 0 0 0;">Sem registros na timeline.</div>`; return; }
     timelineArr.forEach(entry=>{
       const isEditing = state.editingTimelineEntryId === entry.id;
       const item = document.createElement('div'); item.className='tl-item';
       const dot = document.createElement('div'); dot.className = 'tl-item-dot ' + getTimelineDotClass(entry.status); item.appendChild(dot);
-
       if(isEditing){
         const editBlock = document.createElement('div'); editBlock.className='tl-edit-block';
-
-        const rowTitulo = document.createElement('div'); rowTitulo.className='tl-edit-row';
-        rowTitulo.innerHTML = `<label>Título</label><input id="tlEditTitulo_${entry.id}" type="text" value="${entry.titulo||''}">`;
-
-        const rowDesc=document.createElement('div'); rowDesc.className='tl-edit-row';
-        rowDesc.innerHTML = `<label>Descrição</label><textarea id="tlEditDesc_${entry.id}">${entry.descricao||''}</textarea>`;
-
-        const rowSt=document.createElement('div'); rowSt.className='tl-edit-row';
-        rowSt.innerHTML = `<label>Status</label>
-          <select id="tlEditStatus_${entry.id}">
-            <option value="parado">Parado (vermelho)</option>
-            <option value="andamento">Em andamento (amarelo)</option>
-            <option value="concluido">Concluído (verde)</option>
-          </select>`;
+        const rowTitulo = document.createElement('div'); rowTitulo.className='tl-edit-row'; rowTitulo.innerHTML = `<label>Título</label><input id="tlEditTitulo_${entry.id}" type="text" value="${entry.titulo||''}">`;
+        const rowDesc=document.createElement('div'); rowDesc.className='tl-edit-row'; rowDesc.innerHTML = `<label>Descrição</label><textarea id="tlEditDesc_${entry.id}">${entry.descricao||''}</textarea>`;
+        const rowSt=document.createElement('div'); rowSt.className='tl-edit-row'; rowSt.innerHTML = `<label>Status</label>
+          <select id="tlEditStatus_${entry.id}"><option value="parado">Parado (vermelho)</option><option value="andamento">Em andamento (amarelo)</option><option value="concluido">Concluído (verde)</option></select>`;
         setTimeout(()=>{ id(`tlEditStatus_${entry.id}`).value=entry.status||'parado'; }, 0);
-
         const rowBtns=document.createElement('div'); rowBtns.className='tl-edit-buttons';
-        const bCancel=document.createElement('button'); bCancel.className='btn'; bCancel.textContent='Cancelar';
-        bCancel.onclick=()=>{ state.editingTimelineEntryId=null; renderTimelineModal(); };
+        const bCancel=document.createElement('button'); bCancel.className='btn'; bCancel.textContent='Cancelar'; bCancel.onclick=()=>{ state.editingTimelineEntryId=null; renderTimelineModal(); };
         const bSave=document.createElement('button'); bSave.className='btn primary'; bSave.textContent='Salvar';
         bSave.onclick=async ()=>{
           const newTitulo = id(`tlEditTitulo_${entry.id}`).value.trim() || '(sem título)';
           const newDesc   = id(`tlEditDesc_${entry.id}`).value.trim() || '';
           const newStatus = id(`tlEditStatus_${entry.id}`).value;
-          const tTask = getTaskById(state.viewingTaskTimelineId);
-          if(!tTask) return;
-          const arr = Array.isArray(tTask.timeline)?tTask.timeline:[];
-          const ix = arr.findIndex(e=>e.id===entry.id);
+          const tTask = getTaskById(state.viewingTaskTimelineId); if(!tTask) return;
+          const arr = Array.isArray(tTask.timeline)?tTask.timeline:[]; const ix = arr.findIndex(e=>e.id===entry.id);
           if(ix>=0){ arr[ix] = { ...arr[ix], titulo:newTitulo, descricao:newDesc, status:newStatus, updated_at:new Date().toISOString() }; }
-          tTask.timeline = arr;
-          state.editingTimelineEntryId=null;
-          await saveTaskTimeline(tTask);
+          tTask.timeline = arr; state.editingTimelineEntryId=null; await saveTaskTimeline(tTask);
         };
-
-        rowBtns.append(bCancel,bSave);
-        editBlock.append(rowTitulo,rowDesc,rowSt,rowBtns);
-        item.append(editBlock);
-
+        rowBtns.append(bCancel,bSave); editBlock.append(rowTitulo,rowDesc,rowSt,rowBtns); item.append(editBlock);
       }else{
         const topLine=document.createElement('div'); topLine.className='tl-top-line';
         const leftBlock=document.createElement('div'); leftBlock.className='tl-left-block';
-
         const titleEl=document.createElement('div'); titleEl.className='tl-titulo'; titleEl.textContent=entry.titulo||'(sem título)';
         const line2=document.createElement('div'); line2.className='tl-line2';
         const pill=document.createElement('span'); pill.className=getTimelinePillClass(entry.status); pill.textContent=getTimelineStatusLabel(entry.status);
         const tsLabel = document.createElement('span'); tsLabel.textContent = entry.created_at ? fmtDateTime(entry.created_at) : '(sem data)';
-        line2.append(pill,tsLabel);
-
-        leftBlock.append(titleEl,line2);
-
+        line2.append(pill,tsLabel); leftBlock.append(titleEl,line2);
         const actions=document.createElement('div'); actions.className='tl-actions';
         const task = getTaskById(state.viewingTaskTimelineId);
         const isAutor = task?.autor === state.author || !task?.autor;
         if(isAutor){
-          const bEdit = document.createElement('button'); bEdit.className='btn small'; bEdit.textContent='Editar';
-          bEdit.onclick=()=>{ state.editingTimelineEntryId=entry.id; renderTimelineModal(); };
+          const bEdit = document.createElement('button'); bEdit.className='btn small'; bEdit.textContent='Editar'; bEdit.onclick=()=>{ state.editingTimelineEntryId=entry.id; renderTimelineModal(); };
           const bDel = document.createElement('button'); bDel.className='btn small'; bDel.textContent='Excluir';
-          bDel.onclick=async ()=>{
-            const tTask=getTaskById(state.viewingTaskTimelineId);
-            if(!tTask) return;
-            const arr=Array.isArray(tTask.timeline)?tTask.timeline:[];
-            tTask.timeline = arr.filter(e=>e.id!==entry.id);
-            await saveTaskTimeline(tTask);
-          };
+          bDel.onclick=async ()=>{ const tTask=getTaskById(state.viewingTaskTimelineId); if(!tTask) return; const arr=Array.isArray(tTask.timeline)?tTask.timeline:[]; tTask.timeline = arr.filter(e=>e.id!==entry.id); await saveTaskTimeline(tTask); };
           actions.append(bEdit,bDel);
         }
-
         topLine.append(leftBlock, actions);
         const desc=document.createElement('div'); desc.className='tl-desc'; desc.textContent=entry.descricao||'';
         item.append(topLine, desc);
       }
-
       id('tlList').append(item);
     });
   }
-
   async function addTimelineEntry(){
-    const task = getTaskById(state.viewingTaskTimelineId);
-    if(!task) return;
-    if(task.autor && task.autor !== state.author){
-      return showErr('Sem permissão','Somente o autor da tarefa pode registrar na timeline.');
-    }
+    const task = getTaskById(state.viewingTaskTimelineId); if(!task) return;
+    if(task.autor && task.autor !== state.author){ return showErr('Sem permissão','Somente o autor da tarefa pode registrar na timeline.'); }
     const titulo = (id('tlNovoTitulo').value||'').trim() || '(sem título)';
     const descricao = (id('tlNovoDesc').value||'').trim() || '';
     const status = id('tlNovoStatus').value || 'parado';
     const entry = { id: crypto.randomUUID(), titulo, descricao, status, created_at: new Date().toISOString() };
-    const arr = Array.isArray(task.timeline)?task.timeline:[];
-    arr.push(entry);
-    task.timeline = arr;
+    const arr = Array.isArray(task.timeline)?task.timeline:[]; arr.push(entry); task.timeline = arr;
     id('tlNovoTitulo').value=''; id('tlNovoDesc').value=''; id('tlNovoStatus').value='parado';
     await saveTaskTimeline(task);
   }
 
   function makeTaskCard(t){
-    const card=document.createElement('div');
-    card.className='card'; card.classList.add('is-'+t.status); card.draggable=true; card.dataset.id=t.id;
+    const card=document.createElement('div'); card.className='card'; card.classList.add('is-'+t.status); card.draggable=true; card.dataset.id=t.id;
     card.addEventListener('dragstart', e=>{ e.dataTransfer.setData('text/plain', t.id); });
     card.addEventListener('click', ()=>{ openTimelineModal(t.id); });
-
     const title=document.createElement('div'); title.className='title'; title.textContent=t.titulo||'(sem título)';
-
     const badges=document.createElement('div'); badges.className='badges';
     const stBadge=document.createElement('span'); stBadge.className='badge status-'+t.status; stBadge.textContent=t.status.replace('_',' ');
     const prazo=document.createElement('span'); prazo.className='badge'; prazo.textContent=t.prazo ? 'Prazo: '+fmtDate(t.prazo) : 'Sem prazo';
     badges.append(stBadge,prazo);
-
-    const due=getDueBadge(t.prazo, t.status);
-    if(due){ const b=document.createElement('span'); b.className='badge '+due.cls; b.textContent=due.text.toUpperCase(); badges.append(b); }
-
+    const due=getDueBadge(t.prazo, t.status); if(due){ const b=document.createElement('span'); b.className='badge '+due.cls; b.textContent=due.text.toUpperCase(); badges.append(b); }
     const stRow=document.createElement('div'); stRow.className='row';
     const stLabel=document.createElement('span'); stLabel.className='muted'; stLabel.style.fontSize='12px'; stLabel.textContent='Status:';
     const stSel=document.createElement('select'); stSel.className='status-inline';
     stSel.innerHTML=`<option value="a_fazer">a fazer</option><option value="em_andamento">em andamento</option><option value="concluida">concluída</option>`;
-    stSel.value=t.status;
-    stSel.addEventListener('click', ev=>ev.stopPropagation());
+    stSel.value=t.status; stSel.addEventListener('click', ev=>ev.stopPropagation());
     stSel.onchange=async e=>{ e.stopPropagation(); await upsertTask({ id:t.id, status:e.target.value }); if(id('chkUpdateLink').checked) updateShareLink(); };
-
     stRow.append(stLabel, stSel);
-
-    const meta=document.createElement('div'); meta.className='muted'; meta.style.fontSize='12px';
-    meta.textContent='Criada em: ' + (t.created_at ? fmtDateTime(t.created_at) : '—');
-
-    const tags=document.createElement('div'); tags.className='tags';
-    (t.responsaveis||[]).forEach(p=>{ const el=document.createElement('span'); el.className='tag'; el.textContent=p; tags.append(el); });
-
+    const meta=document.createElement('div'); meta.className='muted'; meta.style.fontSize='12px'; meta.textContent='Criada em: ' + (t.created_at ? fmtDateTime(t.created_at) : '—');
+    const tags=document.createElement('div'); tags.className='tags'; (t.responsaveis||[]).forEach(p=>{ const el=document.createElement('span'); el.className='tag'; el.textContent=p; tags.append(el); });
     const actions=document.createElement('div'); actions.className='actions';
-    const bEdit=document.createElement('button'); bEdit.className='btn small'; bEdit.textContent='Editar';
-    bEdit.onclick=(ev)=>{ ev.stopPropagation(); openTaskModal(t); };
-    const bDel=document.createElement('button'); bDel.className='btn small'; bDel.textContent='Excluir';
-    bDel.onclick=(ev)=>{ ev.stopPropagation(); deleteTask(t.id); };
+    const bEdit=document.createElement('button'); bEdit.className='btn small'; bEdit.textContent='Editar'; bEdit.onclick=(ev)=>{ ev.stopPropagation(); openTaskModal(t); };
+    const bDel=document.createElement('button'); bDel.className='btn small'; bDel.textContent='Excluir'; bDel.onclick=(ev)=>{ ev.stopPropagation(); deleteTask(t.id); };
     actions.append(bEdit,bDel);
-
-    card.append(title);
-    if(t.descricao){ const d=document.createElement('div'); d.className='muted'; d.textContent=t.descricao; card.append(d); }
+    card.append(title); if(t.descricao){ const d=document.createElement('div'); d.className='muted'; d.textContent=t.descricao; card.append(d); }
     card.append(badges, stRow, meta, tags, actions);
     return card;
   }
@@ -1513,25 +1258,19 @@
   function renderTasks(){
     const cols={ atrasadas:id('col-atrasadas'), a_fazer:id('col-a_fazer'), em_andamento:id('col-em_andamento'), concluida:id('col-concluida') };
     Object.values(cols).forEach(el=>el.innerHTML='');
-
     const fSt=id('fStatus').value, fResp=id('fResp').value, fPrazo=id('fPrazo').value;
     const today=new Date(); today.setHours(0,0,0,0);
     const endWeek=new Date(today); endWeek.setDate(today.getDate() + (7 - today.getDay())); endWeek.setHours(23,59,59,999);
     let list=[...state.tasks];
-
-    // Sub-aba rápida (escopo)
     const scope = state.subScope;
     const prazoToLocal=t=> t.prazo ? ymdToLocalDate(t.prazo) : null;
     const isOverdue=t=>{ const p=prazoToLocal(t); return p && p<today && t.status!=='concluida'; };
-
     if(scope==='atrasadas') list=list.filter(isOverdue);
     if(scope==='a_fazer') list=list.filter(t=>t.status==='a_fazer' && !isOverdue(t));
     if(scope==='em_andamento') list=list.filter(t=>t.status==='em_andamento' && !isOverdue(t));
     if(scope==='concluida') list=list.filter(t=>t.status==='concluida');
-
     if(fSt!=='todos') list=list.filter(t=>t.status===fSt);
     if(fResp!=='todos') list=list.filter(t=>(t.responsaveis||[]).includes(fResp));
-
     if(state.filterDate){ list=list.filter(t=>t.prazo===state.filterDate); }
     else{
       if(fPrazo==='hoje'){ list=list.filter(t=>{ const p=prazoToLocal(t); return p && p.getTime()===today.getTime(); }); }
@@ -1542,44 +1281,21 @@
     const overdue=list.filter(isOverdue);
     const notOverdue=list.filter(t=>!isOverdue(t));
     overdue.forEach(t=> cols.atrasadas.append(makeTaskCard(t)));
-
     const counts={a_fazer:0,em_andamento:0,concluida:0};
     notOverdue.forEach(t=>counts[t.status]=(counts[t.status]||0)+1);
     notOverdue.forEach(t=> cols[t.status].append(makeTaskCard(t)));
-
-    qsa('.col').forEach(col=>{
-      const st=col.dataset.status, badge=col.querySelector('header .badge');
-      if(!badge) return;
-      badge.textContent = (st==='atrasadas') ? overdue.length : (counts[st]||0);
-    });
-
-    ['col-a_fazer','col-em_andamento','col-concluida'].forEach(cid=>{
-      const dz=id(cid);
-      dz.ondrop=async e=>{
-        e.preventDefault();
-        const idDrag=e.dataTransfer.getData('text/plain');
-        const novo=cid.replace('col-','');
-        const t=state.tasks.find(x=>x.id===idDrag);
-        if(!t) return;
-        await upsertTask({ id:t.id, status:novo });
-        if(id('chkUpdateLink').checked) updateShareLink();
-      };
-    });
-
+    qsa('.col').forEach(col=>{ const st=col.dataset.status, badge=col.querySelector('header .badge'); if(!badge) return; badge.textContent = (st==='atrasadas') ? overdue.length : (counts[st]||0); });
     updateFilters();
   }
 
   function renderNotes(){
     const wrap=id('notes'); if(!wrap) return;
-    wrap.innerHTML='';
-    const ordered=[...state.notes].sort((a,b)=> new Date(b.created_at||0) - new Date(a.created_at||0));
+    wrap.innerHTML=''; const ordered=[...state.notes].sort((a,b)=> new Date(b.created_at||0) - new Date(a.created_at||0));
     ordered.forEach(n=>{
       const dv=document.createElement('div'); dv.className='note';
-
       if(state.editingNoteId===n.id){
         const edit=document.createElement('div'); edit.className='note-edit';
-        const sel=document.createElement('select'); sel.id=`edit_author_${n.id}`;
-        sel.innerHTML=FIXED_RESPONSAVEIS.map(a=>`<option ${a===n.autor?'selected':''} value="${a}">${a}</option>`).join('');
+        const sel=document.createElement('select'); sel.id=`edit_author_${n.id}`; sel.innerHTML=FIXED_RESPONSAVEIS.map(a=>`<option ${a===n.autor?'selected':''} value="${a}">${a}</option>`).join('');
         const ta=document.createElement('textarea'); ta.id=`edit_area_${n.id}`; ta.value=n.conteudo||'';
         const row=document.createElement('div'); row.className='actions';
         const bCancel=document.createElement('button'); bCancel.className='btn'; bCancel.textContent='Cancelar'; bCancel.onclick=()=>cancelEditNote();
@@ -1606,11 +1322,8 @@
     id('viewProjectBoard').style.display='';
     id('projectToolbar').style.display='';
     id('subtabs').style.display='';
-
     id('noteNow').textContent=`agora: ${fmtDateTime(new Date())}`;
-    renderTasks();
-    renderNotes();
-    updateSelectedDayChip();
+    renderTasks(); renderNotes(); updateSelectedDayChip();
   }
 
   function updateFilters(){
@@ -1622,180 +1335,116 @@
     if(opts.includes(val)) sel.value=val; else sel.value='todos';
   }
 
-  function toggleCalendar(){
-    const pop=id('calPopover');
-    if(pop.classList.contains('hidden')) openCalendar();
-    else closeCalendar();
-  }
-  function openCalendar(){
-    if(!state.calMonth){
-      const base = state.filterDate ? ymdToLocalDate(state.filterDate) : new Date();
-      state.calMonth = new Date(base.getFullYear(), base.getMonth(), 1);
-    }
-    renderCalendar();
-    id('calPopover').classList.remove('hidden');
-    requestAnimationFrame(placeCalendarPopover);
-  }
-  function placeCalendarPopover(){
-    const pop=id('calPopover'); const btn=id('btnCal'); const vw=window.innerWidth, vh=window.innerHeight;
-    const r=btn.getBoundingClientRect(); const popW=pop.offsetWidth||280, popH=pop.offsetHeight||280;
-
-    if(vw<=420){
-      pop.style.left='50%'; pop.style.transform='translateX(-50%)'; pop.style.top=''; pop.style.bottom='calc(env(safe-area-inset-bottom, 0px) + 8px)'; pop.style.width='calc(100vw - 16px)';
-      return;
-    }else{ pop.style.bottom=''; pop.style.transform=''; pop.style.width='280px'; }
-
+  /* ===== Calendário ===== */
+  function toggleCalendar(){ const pop=id('calPopover'); if(pop.classList.contains('hidden')) openCalendar(); else closeCalendar(); }
+  function openCalendar(){ if(!state.calMonth){ const base = state.filterDate ? ymdToLocalDate(state.filterDate) : new Date(); state.calMonth = new Date(base.getFullYear(), base.getMonth(), 1); } renderCalendar(); id('calPopover').classList.remove('hidden'); requestAnimationFrame(placeCalendarPopover); }
+  function placeCalendarPopover(){ const pop=id('calPopover'); const btn=id('btnCal'); const vw=window.innerWidth, vh=window.innerHeight; const r=btn.getBoundingClientRect(); const popW=pop.offsetWidth||280, popH=pop.offsetHeight||280;
+    if(vw<=420){ pop.style.left='50%'; pop.style.transform='translateX(-50%)'; pop.style.top=''; pop.style.bottom='calc(env(safe-area-inset-bottom, 0px) + 8px)'; pop.style.width='calc(100vw - 16px)'; return; } else { pop.style.bottom=''; pop.style.transform=''; pop.style.width='280px'; }
     let left = r.left + (r.width/2) - (popW/2); left = Math.max(8, Math.min(left, vw - popW - 8));
     let top = r.bottom + 8; if(top + popH > vh - 8) top = r.top - popH - 8; top = Math.max(8, Math.min(top, vh - popH - 8));
     pop.style.left = left + 'px'; pop.style.top  = top  + 'px';
   }
   function closeCalendar(){ id('calPopover').classList.add('hidden'); }
-
-  function getTaskDatesSet(){
-    const set=new Set();
-    (state.tasks||[]).forEach(t=>{ if(t.prazo) set.add(t.prazo); });
-    return set;
-  }
-
+  function getTaskDatesSet(){ const set=new Set(); (state.tasks||[]).forEach(t=>{ if(t.prazo) set.add(t.prazo); }); return set; }
   function renderCalendar(){
-    const pop=id('calPopover');
-    const d=state.calMonth||new Date();
-    const y=d.getFullYear(), m=d.getMonth();
-    const first=new Date(y,m,1);
-    const firstDow=first.getDay();
-    const daysInMonth=new Date(y,m+1,0).getDate();
-    const title=first.toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
-    const dows=['D','S','T','Q','Q','S','S'];
-    const taskSet=getTaskDatesSet();
-    const todayStr=toYMD(new Date());
-
-    let grid='';
-    grid+=dows.map(x=>`<div class="cal-dow">${x}</div>`).join('');
-    for(let i=0;i<firstDow;i++) grid+=`<div></div>`;
-    for(let day=1; day<=daysInMonth; day++){
-      const dt=new Date(y,m,day);
-      const ymd=toYMD(dt);
-      const has=taskSet.has(ymd);
-      const isToday=ymd===todayStr;
-      const isSel=state.filterDate===ymd;
-      grid += `<div class="cal-day${has?' has-task':''}${isToday?' is-today':''}${isSel?' is-selected':''}" data-ymd="${ymd}">${day}</div>`;
-    }
-
-    pop.innerHTML=`
-      <div class="cal">
-        <div class="cal-head">
-          <button class="btn small" id="calPrev">‹</button>
-          <div class="title">${title}</div>
-          <button class="btn small" id="calNext">›</button>
-        </div>
-        <div class="cal-grid">${grid}</div>
-        <div class="row" style="justify-content:space-between; padding:0 6px 4px;">
-          <button class="btn small" id="calHoje">Hoje</button>
-          <button class="btn small" id="calFechar">Fechar</button>
-        </div>
-      </div>
-    `;
-
+    const pop=id('calPopover'); const d=state.calMonth||new Date(); const y=d.getFullYear(), m=d.getMonth(); const first=new Date(y,m,1); const firstDow=first.getDay(); const daysInMonth=new Date(y,m+1,0).getDate(); const title=first.toLocaleDateString('pt-BR',{month:'long',year:'numeric'}); const dows=['D','S','T','Q','Q','S','S']; const taskSet=getTaskDatesSet(); const todayStr=toYMD(new Date());
+    let grid=''; grid+=dows.map(x=>`<div class="cal-dow">${x}</div>`).join(''); for(let i=0;i<firstDow;i++) grid+=`<div></div>`;
+    for(let day=1; day<=daysInMonth; day++){ const dt=new Date(y,m,day); const ymd=toYMD(dt); const has=taskSet.has(ymd); const isToday=ymd===todayStr; const isSel=state.filterDate===ymd; grid += `<div class="cal-day${has?' has-task':''}${isToday?' is-today':''}${isSel?' is-selected':''}" data-ymd="${ymd}">${day}</div>`; }
+    pop.innerHTML=`<div class="cal"><div class="cal-head"><button class="btn small" id="calPrev">‹</button><div class="title">${title}</div><button class="btn small" id="calNext">›</button></div><div class="cal-grid">${grid}</div><div class="row" style="justify-content:space-between; padding:0 6px 4px;"><button class="btn small" id="calHoje">Hoje</button><button class="btn small" id="calFechar">Fechar</button></div></div>`;
     id('calPrev').onclick=()=>{ state.calMonth=new Date(y,m-1,1); renderCalendar(); placeCalendarPopover(); };
     id('calNext').onclick=()=>{ state.calMonth=new Date(y,m+1,1); renderCalendar(); placeCalendarPopover(); };
     id('calHoje').onclick=()=>{ const now=new Date(); state.calMonth=new Date(now.getFullYear(), now.getMonth(), 1); renderCalendar(); placeCalendarPopover(); };
     id('calFechar').onclick=closeCalendar;
-
-    qsa('#calPopover .cal-day').forEach(el=>{
-      el.onclick=()=>{ state.filterDate=el.dataset.ymd; id('fPrazo').value='todos'; closeCalendar(); renderProjectBoard(); };
-    });
+    qsa('#calPopover .cal-day').forEach(el=>{ el.onclick=()=>{ state.filterDate=el.dataset.ymd; id('fPrazo').value='todos'; closeCalendar(); renderProjectBoard(); }; });
   }
+  function updateSelectedDayChip(){ const chip=id('selDiaTag'); const txt=id('selDiaText'); if(state.filterDate){ chip.style.display=''; txt.textContent=fmtDate(state.filterDate); } else { chip.style.display='none'; } }
 
-  function updateSelectedDayChip(){
-    const chip=id('selDiaTag'); const txt=id('selDiaText');
-    if(state.filterDate){ chip.style.display=''; txt.textContent=fmtDate(state.filterDate); }
-    else{ chip.style.display='none'; }
-  }
-
-  function openTaskModal(t){
-    if(!state.currentProject) return showErr('Projeto não selecionado','Selecione um projeto.');
-    state.editingTaskId = t?.id || null;
-    id('taskModalTitle').textContent = t ? 'Editar tarefa' : 'Nova tarefa';
-    id('tTitulo').value = t?.titulo || '';
-    id('tDesc').value = t?.descricao || '';
-    renderRespChoices(t?.responsaveis||[]);
-    id('tPrazo').value = t?.prazo || '';
-    id('tStatus').value = t?.status || 'a_fazer';
-    id('dlgTask').showModal();
-  }
-
+  function openTaskModal(t){ if(!state.currentProject) return showErr('Projeto não selecionado','Selecione um projeto.'); state.editingTaskId = t?.id || null; id('taskModalTitle').textContent = t ? 'Editar tarefa' : 'Nova tarefa'; id('tTitulo').value = t?.titulo || ''; id('tDesc').value = t?.descricao || ''; renderRespChoices(t?.responsaveis||[]); id('tPrazo').value = t?.prazo || ''; id('tStatus').value = t?.status || 'a_fazer'; id('dlgTask').showModal(); }
+  function renderRespChoices(selected=[]){ const wrap=id('tRespGroup'); wrap.innerHTML=''; FIXED_RESPONSAVEIS.forEach((name, idx)=>{ const input=document.createElement('input'); input.type='checkbox'; input.id=`resp_${idx}`; input.value=name; if(selected.includes(name)) input.checked=true; const label=document.createElement('label'); label.htmlFor=input.id; label.textContent=name; wrap.append(input,label); }); }
   async function saveTaskFromModal(){
     if(!state.currentProject) return showErr('Projeto não selecionado','Selecione um projeto.');
     const selected=Array.from(document.querySelectorAll('#tRespGroup input:checked')).map(i=>i.value);
-    const obj={
-      id: state.editingTaskId || undefined,
-      titulo: id('tTitulo').value.trim() || 'Sem título',
-      descricao: id('tDesc').value.trim() || null,
-      responsaveis: selected,
-      prazo: id('tPrazo').value || null,
-      status: id('tStatus').value,
-      autor: state.author
-    };
-    await upsertTask(obj);
-    id('dlgTask').close();
-    if(id('chkUpdateLink').checked) updateShareLink();
+    const obj={ id: state.editingTaskId || undefined, titulo: id('tTitulo').value.trim() || 'Sem título', descricao: id('tDesc').value.trim() || null, responsaveis: selected, prazo: id('tPrazo').value || null, status: id('tStatus').value, autor: state.author };
+    await upsertTask(obj); id('dlgTask').close(); if(id('chkUpdateLink').checked) updateShareLink();
   }
 
-  function updateShareLink(){
-    const url=new URL(location.href);
-    if(state.currentProject?.slug) url.searchParams.set('board',state.currentProject.slug);
-    url.searchParams.set('theme',state.theme);
-    history.replaceState({},'',url.toString());
-  }
-  function generateShareLink(){
-    const url=new URL(location.href);
-    if(state.currentProject?.slug) url.searchParams.set('board',state.currentProject.slug);
-    url.searchParams.set('theme',state.theme);
-    navigator.clipboard.writeText(url.toString());
-    alert('Link copiado! Cole no WhatsApp para compartilhar.');
-  }
-  function toggleTheme(){
-    state.theme=(state.theme==='dark')?'light':'dark';
-    localStorage.setItem('theme',state.theme);
-    applyTheme();
-    updateShareLink();
-  }
-
+  /* =================== Export/Share/Theme =================== */
+  function updateShareLink(){ const url=new URL(location.href); if(state.currentProject?.slug) url.searchParams.set('board',state.currentProject.slug); url.searchParams.set('theme',state.theme); history.replaceState({},'',url.toString()); }
+  function generateShareLink(){ const url=new URL(location.href); if(state.currentProject?.slug) url.searchParams.set('board',state.currentProject.slug); url.searchParams.set('theme',state.theme); navigator.clipboard.writeText(url.toString()); alert('Link copiado! Cole no WhatsApp para compartilhar.'); }
+  function toggleTheme(){ state.theme=(state.theme==='dark')?'light':'dark'; localStorage.setItem('theme',state.theme); applyTheme(); updateShareLink(); }
   function exportCSV(){
     if(!state.currentProject) return showErr('Projeto não selecionado','Selecione um projeto.');
-    const rows=state.tasks.map(t=>({
-      id:t.id, projeto:state.currentProject.slug, titulo:t.titulo, descricao:t.descricao||'', status:t.status,
-      prazo:t.prazo||'', responsaveis:(t.responsaveis||[]).join('; '), autor:t.autor||'',
-      criado_em:t.created_at||'', atualizado_em:t.updated_at||''
-    }));
-    const csv=toCSV(rows);
-    const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
-    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`tarefas_${state.currentProject.slug}.csv`; a.click();
+    const rows=state.tasks.map(t=>({ id:t.id, projeto:state.currentProject.slug, titulo:t.titulo, descricao:t.descricao||'', status:t.status, prazo:t.prazo||'', responsaveis:(t.responsaveis||[]).join('; '), autor:t.autor||'', criado_em:t.created_at||'', atualizado_em:t.updated_at||'' }));
+    const csv=toCSV(rows); const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`tarefas_${state.currentProject.slug}.csv`; a.click();
+  }
+
+  /* =================== Dashboard (básico) =================== */
+  function openDashboard(){
+    computeDashboard();
+    id('dlgDash').showModal();
+    drawBars('dbLast30', window._dash_last30_labels, window._dash_last30_vals);
+    drawBars('dbPct', ['No prazo','Atraso'], [window._dash_pct_ok, window._dash_pct_late]);
+  }
+  function computeDashboard(){
+    const now=new Date(); const start=new Date(); start.setDate(now.getDate()-29); start.setHours(0,0,0,0);
+    const map={}; const labels=[];
+    for(let i=0;i<30;i++){ const d=new Date(start); d.setDate(start.getDate()+i); const ymd=toYMD(d); map[ymd]=0; labels.push(d.toLocaleDateString()); }
+    let ok=0, late=0, leadSum=0, leadCount=0;
+    (state.tasks||[]).forEach(t=>{
+      if(t.status==='concluida'){
+        const doneAt = t.updated_at ? new Date(t.updated_at) : null;
+        if(doneAt && doneAt >= start){
+          const ymd=toYMD(new Date(doneAt)); if(ymd in map) map[ymd]=(map[ymd]||0)+1;
+        }
+        // no prazo?
+        if(t.prazo && doneAt){
+          const prazoDate = ymdToLocalDate(t.prazo); const doneDay = new Date(doneAt); doneDay.setHours(0,0,0,0);
+          if(doneDay <= prazoDate) ok++; else late++;
+        }
+        // lead time (dias entre criação e conclusão)
+        if(t.created_at && doneAt){ const created=new Date(t.created_at); const diffMs = doneAt - created; if(diffMs>0){ leadSum += diffMs/(1000*60*60*24); leadCount++; } }
+      }
+    });
+    const vals = labels.map((_,i)=>{ const d=new Date(start); d.setDate(start.getDate()+i); return map[toYMD(d)]||0; });
+    window._dash_last30_labels=labels; window._dash_last30_vals=vals;
+    window._dash_pct_ok=ok; window._dash_pct_late=late;
+    id('dbTotalConcluidas').textContent = `Concluídas: ${ok+late}`;
+    const pct = (ok+late)>0 ? Math.round((ok/(ok+late))*100) : 0;
+    id('dbPctNoPrazo').textContent = `% no prazo: ${pct}%`;
+    id('dbLeadTime').textContent = `Lead time méd.: ${leadCount? (leadSum/leadCount).toFixed(1)+' dias':'—'}`;
+  }
+  function drawBars(canvasId, labels, values){
+    const c = id(canvasId); const ctx=c.getContext('2d');
+    const W=c.width = c.clientWidth; const H=c.height;
+    ctx.clearRect(0,0,W,H);
+    const max = Math.max(1, ...values);
+    const pad=24; const n=values.length; const bw=(W - pad*2)/n;
+    ctx.strokeStyle = 'rgba(255,255,255,.15)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(pad, H-pad); ctx.lineTo(W-pad, H-pad); ctx.stroke();
+    ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--brand') || '#185b24';
+    for(let i=0;i<n;i++){
+      const v=values[i], h = ((H - pad*2) * v / max);
+      const x = pad + i*bw + 2; const y = H - pad - h;
+      ctx.fillRect(x, y, Math.max(2, bw - 4), Math.max(1, h));
+    }
   }
 
   /* =================== Sidebar Mobile =================== */
   function openSidebar(){ id('sidebar').classList.add('open'); }
   function closeSidebar(){ id('sidebar').classList.remove('open'); }
-  function toggleSidebar(){
-    const s=id('sidebar');
-    if(s.classList.contains('open')) closeSidebar(); else openSidebar();
-  }
+  function toggleSidebar(){ const s=id('sidebar'); if(s.classList.contains('open')) closeSidebar(); else openSidebar(); }
 
   /* =================== Eventos =================== */
-  // Tema
   id('btnTheme').onclick = toggleTheme;
-
-  // Sidebar
   id('btnOpenSidebar').onclick = toggleSidebar;
 
-  // Projetos
   id('btnNovoProjeto').onclick = openProjectModal;
   id('pSalvar').onclick = saveProjectFromModal;
   id('pCancelar').onclick = ()=>id('dlgProject').close();
-  id('projSearch').oninput = renderSidebarProjects;
+  id('projSearch').oninput = ()=>{ renderSidebarProjects(); renderProjectsView(); };
+  id('chkShowArchived').onchange = ()=>{ renderSidebarProjects(); renderProjectsView(); };
   id('btnVoltarProjetos').onclick = showProjectsHome;
 
-  // Toolbar/Kanban
   document.getElementById('btnNova').onclick = ()=>openTaskModal();
   qsa('[data-add]').forEach(b=>{ b.onclick=()=>openTaskModal({status:b.getAttribute('data-add')}); });
   document.getElementById('btnExport').onclick = exportCSV;
@@ -1807,55 +1456,36 @@
   document.getElementById('fResp').onchange = renderProjectBoard;
   document.getElementById('fPrazo').onchange = ()=>{ state.filterDate=null; renderProjectBoard(); };
 
-  // Reuniões
   document.getElementById('btnMeetings').onclick = openMeetings;
   document.getElementById('mSalvar').onclick = saveMeetingFromModal;
   document.getElementById('mCancelar').onclick = ()=>{ id('mTitulo').value=''; id('mDesc').value=''; id('mData').value=''; id('mHora').value=''; };
   document.getElementById('mFechar').onclick = ()=>id('dlgMeetings').close();
 
-  // Timeline
   document.getElementById('tlNovoSalvar').onclick = addTimelineEntry;
   document.getElementById('tlFechar').onclick = ()=>{ state.viewingTaskTimelineId=null; state.editingTimelineEntryId=null; id('dlgTimeline').close(); };
 
-  // mini-calendário
   document.getElementById('btnCal').onclick = toggleCalendar;
   document.getElementById('btnClearDia').onclick = ()=>{ state.filterDate=null; renderProjectBoard(); };
-  document.addEventListener('click', (ev)=>{
-    const pop=id('calPopover'); if(pop.classList.contains('hidden')) return;
-    if(!pop.contains(ev.target) && ev.target!==id('btnCal')) closeCalendar();
-  });
+  document.addEventListener('click', (ev)=>{ const pop=id('calPopover'); if(pop.classList.contains('hidden')) return; if(!pop.contains(ev.target) && ev.target!==id('btnCal')) closeCalendar(); });
   document.addEventListener('keydown', (ev)=>{ if(ev.key==='Escape') closeCalendar(); });
-  window.addEventListener('resize', ()=>{ const pop=id('calPopover'); if(!pop.classList.contains('hidden')) placeCalendarPopover(); });
-  window.addEventListener('scroll', ()=>{ const pop=id('calPopover'); if(!pop.classList.contains('hidden')) placeCalendarPopover(); }, true);
+  window.addEventListener('resize', ()=>{ const pop=id('calPopover'); if(!pop.classList.contains('hidden')) { const _=placeCalendarPopover(); }});
+  window.addEventListener('scroll', ()=>{ const pop=id('calPopover'); if(!pop.classList.contains('hidden')) { const _=placeCalendarPopover(); }}, true);
 
-  // Subtabs (abas rápidas)
   qsa('.subtab').forEach(tab=>{
-    tab.onclick = ()=>{
-      qsa('.subtab').forEach(t=>t.classList.remove('active'));
-      tab.classList.add('active');
-      state.subScope = tab.dataset.scope;
-      renderProjectBoard();
-    };
+    tab.onclick = ()=>{ qsa('.subtab').forEach(t=>t.classList.remove('active')); tab.classList.add('active'); state.subScope = tab.dataset.scope; renderProjectBoard(); };
   });
+
+  id('btnDashboard').onclick = openDashboard;
+  id('dbFechar').onclick = ()=>id('dlgDash').close();
 
   /* =================== Boot =================== */
   async function startApp(){
-    // aplica tema da URL se existir
     const params=new URL(location.href).searchParams;
-    const themeFromUrl=params.get('theme');
-    if(themeFromUrl){ state.theme=themeFromUrl; localStorage.setItem('theme',state.theme); applyTheme(); }
-
+    const themeFromUrl=params.get('theme'); if(themeFromUrl){ state.theme=themeFromUrl; localStorage.setItem('theme',state.theme); applyTheme(); }
     await maybeInitSupabase();
-    await fetchProjects();
-
-    // se vem um board na URL, já seleciona
+    await fetchProjectsAndStats();
     const fromUrl = params.get('board');
-    if(fromUrl && state.projects.find(p=>p.slug===fromUrl)){
-      await selectProject(fromUrl);
-    }else{
-      // tela de projetos como inicial
-      showProjectsHome();
-    }
+    if(fromUrl && state.projects.find(p=>p.slug===fromUrl)){ await selectProject(fromUrl); } else { showProjectsHome(); }
   }
   </script>
 </body>

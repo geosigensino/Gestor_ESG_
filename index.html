@@ -203,7 +203,7 @@ dialog.modal-light .btn.primary{ background:linear-gradient(180deg,var(--brand),
 @media (max-width: 992px), (hover:none) and (pointer:coarse){
   .cal-pop{
     position: fixed !important;
-    inset: 0 !important;                 /* ocupa toda a viewport */
+    inset: 0 !important;
     width: 100dvw !important;
     height: 100dvh !important;
     max-width: none !important;
@@ -216,15 +216,14 @@ dialog.modal-light .btn.primary{ background:linear-gradient(180deg,var(--brand),
     grid-template-rows: auto 1fr auto;
     gap: 8px;
     padding: 12px;
-    max-width: 560px;                    /* largura confortável */
-    margin: 0 auto;                      /* centraliza o conteúdo */
+    max-width: 560px;
+    margin: 0 auto;
   }
   .cal-grid{
-    overflow: auto;                      /* garante rolagem se necessário */
+    overflow: auto;
     padding: 4px 6px 8px;
   }
 }
-/* (Removido o bloco antigo @media (max-width:420px){ .cal-pop{ ... } }) */
 
 /* ===== Avisos de vencimento ===== */
 .badge.due{ font-weight:700 }
@@ -869,6 +868,73 @@ function renderNoteAuthors(){
   id('noteAuthor').innerHTML=FIXED_RESPONSAVEIS.map(n=>`<option value="${n}">${n}</option>`).join('');
   id('noteNow').textContent=`agora: ${fmtDateTime(new Date())}`;
 }
+
+/* --- 👇 ADICIONADO: criar/excluir anotações (online/offline) --- */
+async function addNote(texto){
+  const slug = state.currentProject?.slug;
+  if(!slug) return showErr('Projeto não selecionado','Selecione um projeto.');
+  const conteudo = (texto || '').trim();
+  if(!conteudo) return showErr('Anotação vazia','Escreva algo antes de anotar.');
+
+  const noteObj = {
+    conteudo,
+    autor: id('noteAuthor')?.value || state.author || 'Anônimo',
+    board_slug: slug
+  };
+
+  if(state.online){
+    // otimista
+    const tempId = crypto.randomUUID();
+    const optimistic = { id: tempId, created_at: new Date().toISOString(), updated_at: null, ...noteObj };
+    state.notes = [optimistic, ...(state.notes || [])];
+    renderNotes();
+
+    const { data, error } = await state.client.from('notes').insert(noteObj).select().single();
+    if(error){
+      state.notes = (state.notes || []).filter(n => n.id !== tempId);
+      renderNotes();
+      return showErr('Erro ao criar anotação', error);
+    }
+    const ix = state.notes.findIndex(n => n.id === tempId);
+    if(ix >= 0){ state.notes[ix] = data; }
+  }else{
+    const dataLoc = loadProjectDataLocal(slug);
+    const newNote = { id: crypto.randomUUID(), created_at: new Date().toISOString(), updated_at: null, ...noteObj };
+    dataLoc.notes = [newNote, ...(dataLoc.notes || [])];
+    saveProjectDataLocal(slug, dataLoc);
+    state.notes = dataLoc.notes;
+  }
+
+  const ta = id('noteInput');
+  if(ta){ ta.value = ''; ta.focus(); }
+  renderNotes();
+  if(id('chkUpdateLink')?.checked) updateShareLink();
+}
+
+async function deleteNote(idv){
+  const slug = state.currentProject?.slug;
+  if(!slug) return;
+  if(!confirm('Excluir esta anotação?')) return;
+
+  const backup = [...(state.notes || [])];
+  state.notes = (state.notes || []).filter(n => n.id !== idv);
+  renderNotes();
+
+  if(state.online){
+    const { error } = await state.client.from('notes').delete().eq('id', idv);
+    if(error){
+      state.notes = backup;
+      renderNotes();
+      return showErr('Erro ao excluir anotação', error);
+    }
+  }else{
+    const dataLoc = loadProjectDataLocal(slug);
+    dataLoc.notes = (dataLoc.notes || []).filter(n => n.id !== idv);
+    saveProjectDataLocal(slug, dataLoc);
+  }
+}
+/* --- 👆 FIM DO BLOCO NOVO --- */
+
 async function upsertMeeting(obj){
   const slug = state.currentProject?.slug; if(!slug) return showErr('Projeto não selecionado','Selecione um projeto.');
   if(state.online){
@@ -1029,7 +1095,7 @@ function renderTimelineModal(){
     const canEdit = isAutor;
     if(canEdit){
       const bEdit = document.createElement('button'); bEdit.className='btn small'; bEdit.textContent='Editar';
-      bEdit.onclick=()=>{ /* simplificado: edição completa omitida para focar no calendário */ };
+      bEdit.onclick=()=>{ /* edição opcional */ };
       const bDel = document.createElement('button'); bDel.className='btn small'; bDel.textContent='Excluir';
       bDel.onclick=async ()=>{ const tTask=getTaskById(state.viewingTaskTimelineId); if(!tTask) return; const arr=Array.isArray(tTask.timeline)?tTask.timeline:[]; tTask.timeline = arr.filter(e=>e.id!==entry.id); await saveTaskTimeline(tTask); };
       actions.append(bEdit,bDel);
@@ -1131,7 +1197,7 @@ function renderNotes(){
     meta.innerHTML=`<span>por <strong>${n.autor||'—'}</strong></span><span>•</span><span>${created}</span>${(updated? `<span>•</span><span>(editado em ${updated})</span>`:'')}`;
     dv.append(meta);
     const row=document.createElement('div'); row.className='actions';
-    const bEdit=document.createElement('button'); bEdit.className='btn small'; bEdit.textContent='Editar'; bEdit.onclick=()=>{/* edição omitida */};
+    const bEdit=document.createElement('button'); bEdit.className='btn small'; bEdit.textContent='Editar'; bEdit.onclick=()=>{/* edição opcional */};
     const bDel=document.createElement('button'); bDel.className='btn small'; bDel.textContent='Excluir'; bDel.onclick=()=>deleteNote(n.id);
     row.append(bEdit,bDel); dv.append(row);
     wrap.append(dv);
@@ -1158,20 +1224,14 @@ function openCalendar(){
   if(!state.calMonth){ const base = state.filterDate ? ymdToLocalDate(state.filterDate) : new Date(); state.calMonth = new Date(base.getFullYear(), base.getMonth(), 1); }
   renderCalendar(); id('calPopover').classList.remove('hidden'); requestAnimationFrame(placeCalendarPopover);
 }
-
-/* >>>>>>> POSICIONAMENTO ATUALIZADO — mobile tela cheia / desktop popover */
 function placeCalendarPopover(){
   const pop=id('calPopover'); const btn=id('btnCal');
   const isMobile = window.matchMedia('(max-width: 992px), (hover: none) and (pointer: coarse)').matches;
 
   if(isMobile){
-    // Tela cheia — estilos principais já estão no CSS (media query),
-    // aqui garantimos que nenhuma posição herdada atrapalhe:
     pop.style.left = '0'; pop.style.top = '0'; pop.style.bottom = 'auto'; pop.style.transform = 'none'; pop.style.width = '100dvw';
     return;
   }
-
-  // Desktop: mantém comportamento de popover posicionado próximo ao botão
   const vw=window.innerWidth, vh=window.innerHeight;
   const r=btn.getBoundingClientRect();
   const popW=pop.offsetWidth||280, popH=pop.offsetHeight||280;

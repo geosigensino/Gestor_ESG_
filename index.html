@@ -876,17 +876,6 @@ async function deleteProject(slug){
   await fetchProjectsAndStats();
   showProjectsHome();
 }
-    }catch(e){ return showErr('Erro ao excluir projeto', e); }
-  }else{
-    localStorage.removeItem(lsKeyData(slug));
-    const arr = loadProjectsLocal().filter(p=>p.slug!==slug);
-    saveProjectsLocal(arr);
-  }
-  if(state.currentProject?.slug === slug) state.currentProject = null;
-  await fetchProjectsAndStats();
-  showProjectsHome();
-}
-
 /* =================== Projetos: UI (sidebar/grade + menu) =================== */
 function kpiBadge(label, val, cls){
   const span = document.createElement('span');
@@ -2221,3 +2210,4 @@ async function deleteNote(idv){
 </script>
 </body>
 </html>
+
